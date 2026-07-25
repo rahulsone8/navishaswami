@@ -5,9 +5,9 @@ module.exports = (req, res) => {
   const config = {
     SUPABASE_URL: process.env.SUPABASE_URL || "https://zpgahkzikzqoozmhwaja.supabase.co",
     SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "sb_publishable_L8FYHXGZ5MzHr0hwDKRY4w_sw_hXUNs",
-    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "dju6e6g3j",
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "dtsmry84",
     CLOUDINARY_UPLOAD_PRESET: process.env.CLOUDINARY_UPLOAD_PRESET || "shivi_party_snaps",
-    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || ""
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "559857846832466"
   };
 
   res.status(200).send(`window.APP_CONFIG = Object.assign({}, window.APP_CONFIG, ${JSON.stringify(config, null, 2)});`);
