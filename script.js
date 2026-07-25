@@ -90,7 +90,15 @@
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // ── SCROLL REVEAL ─────────────────────────────────────────
+  // ── SCROLL REVEAL & HERO INITIALIZATION ─────────────────────
+  document.querySelectorAll('.hero .reveal').forEach(function(el) {
+    el.classList.add('visible');
+  });
+  if (statDays && !countTriggered) {
+    countTriggered = true;
+    animateCount(statDays, daysOld, 2000);
+  }
+
   var reveals = document.querySelectorAll('.reveal');
 
   if ('IntersectionObserver' in window) {
@@ -106,11 +114,11 @@
           }
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+    }, { threshold: 0.05, rootMargin: '0px 0px 50px 0px' });
 
     reveals.forEach(function (el) {
       var parent = el.parentElement;
-      var siblings = parent.querySelectorAll(':scope > .reveal');
+      var siblings = parent ? parent.querySelectorAll(':scope > .reveal') : [];
       var idx = Array.prototype.indexOf.call(siblings, el);
       el.style.transitionDelay = (idx * 0.08) + 's';
       revealObserver.observe(el);
@@ -120,7 +128,7 @@
     if (statEl) revealObserver.observe(statEl);
   } else {
     reveals.forEach(function (el) { el.classList.add('visible'); });
-    statDays.textContent = daysOld;
+    if (statDays) statDays.textContent = daysOld;
   }
 
   // ── SCROLL PROGRESS BAR ──────────────────────────────────
@@ -1035,10 +1043,13 @@
       var target = document.querySelector(href);
       if (target) {
         e.preventDefault();
-        var navHeight = nav.offsetHeight;
+        var navHeight = nav ? nav.offsetHeight : 0;
         var targetPos = target.getBoundingClientRect().top + window.scrollY - navHeight;
         window.scrollTo({ top: targetPos, behavior: 'smooth' });
       }
+    });
+  });
+
   // ── AUTOMATIC FAMILY TREE IMAGE BINDING ──
   document.querySelectorAll('.ft-card[data-img]').forEach(function(card) {
     var dataImg = card.getAttribute('data-img');
