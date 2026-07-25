@@ -2865,6 +2865,27 @@
       });
     });
 
+    // ── Mobile Dock Scroll Auto-Minimize Engine ───────────────────
+    var lastScrollY = window.scrollY;
+    var mobileDock = document.getElementById('mobile-dock');
+
+    window.addEventListener('scroll', function() {
+      if (!mobileDock) return;
+      var currentScrollY = window.scrollY;
+
+      if (currentScrollY < 60) {
+        mobileDock.classList.remove('scroll-hidden');
+      } else if (currentScrollY > lastScrollY + 12) {
+        // Scrolling DOWN -> smoothly minimize dock out of view
+        mobileDock.classList.add('scroll-hidden');
+      } else if (currentScrollY < lastScrollY - 12) {
+        // Scrolling UP -> reveal dock smoothly
+        mobileDock.classList.remove('scroll-hidden');
+      }
+
+      lastScrollY = currentScrollY;
+    }, { passive: true });
+
   })();
   </script>
 </body>
