@@ -29,15 +29,14 @@
   <!-- ═══ NAVIGATION ═══ -->
   <nav class="nav" id="nav">
     <a href="#top" class="nav__logo">
-      <span class="nav__logo-icon">🦄</span>
       <span class="nav__logo-text">Shivi</span>
     </a>
     <div class="nav__links">
       <a href="#about" class="nav__link">About</a>
       <a href="#journey" class="nav__link">Journey</a>
       <a href="#" class="nav__link" id="nav-gallery-btn">Gallery</a>
-      <a href="#birthday" class="nav__link nav__link--highlight">Birthday 🎂</a>
-      <a href="#" class="nav__link nav__link--party" id="nav-party-snaps-btn">Party Snaps 📸</a>
+      <a href="#birthday" class="nav__link nav__link--highlight">Birthday</a>
+      <a href="#" class="nav__link nav__link--party" id="nav-party-snaps-btn">Party Snaps</a>
     </div>
     <button class="nav__burger" id="nav-burger" aria-label="Toggle menu">
       <span></span><span></span><span></span>
@@ -48,32 +47,42 @@
   <div class="mobile-menu" id="mobile-menu">
     <a href="#about" class="mobile-menu__link">About</a>
     <a href="#journey" class="mobile-menu__link">Journey</a>
-    <a href="#" class="mobile-menu__link" id="mobile-gallery-btn">Gallery 🎬</a>
-    <a href="#birthday" class="mobile-menu__link">Birthday 🎂</a>
-    <a href="#" class="mobile-menu__link" id="mobile-party-snaps-btn">Party Snaps 📸</a>
-    <a href="#wishes" class="mobile-menu__link">Send Wishes 💌</a>
+    <a href="#" class="mobile-menu__link" id="mobile-gallery-btn">Gallery</a>
+    <a href="#birthday" class="mobile-menu__link">Birthday</a>
+    <a href="#" class="mobile-menu__link" id="mobile-party-snaps-btn">Party Snaps</a>
+    <a href="#wishes" class="mobile-menu__link">Send Wishes</a>
   </div>
 
   <!-- ═══ MOBILE FLOATING GLASS DOCK (Thumb Nav for Phones) ═══ -->
   <div class="mobile-dock" id="mobile-dock" aria-label="Quick Mobile Navigation">
     <a href="#top" class="mobile-dock__item active" id="dock-home-btn">
-      <span class="mobile-dock__icon">🏠</span>
+      <span class="mobile-dock__icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </span>
       <span class="mobile-dock__label">Home</span>
     </a>
     <a href="#" class="mobile-dock__item" id="dock-reels-btn">
-      <span class="mobile-dock__icon">🎬</span>
+      <span class="mobile-dock__icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+      </span>
       <span class="mobile-dock__label">Reels</span>
     </a>
     <a href="#" class="mobile-dock__item mobile-dock__item--highlight" id="dock-party-snaps-btn">
-      <span class="mobile-dock__icon">📸</span>
+      <span class="mobile-dock__icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+      </span>
       <span class="mobile-dock__label">Snaps</span>
     </a>
     <a href="#birthday" class="mobile-dock__item" id="dock-birthday-btn">
-      <span class="mobile-dock__icon">🎂</span>
+      <span class="mobile-dock__icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      </span>
       <span class="mobile-dock__label">Event</span>
     </a>
     <a href="#wishes" class="mobile-dock__item" id="dock-wishes-btn">
-      <span class="mobile-dock__icon">💌</span>
+      <span class="mobile-dock__icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </span>
       <span class="mobile-dock__label">Wishes</span>
     </a>
   </div>
@@ -97,14 +106,14 @@
     <div class="hero__content">
       <div class="hero__badge reveal">
         <span class="hero__badge-dot"></span>
-        Turning 1 on 4th August 🎂
+        Turning 1 on 4th August
       </div>
       <h1 class="hero__name reveal">
         <span class="hero__meet-text">Meet</span>
         <span class="shivi-inline-photo"><img src="assets/images/shivi_cutout.png" alt="Shivi" class="shivi-cutout-img" /></span>
       </h1>
       <p class="hero__tagline reveal">
-        A tiny miracle turning <strong class="gold">ONE</strong> on <strong>4th August 2026</strong> 💕
+        A tiny miracle turning <strong class="gold">ONE</strong> on <strong>4th August 2026</strong>
       </p>
       <div class="hero__stats reveal">
         <div class="stat" id="stat-days">
@@ -582,7 +591,7 @@
       <button class="party-gallery__close" id="party-gallery-close-btn" aria-label="Close Gallery">&times;</button>
       
       <div class="party-gallery__header">
-        <div class="party-gallery__badge"><span>📸</span> Party Memories</div>
+        <div class="party-gallery__badge">Party Memories</div>
         <h2 class="party-gallery__title">Party Memories &amp; Photo Albums</h2>
         <p class="party-gallery__subtitle">Upload your photos under your name to save them into your own named album folder!</p>
       </div>
@@ -590,7 +599,6 @@
       <!-- Upload Form with Custom File Dropzone & Live Upload Progress -->
       <div class="party-upload-box">
         <div class="party-upload-box__header">
-          <span class="party-upload-box__icon">✨</span>
           <h4 class="party-upload-box__title">Upload Photos to Your Album Folder</h4>
         </div>
         
@@ -608,14 +616,13 @@
                 Select Photos <span class="required-star">*</span>
               </label>
               <div class="party-file-dropzone" onclick="document.getElementById('party-file-input-named').click()">
-                <span class="party-dropzone-icon">📷</span>
                 <span id="file-chosen-text" class="party-dropzone-text">Choose Photos or Drag &amp; Drop</span>
                 <input type="file" id="party-file-input-named" multiple accept="image/*" required class="party-file-input-hidden" onchange="window.handlePartyFileSelect(this)" />
               </div>
             </div>
 
             <button type="submit" class="party-submit-btn">
-              <span>☁️</span> Upload to Cloud
+              Upload to Cloud
             </button>
           </div>
         </form>
@@ -636,7 +643,7 @@
       <div class="party-albums-wrap">
         <div class="party-albums-topbar">
           <h3 class="party-albums-title" id="albums-section-title">
-            📁 Shared Photo Albums
+            Shared Photo Albums
           </h3>
           
           <div id="album-download-actions" class="party-download-actions" style="display: none;">
@@ -645,13 +652,13 @@
               <span>Select All</span>
             </label>
             <button type="button" class="party-btn party-btn--selected" onclick="downloadSelectedFolderPhotos()">
-              ⬇️ Download Selected (<span id="selected-photos-count">0</span>)
+              Download Selected (<span id="selected-photos-count">0</span>)
             </button>
             <button type="button" class="party-btn party-btn--all" onclick="downloadAllFolderPhotos()">
-              📦 Download All Photos
+              Download All Photos
             </button>
             <button type="button" class="party-btn party-btn--back" onclick="showAllAlbumsView()" id="back-to-albums-btn">
-              ← Back to Albums 📁
+              ← Back to Albums
             </button>
           </div>
         </div>
@@ -692,7 +699,7 @@
       <div class="section-label reveal" style="justify-content:center;"><span>04</span> The Big Day</div>
       <div class="birthday__content">
         <h2 class="birthday__title reveal">
-          Shivi is Turning <span class="birthday__one">ONE!</span> 🎂✨
+          Shivi is Turning <span class="birthday__one">ONE!</span>
         </h2>
         <p class="birthday__sub reveal">
           The countdown is on for 4th August 2026. Join us for a magical milestone celebration!
@@ -721,13 +728,13 @@
         <!-- Event Detail Pill Badges -->
         <div class="birthday__details reveal">
           <div class="birthday__detail">
-            <span>🗓️</span> <strong>4th August 2026</strong>
+            <strong>4th August 2026</strong>
           </div>
           <div class="birthday__detail">
-            <span>⏰</span> <strong>6:15 PM IST</strong>
+            <strong>6:15 PM IST</strong>
           </div>
           <div class="birthday__detail">
-            <span>📍</span> <strong>Station Auditorium</strong>
+            <strong>Station Auditorium</strong>
           </div>
         </div>
       </div>
@@ -746,7 +753,7 @@
       <div class="wishes__box reveal">
         <div class="wishes__emoji-rain" aria-hidden="true" id="emoji-rain"></div>
         <h2 class="wishes__title">
-          Send a Birthday Wish to Shivi 💌
+          Send a Birthday Wish to Shivi
         </h2>
         <p class="wishes__text">
           Write a sweet birthday message or blessing for baby Shivi! She will cherish all your warm words when she grows up.
@@ -764,34 +771,22 @@
             <textarea id="wish-message" rows="3" placeholder="Write your sweetest birthday wishes and blessings for baby Shivi..." required></textarea>
           </div>
 
-          <div class="form-group">
-            <label>Pick a Blessing Emoji</label>
-            <div class="emoji-picker" id="emoji-picker">
-              <button type="button" class="emoji-btn active" onclick="selectWishEmoji(this, '💖')">💖</button>
-              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '🎂')">🎂</button>
-              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '🌈')">🌈</button>
-              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '✨')">✨</button>
-              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '👑')">👑</button>
-              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '🎈')">🎈</button>
-            </div>
-          </div>
-
           <button type="submit" class="wish-submit-btn" style="margin-top: 0.8rem;">
-            Send Wish to Shivi 💌
+            Send Wish to Shivi
           </button>
         </form>
 
         <div id="wish-success-msg" style="display:none; margin-top:1.2rem; padding:0.9rem; background:rgba(207,245,234,0.95); border:1.5px solid var(--gold); border-radius:16px; text-align:center; font-weight:800; color:var(--plum); font-size:1rem; box-shadow:0 4px 15px rgba(91,58,102,0.1);">
-          🎉 Thank you! Your wish for Shivi has been posted below! 💌✨
+          Thank you! Your wish for Shivi has been posted below!
         </div>
       </div>
 
       <!-- Live Wishes Board (Horizontal Scroll Track + View All Button) -->
       <div class="wishes-board-wrap reveal">
         <div class="wishes-board__header">
-          <h3 class="wishes-board__heading">Wishes &amp; Blessings for Shivi ✨</h3>
+          <h3 class="wishes-board__heading">Wishes &amp; Blessings for Shivi</h3>
           <button type="button" class="wishes-view-all-btn" id="view-all-wishes-btn" onclick="openAllWishesModal()" style="display:none;">
-            View All Wishes (<span id="wishes-count-num">0</span>) 📜
+            View All Wishes (<span id="wishes-count-num">0</span>)
           </button>
         </div>
 
@@ -810,8 +805,8 @@
       <button class="party-gallery__close" onclick="closeAllWishesModal()" aria-label="Close">&times;</button>
       
       <div class="party-gallery__header">
-        <div class="section-label" style="justify-content:center;"><span>📜</span> Guestbook</div>
-        <h2 class="party-gallery__title">All Wishes &amp; Blessings for Shivi 📜</h2>
+        <div class="section-label" style="justify-content:center;">Guestbook</div>
+        <h2 class="party-gallery__title">All Wishes &amp; Blessings for Shivi</h2>
         <p class="party-gallery__subtitle">Every warm note and birthday blessing written with love!</p>
       </div>
 
@@ -821,15 +816,14 @@
     </div>
   </div>
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- REMEMBRANCE — You Will Always Be Missed 🕯️✨               -->
+  <!-- REMEMBRANCE — You Will Always Be Missed                   -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section id="remembering" class="section memorial">
     <div class="container">
       <div class="memorial__header reveal">
-        <span class="memorial__candle">🕯️</span>
         <h2 class="memorial__title">You Will Always Be Missed</h2>
         <p class="memorial__sub">
-          Forever in our hearts &amp; watching over little Shivi from heaven 🕊️✨
+          Forever in our hearts &amp; watching over little Shivi
         </p>
       </div>
 
@@ -838,26 +832,26 @@
         <div class="memorial-card" data-img="assets/images/shivi_bua_memorial.jpg">
           <div class="memorial-card__frame">
             <div class="memorial-card__img-box">
-              <img src="assets/images/shivi_bua_memorial.jpg" alt="Shivi's Bhua" class="memorial-card__real-img" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'memorial-card__placeholder\'>🕊️</span>';" />
+              <img src="assets/images/shivi_bua_memorial.jpg" alt="Shivi's Bhua" class="memorial-card__real-img" />
             </div>
             <div class="memorial-card__halo"></div>
           </div>
           <h3 class="memorial-card__name">In Loving Memory of Bhua</h3>
-          <span class="memorial-card__relation">Shivi's Beloved Bhua 🕊️</span>
-          <p class="memorial-card__quote">"Your warmth, love, and heavenly blessings guide little Shivi every single day." 🕯️✨</p>
+          <span class="memorial-card__relation">Shivi's Beloved Bhua</span>
+          <p class="memorial-card__quote">"Your warmth, love, and heavenly blessings guide little Shivi every single day."</p>
         </div>
 
         <!-- Memorial Card 2: Bade Papa 2 -->
         <div class="memorial-card" data-img="badepapa2.jpg">
           <div class="memorial-card__frame">
             <div class="memorial-card__img-box">
-              <img src="badepapa2.jpg" alt="Bade Papa 2" class="memorial-card__real-img" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\'memorial-card__placeholder\'>🕊️</span>';" />
+              <img src="badepapa2.jpg" alt="Bade Papa 2" class="memorial-card__real-img" />
             </div>
             <div class="memorial-card__halo"></div>
           </div>
           <h3 class="memorial-card__name">In Loving Memory of Bade Papa</h3>
-          <span class="memorial-card__relation">Shivi's Beloved Bade Papa 🕊️</span>
-          <p class="memorial-card__quote">"Forever in our hearts, watching over little Shivi from heaven." 🕯️✨</p>
+          <span class="memorial-card__relation">Shivi's Beloved Bade Papa</span>
+          <p class="memorial-card__quote">"Forever in our hearts, watching over little Shivi from heaven."</p>
         </div>
       </div>
     </div>
@@ -868,31 +862,11 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
   <footer class="footer">
     <div class="container">
-      <div class="footer__unicorn" aria-hidden="true">
-        <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" width="120">
-          <ellipse cx="60" cy="55" rx="24" ry="18" fill="white" opacity="0.9"/>
-          <circle cx="60" cy="38" r="14" fill="white" opacity="0.9"/>
-          <path d="M60 24 L57.5 12 L62.5 12 Z" fill="#F0B93D"/>
-          <circle cx="55" cy="36" r="2" fill="#5B3A66"/>
-          <circle cx="54.5" cy="35.5" r="0.7" fill="white"/>
-          <ellipse cx="52" cy="41" rx="3" ry="1.8" fill="#FFD9E8" opacity="0.5"/>
-          <path d="M54 42 Q58 45 62 42" stroke="#5B3A66" stroke-width="1" stroke-linecap="round" fill="none"/>
-          <path d="M48 32 Q44 26 48 30" stroke="#FFD9E8" stroke-width="2" stroke-linecap="round" fill="none"/>
-          <path d="M72 32 Q76 26 72 30" stroke="#FFD9E8" stroke-width="2" stroke-linecap="round" fill="none"/>
-          <path d="M48 38 Q42 42 44 48 Q40 52 44 56" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-          <path d="M46 40 Q38 46 42 54" stroke="#FFD9E8" stroke-width="2" stroke-linecap="round" fill="none"/>
-          <line x1="48" y1="70" x2="48" y2="78" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="55" y1="72" x2="55" y2="80" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="65" y1="72" x2="65" y2="80" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="72" y1="70" x2="72" y2="78" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round"/>
-          <path d="M82 55 Q90 48 88 40 Q92 44 88 52" stroke="#FFD9E8" stroke-width="2" stroke-linecap="round" fill="none"/>
-        </svg>
-      </div>
       <p class="footer__line">
-        Made with all the love in the world for our little <em>Shivi</em> 🦄
+        Made with all the love in the world for our little <em>Shivi</em>
       </p>
       <p class="footer__sub">
-        © The Swami Family · Navisha's corner of the internet · <a href="admin.html" style="color: var(--plum); opacity: 0.75; text-decoration: none; font-weight: 700;" target="_blank">🔐 Admin</a>
+        © The Swami Family · Navisha's corner of the internet · <a href="admin.html" style="color: var(--plum); opacity: 0.75; text-decoration: none; font-weight: 700;" target="_blank">Admin Login</a>
       </p>
     </div>
   </footer>
@@ -2035,11 +2009,11 @@
       } catch(e) {}
 
       var defaultList = [
-        { id: 'm1', num: '01', title: 'First Day in This World 👶🏻🌸', sub: 'Held closely in Papa\'s loving arms', date: '4 Aug 2025', img: 'assets/images/shivi_first_day.jpg', emoji: '👶🏻🌸' },
-        { id: 'm2', num: '02', title: 'First Smile 😊✨', sub: 'The smile that melted everyone\'s hearts', date: 'Sept 2025', img: '', emoji: '😊✨' },
-        { id: 'm3', num: '03', title: 'First Giggles 🤭🎶', sub: 'Papa\'s silly faces finally worked!', date: 'Dec 2025', img: '', emoji: '🤭🎶' },
-        { id: 'm4', num: '04', title: 'First Word: "Ma-ma" 🗣️💖', sub: 'The sweetest sound in the world', date: 'April 2026', img: '', emoji: '🗣️💖' },
-        { id: 'm5', num: '05', title: 'Turning 1 Year Old! 🥳🎂', sub: 'One full year of love & happiness!', date: '4 Aug 2026', img: 'assets/images/shivi_lollipop.jpg', emoji: '🥳🎂' }
+        { id: 'm1', num: '01', title: 'First Day in This World', sub: 'Held closely in Papa\'s loving arms', date: '4 Aug 2025', img: 'assets/images/shivi_first_day.jpg', emoji: '' },
+        { id: 'm2', num: '02', title: 'First Smile', sub: 'The smile that melted everyone\'s hearts', date: 'Sept 2025', img: '', emoji: '' },
+        { id: 'm3', num: '03', title: 'First Giggles', sub: 'Papa\'s silly faces finally worked!', date: 'Dec 2025', img: '', emoji: '' },
+        { id: 'm4', num: '04', title: 'First Word: "Ma-ma"', sub: 'The sweetest sound in the world', date: 'April 2026', img: '', emoji: '' },
+        { id: 'm5', num: '05', title: 'Turning 1 Year Old!', sub: 'One full year of love & happiness!', date: '4 Aug 2026', img: 'assets/images/shivi_lollipop.jpg', emoji: '' }
       ];
 
       var list = (savedMilestones && savedMilestones.length > 0) ? savedMilestones : defaultList;
