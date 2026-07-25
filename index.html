@@ -186,16 +186,19 @@
           </p>
         </div>
 
-        <!-- Inline Detail Drawer (No Popup Modal!) -->
-        <div id="ft-inline-info" class="ft-inline-info" style="display:none;">
-          <div class="ft-inline-info__avatar" id="ft-info-avatar-box">
+        <!-- Small Premium 80/20 Family Tree Card -->
+        <div id="ft-inline-info" class="ft-popup-card" style="display:none;">
+          <button type="button" class="ft-popup-card__close" onclick="closeFtCard()" aria-label="Close Card">&times;</button>
+          
+          <!-- 80% Image Section -->
+          <div class="ft-popup-card__img-box" id="ft-info-avatar-box">
             <img id="ft-info-img" src="" alt="Family Member" />
           </div>
-          <div class="ft-inline-info__text">
-            <span class="ft-inline-info__role" id="ft-info-role">Dada</span>
-            <h4 class="ft-inline-info__name" id="ft-info-name">Dada</h4>
-            <p class="ft-inline-info__relation" id="ft-info-relation">Paternal Grandfather</p>
-            <p class="ft-inline-info__note" id="ft-info-note">"Shivi's beloved family member!"</p>
+          
+          <!-- 20% Text Section -->
+          <div class="ft-popup-card__text">
+            <h4 class="ft-popup-card__name" id="ft-info-name">Dada</h4>
+            <p class="ft-popup-card__relation" id="ft-info-relation">Paternal Grandfather</p>
           </div>
         </div>
 

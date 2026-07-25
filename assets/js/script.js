@@ -862,20 +862,57 @@
     }
   });
 
+  // ── FAMILY TREE SMALL 80/20 CARD ENGINE ─────────────────────
+  var activeFtCardNode = null;
+  var ftAutoHideTimer = null;
+
+  window.closeFtCard = function() {
+    var ftInlineInfo = document.getElementById('ft-inline-info');
+    if (ftInlineInfo) {
+      ftInlineInfo.style.display = 'none';
+      ftInlineInfo.classList.remove('open');
+    }
+    document.querySelectorAll('.ft-card').forEach(function (c) { c.classList.remove('selected'); });
+    activeFtCardNode = null;
+    if (ftAutoHideTimer) {
+      clearTimeout(ftAutoHideTimer);
+      ftAutoHideTimer = null;
+    }
+  };
+
   document.querySelectorAll('.ft-card').forEach(function (card) {
-    card.addEventListener('click', function () {
+    card.addEventListener('click', function (e) {
+      if (e) e.stopPropagation();
+
+      // IF CLICKING THE SAME NODE AGAIN -> TOGGLE CLOSE!
+      if (activeFtCardNode === card) {
+        window.closeFtCard();
+        return;
+      }
+
+      // Clear existing auto-hide timer
+      if (ftAutoHideTimer) {
+        clearTimeout(ftAutoHideTimer);
+        ftAutoHideTimer = null;
+      }
+
       // Unselect all other cards
       document.querySelectorAll('.ft-card').forEach(function (c) { c.classList.remove('selected'); });
       card.classList.add('selected');
+      activeFtCardNode = card;
 
       var name = card.getAttribute('data-name') || 'Family Member';
       var role = card.getAttribute('data-role') || 'Relation';
-      var relation = card.getAttribute('data-relation') || '';
+      var relation = card.getAttribute('data-relation') || role || '';
       var avatarEmoji = card.getAttribute('data-avatar') || '💕';
       var imgSrc = card.getAttribute('data-img');
 
+      var ftInfoName = document.getElementById('ft-info-name');
+      var ftInfoRelation = document.getElementById('ft-info-relation');
+      var ftInfoAvatarBox = document.getElementById('ft-info-avatar-box');
+      var ftInlineInfo = document.getElementById('ft-inline-info');
+
       if (ftInfoName) ftInfoName.textContent = name;
-      if (ftInfoRole) ftInfoRole.textContent = role;
       if (ftInfoRelation) ftInfoRelation.textContent = relation;
 
       if (imgSrc && ftInfoAvatarBox) {
@@ -884,19 +921,22 @@
         ftInfoAvatarBox.innerHTML = '<span>' + avatarEmoji + '</span>';
       }
 
-      if (ftInfoNote) {
-        ftInfoNote.textContent = '"Shivi\'s beloved ' + role + '! Always showering her with endless love, laughter & blessings." 💕';
-      }
-
       if (ftInlineInfo) {
         ftInlineInfo.style.display = 'flex';
-        // Smooth scroll to inline info box
+        ftInlineInfo.classList.remove('open');
+        void ftInlineInfo.offsetWidth;
+        ftInlineInfo.classList.add('open');
         ftInlineInfo.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
       if (typeof launchConfetti === 'function' && role.includes('Shivi')) {
         launchConfetti(window.innerWidth / 2, window.innerHeight * 0.4);
       }
+
+      // AUTO-HIDE AFTER 10 SECONDS
+      ftAutoHideTimer = setTimeout(function() {
+        window.closeFtCard();
+      }, 10000);
     });
   });
 
