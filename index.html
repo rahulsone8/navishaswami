@@ -480,8 +480,8 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- PARTY SNAPS & GALLERY MODAL OVERLAY (Opens on Click Only!) -->
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- ═══ GALLERY REELS MODAL (Instagram-style) ═══ -->
-  <div id="reels-modal" role="dialog" aria-modal="true" aria-label="Shivi's Video Reels Gallery">
+  <!-- ═══ GALLERY REELS MODAL (Clean Instagram Style) ═══ -->
+  <div id="reels-modal" role="dialog" aria-modal="true" aria-label="Reels Gallery">
 
     <!-- Cinema backdrop video layer for desktop -->
     <div class="reels-cinema-bg" id="reels-cinema-bg">
@@ -490,21 +490,18 @@
 
     <!-- Topbar -->
     <div class="reels-topbar">
-      <div class="reels-topbar-brand">
-        <div class="reels-topbar-logo">🦄</div>
-        <div class="reels-topbar-title">Shivi's Reels <span class="reels-topbar-badge">LIVE</span></div>
-      </div>
+      <div class="reels-topbar-brand">Reels</div>
       <button class="reels-close-btn" id="reels-close-btn" aria-label="Close Reels">✕</button>
     </div>
 
     <!-- Loading -->
     <div class="reels-loader" id="reels-loader">
       <div class="reels-spinner"></div>
-      <p>Loading Shivi's Magical Reels... ✨</p>
+      <p>Loading Reels...</p>
     </div>
 
     <!-- Toast Notification -->
-    <div class="reels-toast" id="reels-toast">✨ Link Copied!</div>
+    <div class="reels-toast" id="reels-toast">Link Copied</div>
 
     <!-- Reel Stack -->
     <div class="reels-stack" id="reels-stack"></div>
@@ -517,39 +514,37 @@
     <button class="reels-nav-arrow reels-nav-arrow--down" id="reels-arrow-down" aria-label="Next reel">▼</button>
 
     <!-- Global mute button -->
-    <button class="reel-mute-btn" id="reels-mute-btn" aria-label="Toggle mute">🔇</button>
+    <button class="reel-mute-btn" id="reels-mute-btn" aria-label="Toggle mute">
+      <svg class="reel-audio-icon-svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+    </button>
   </div>
 
   <!-- Comment Drawer Backdrop -->
   <div class="reel-drawer-backdrop" id="reel-drawer-backdrop"></div>
 
-  <!-- Comment Drawer (shared, moves per reel) -->
+  <!-- Comment Drawer -->
   <div class="reel-comment-drawer" id="reel-comment-drawer">
     <div class="drawer-handle"></div>
     <div class="drawer-title">
-      <span>💬 Comments &amp; Wishes</span>
+      <span>Comments</span>
       <button class="drawer-close" id="drawer-close-btn">✕</button>
     </div>
 
-    <!-- Quick Emoji Bar -->
-    <div class="drawer-emoji-bar" id="drawer-emoji-bar">
-      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('❤️')">❤️</button>
-      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('💖')">💖</button>
-      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('🎂')">🎂</button>
-      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('🥳')">🥳</button>
-      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('🤩')">🤩</button>
-      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('👏')">👏</button>
-      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('👶🏻')">👶🏻</button>
-      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('✨')">✨</button>
-    </div>
-
     <div class="drawer-comments-list" id="drawer-comments-list">
-      <p class="drawer-no-comments">Be the first to comment! 💕</p>
+      <p class="drawer-no-comments">Be the first to comment</p>
     </div>
     <div class="drawer-input-row">
       <input type="text" id="drawer-name-input" class="drawer-name-input" placeholder="Your name" maxlength="30" />
       <input type="text" id="drawer-comment-input" class="drawer-comment-input" placeholder="Add a comment..." maxlength="200" />
-      <button class="drawer-send-btn" id="drawer-send-btn" aria-label="Send comment">➤</button>
+      <button class="drawer-send-btn" id="drawer-send-btn" aria-label="Send comment">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+        </svg>
+      </button>
     </div>
   </div>
 
@@ -2440,38 +2435,48 @@
 
       var likedKey = 'liked_' + reel.id;
       var alreadyLiked = localStorage.getItem(likedKey) === '1';
-      var desc = reel.description || reel.title || 'A precious memory 💕';
-      var isLongDesc = desc.length > 60;
+      var desc = reel.description || reel.title || 'Shivi\'s special moment';
+      var isLongDesc = desc.length > 55;
+
+      var heartSvg = '<svg class="reel-icon-svg" viewBox="0 0 24 24" width="28" height="28" fill="' + (alreadyLiked ? '#FF3040' : 'none') + '" stroke="' + (alreadyLiked ? '#FF3040' : 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>';
+
+      var commentSvg = '<svg class="reel-icon-svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>';
+
+      var shareSvg = '<svg class="reel-icon-svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>';
+
+      var playSvg = '<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>';
 
       item.innerHTML =
         '<video class="reel-video" src="' + (reel.video_url || '') + '" playsinline muted loop preload="metadata"></video>' +
         '<div class="reel-tap-overlay" id="tap-' + idx + '"></div>' +
-        '<div class="reel-play-icon" id="play-icon-' + idx + '">▶</div>' +
-        (idx === 0 ? '<div class="reel-swipe-hint"><span>Swipe up for more reels 👆</span></div>' : '') +
+        '<div class="reel-play-icon" id="play-icon-' + idx + '">' + playSvg + '</div>' +
 
         '<div class="reel-actions">' +
           '<button class="reel-action-btn' + (alreadyLiked ? ' liked' : '') + '" id="like-btn-' + idx + '" aria-label="Like">' +
-            '<div class="reel-action-icon">' + (alreadyLiked ? '❤️' : '🤍') + '</div>' +
+            '<div class="reel-icon-wrap" id="like-icon-wrap-' + idx + '">' + heartSvg + '</div>' +
             '<span class="reel-action-label" id="like-count-' + idx + '">...</span>' +
           '</button>' +
+
           '<button class="reel-action-btn" id="comment-btn-' + idx + '" aria-label="Comment">' +
-            '<div class="reel-action-icon">💬</div>' +
+            '<div class="reel-icon-wrap">' + commentSvg + '</div>' +
             '<span class="reel-action-label" id="comment-count-' + idx + '">0</span>' +
           '</button>' +
+
           '<button class="reel-action-btn" id="share-btn-' + idx + '" aria-label="Share">' +
-            '<div class="reel-action-icon">↗️</div>' +
-            '<span class="reel-action-label">Share</span>' +
+            '<div class="reel-icon-wrap">' + shareSvg + '</div>' +
           '</button>' +
-          '<div class="reel-disc-wrapper" title="Shivi\'s Original Audio">' +
-            '<img src="assets/images/shivi_cutout.png" class="reel-disc-thumb" alt="Disc" />' +
+
+          '<div class="reel-audio-thumb-box">' +
+            '<img src="assets/images/shivi_cutout.png" alt="Audio" />' +
           '</div>' +
         '</div>' +
 
         '<div class="reel-bottom-overlay">' +
           '<div class="reel-user-row">' +
-            '<div class="reel-user-avatar"><span>🦄</span></div>' +
-            '<div class="reel-username">Shivi\'s World</div>' +
-            '<span class="reel-badge-follow">Birthday ⭐</span>' +
+            '<div class="reel-user-avatar-wrap">' +
+              '<div class="reel-user-avatar">S</div>' +
+            '</div>' +
+            '<div class="reel-username">shivis_world</div>' +
           '</div>' +
 
           '<div class="reel-description-box">' +
@@ -2480,14 +2485,14 @@
           '</div>' +
 
           '<div class="reel-audio-row">' +
-            '<span class="reel-audio-icon">🎵</span>' +
-            '<div class="reel-audio-marquee">Shivi\'s Original Audio • Birthday Celebration 🎂</div>' +
+            '<svg class="reel-audio-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>' +
+            '<div class="reel-audio-text">shivis_world • Original audio</div>' +
           '</div>' +
         '</div>' +
 
         '<div class="reel-progress-bar" id="bar-' + idx + '"><div class="reel-progress-fill" id="prog-' + idx + '"></div></div>';
 
-      // Tap / Double Tap Logic (Instagram Double-Tap Heart Pop)
+      // Tap / Double Tap Logic
       var tap = item.querySelector('#tap-' + idx);
       var vid = item.querySelector('.reel-video');
       var playIcon = item.querySelector('#play-icon-' + idx);
@@ -2498,24 +2503,22 @@
           var tapLength = currentTime - lastTapTime;
 
           if (tapLength < 320 && tapLength > 0) {
-            // DOUBLE TAP DETECTED -> BIG HEART POP + LIKE!
             e.preventDefault();
-            triggerDoubleTapHeart(item, e);
+            triggerDoubleTapHeart(item);
             if (localStorage.getItem('liked_' + reel.id) !== '1') {
               handleLike(reel.id, idx);
             }
           } else {
-            // SINGLE TAP -> PLAY / PAUSE TOGGLE
             setTimeout(function() {
               if (new Date().getTime() - lastTapTime >= 320) {
                 if (vid.paused) {
                   vid.play().catch(function(){});
-                  playIcon.textContent = '▶';
+                  playIcon.innerHTML = '<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>';
                   playIcon.className = 'reel-play-icon show';
-                  setTimeout(function() { playIcon.className = 'reel-play-icon hide'; }, 550);
+                  setTimeout(function() { playIcon.className = 'reel-play-icon hide'; }, 500);
                 } else {
                   vid.pause();
-                  playIcon.textContent = '⏸';
+                  playIcon.innerHTML = '<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>';
                   playIcon.className = 'reel-play-icon show';
                 }
               }
@@ -2525,7 +2528,7 @@
         });
       }
 
-      // Progress bar & Click seeking
+      // Progress bar & Seeking
       var progressBar = item.querySelector('#bar-' + idx);
       var progressFill = item.querySelector('#prog-' + idx);
 
@@ -2588,31 +2591,31 @@
     }
 
     // Double Tap Center Heart Pop Animation
-    function triggerDoubleTapHeart(container, e) {
+    function triggerDoubleTapHeart(container) {
       var heart = document.createElement('div');
       heart.className = 'reel-double-tap-heart';
-      heart.textContent = '💖';
+      heart.innerHTML = '<svg viewBox="0 0 24 24" fill="#FF3040" stroke="#FF3040" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>';
       container.appendChild(heart);
-      setTimeout(function() { heart.remove(); }, 850);
+      setTimeout(function() { heart.remove(); }, 800);
     }
 
     // Share Handler
     function handleShare(reel) {
-      var title = reel.title || "Shivi's Magical Reel";
+      var title = reel.title || "Shivi's Reel";
       var url = window.location.href;
 
       if (navigator.share) {
         navigator.share({
           title: title,
-          text: 'Check out Shivi\'s birthday reel! 💕',
+          text: 'Watch this reel on Shivi\'s Birthday website!',
           url: url
         }).catch(function(){});
       } else {
         if (navigator.clipboard) {
           navigator.clipboard.writeText(url);
-          showReelsToast("✨ Link Copied! Share with Family 💕");
+          showReelsToast("Link Copied");
         } else {
-          showReelsToast("✨ Shivi's Reel Link Ready! 💕");
+          showReelsToast("Reel Link Ready");
         }
       }
     }
@@ -2634,33 +2637,38 @@
 
     function setLikeCount(idx, count) {
       var el = document.getElementById('like-count-' + idx);
-      if (el) el.textContent = count >= 1000 ? (count/1000).toFixed(1) + 'k' : count;
+      if (!el) return;
+      if (count >= 1000000) el.textContent = (count/1000000).toFixed(1) + 'M';
+      else if (count >= 1000) el.textContent = (count/1000).toFixed(1) + 'K';
+      else el.textContent = count;
     }
 
     function handleLike(reelId, idx) {
       var likedKey = 'liked_' + reelId;
       var btn = document.getElementById('like-btn-' + idx);
-      var icon = btn ? btn.querySelector('.reel-action-icon') : null;
+      var iconWrap = document.getElementById('like-icon-wrap-' + idx);
+
+      var heartFilled = '<svg class="reel-icon-svg" viewBox="0 0 24 24" width="28" height="28" fill="#FF3040" stroke="#FF3040" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>';
+
+      var heartOutlined = '<svg class="reel-icon-svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>';
 
       if (localStorage.getItem(likedKey) === '1') {
-        // Unlike
         localStorage.removeItem(likedKey);
         if (btn) btn.classList.remove('liked');
-        if (icon) icon.textContent = '🤍';
+        if (iconWrap) iconWrap.innerHTML = heartOutlined;
         if (sb) {
           sb.from('reel_likes').delete().eq('reel_id', reelId).eq('session_id', sessionId).then(function() {
             fetchLikeCount(reelId, idx);
           });
         }
       } else {
-        // Like + heart burst animation
         localStorage.setItem(likedKey, '1');
         if (btn) {
           btn.classList.add('liked');
           btn.classList.add('heart-burst');
-          setTimeout(function() { btn.classList.remove('heart-burst'); }, 600);
+          setTimeout(function() { btn.classList.remove('heart-burst'); }, 500);
         }
-        if (icon) icon.textContent = '❤️';
+        if (iconWrap) iconWrap.innerHTML = heartFilled;
         if (sb) {
           sb.from('reel_likes').insert({ reel_id: reelId, session_id: sessionId }).then(function() {
             fetchLikeCount(reelId, idx);
