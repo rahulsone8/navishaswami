@@ -53,37 +53,49 @@
     <a href="#wishes" class="mobile-menu__link">Send Wishes</a>
   </div>
 
-  <!-- ═══ MOBILE FLOATING GLASS DOCK (Thumb Nav for Phones) ═══ -->
-  <div class="mobile-dock" id="mobile-dock" aria-label="Quick Mobile Navigation">
-    <a href="#top" class="mobile-dock__item active" id="dock-home-btn">
+  <!-- ═══ INSTAGRAM FLOATING DARK GLASS CAPSULE NAVBAR ═══ -->
+  <div class="mobile-dock" id="mobile-dock" aria-label="Navigation">
+    <a href="#top" class="mobile-dock__item active" id="dock-home-btn" title="Home">
       <span class="mobile-dock__icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
       </span>
-      <span class="mobile-dock__label">Home</span>
     </a>
-    <a href="#" class="mobile-dock__item" id="dock-reels-btn">
+
+    <a href="#" class="mobile-dock__item" id="dock-reels-btn" title="Reels">
       <span class="mobile-dock__icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+        </svg>
       </span>
-      <span class="mobile-dock__label">Reels</span>
     </a>
-    <a href="#" class="mobile-dock__item mobile-dock__item--highlight" id="dock-party-snaps-btn">
-      <span class="mobile-dock__icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+
+    <a href="#" class="mobile-dock__item" id="dock-party-snaps-btn" title="Party Snaps">
+      <span class="mobile-dock__icon" style="position:relative;">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+        <span class="dock-badge">3</span>
       </span>
-      <span class="mobile-dock__label">Snaps</span>
     </a>
-    <a href="#birthday" class="mobile-dock__item" id="dock-birthday-btn">
+
+    <a href="#birthday" class="mobile-dock__item" id="dock-birthday-btn" title="Event">
       <span class="mobile-dock__icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
       </span>
-      <span class="mobile-dock__label">Event</span>
     </a>
-    <a href="#wishes" class="mobile-dock__item" id="dock-wishes-btn">
-      <span class="mobile-dock__icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-      </span>
-      <span class="mobile-dock__label">Wishes</span>
+
+    <a href="#wishes" class="mobile-dock__item" id="dock-wishes-btn" title="Wishes">
+      <div class="dock-avatar-wrap">
+        <img src="assets/images/shivi_cutout.png" alt="Shivi" class="dock-avatar-img" />
+        <span class="dock-avatar-dot"></span>
+      </div>
     </a>
   </div>
 
