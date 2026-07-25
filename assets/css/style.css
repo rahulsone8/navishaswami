@@ -469,23 +469,65 @@ em { font-style: italic; }
   align-items: center;
   justify-content: center;
   position: relative;
-  background: transparent;
-  padding: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(240, 185, 61, 0.22), rgba(227, 214, 245, 0.75));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 2.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 40px;
+  padding: 1.2rem 2.2rem;
+  margin: 1.2rem auto;
+  box-shadow: 
+    0 25px 65px rgba(91, 58, 102, 0.25),
+    0 8px 25px rgba(240, 185, 61, 0.3),
+    inset 0 2px 18px rgba(255, 255, 255, 0.95),
+    inset 0 -4px 20px rgba(240, 185, 61, 0.22);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: liquidGlassGlow 4s infinite alternate ease-in-out;
+}
+
+.shivi-inline-photo::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 43px;
+  background: linear-gradient(135deg, rgba(240, 185, 61, 0.6), rgba(255, 255, 255, 0.85), rgba(91, 58, 102, 0.4));
+  z-index: -1;
+  opacity: 0.85;
+  filter: blur(12px);
 }
 
 .shivi-cutout-img {
-  height: clamp(140px, 30vw, 290px);
+  height: clamp(220px, 45vw, 440px);
   width: auto;
-  max-width: min(960px, 96vw);
+  max-width: min(960px, 94vw);
   display: block;
-  margin: 0.3rem auto;
+  margin: 0 auto;
   mix-blend-mode: multiply;
-  filter: drop-shadow(0 12px 30px rgba(91, 58, 102, 0.28));
-  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 15px 35px rgba(91, 58, 102, 0.32));
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.shivi-cutout-img:hover {
-  transform: scale(1.04) rotate(-1deg);
+.shivi-inline-photo:hover {
+  transform: scale(1.04) translateY(-6px);
+  box-shadow: 
+    0 35px 85px rgba(91, 58, 102, 0.32),
+    0 12px 35px rgba(240, 185, 61, 0.45),
+    inset 0 2px 22px rgba(255, 255, 255, 1);
+}
+
+@keyframes liquidGlassGlow {
+  0% {
+    box-shadow: 
+      0 25px 65px rgba(91, 58, 102, 0.25),
+      0 8px 25px rgba(240, 185, 61, 0.3),
+      inset 0 2px 18px rgba(255, 255, 255, 0.95);
+  }
+  100% {
+    box-shadow: 
+      0 30px 75px rgba(91, 58, 102, 0.35),
+      0 12px 35px rgba(240, 185, 61, 0.5),
+      inset 0 2px 24px rgba(255, 255, 255, 1);
+  }
 }
 
 .hero__unicorn-emoji {
