@@ -8,6 +8,8 @@
   <meta name="theme-color" content="#5B3A66" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+  <link rel="preconnect" href="https://zpgahkzikzqoozmhwaja.supabase.co" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css?v=20260725_v16" />
   <link rel="stylesheet" href="assets/css/reels.css?v=20260726_v1" />
@@ -18,7 +20,7 @@
 </head>
 <body>
   <!-- ═══ MOBILE DEDICATED BACKGROUND ═══ -->
-  <img id="mobile-bg-img" src="assets/images/mobile_bg.jpg" alt="" aria-hidden="true" />
+  <img id="mobile-bg-img" src="assets/images/mobile_bg.jpg" alt="" aria-hidden="true" decoding="async" loading="eager" />
 
   <!-- ═══ SCROLL PROGRESS BAR ═══ -->
   <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
@@ -2898,25 +2900,28 @@
       }
     });
 
-    // ── Mobile Dock Scroll Auto-Minimize Engine ───────────────────
+    // ── Mobile Dock Scroll Auto-Minimize Engine (60fps Throttled) ────
     var lastScrollY = window.scrollY;
     var mobileDock = document.getElementById('mobile-dock');
+    var isDockTicking = false;
 
     window.addEventListener('scroll', function() {
       if (!mobileDock) return;
-      var currentScrollY = window.scrollY;
-
-      if (currentScrollY < 60) {
-        mobileDock.classList.remove('scroll-hidden');
-      } else if (currentScrollY > lastScrollY + 12) {
-        // Scrolling DOWN -> smoothly minimize dock out of view
-        mobileDock.classList.add('scroll-hidden');
-      } else if (currentScrollY < lastScrollY - 12) {
-        // Scrolling UP -> reveal dock smoothly
-        mobileDock.classList.remove('scroll-hidden');
+      if (!isDockTicking) {
+        window.requestAnimationFrame(function() {
+          var currentScrollY = window.scrollY;
+          if (currentScrollY < 60) {
+            mobileDock.classList.remove('scroll-hidden');
+          } else if (currentScrollY > lastScrollY + 12) {
+            mobileDock.classList.add('scroll-hidden');
+          } else if (currentScrollY < lastScrollY - 12) {
+            mobileDock.classList.remove('scroll-hidden');
+          }
+          lastScrollY = currentScrollY;
+          isDockTicking = false;
+        });
+        isDockTicking = true;
       }
-
-      lastScrollY = currentScrollY;
     }, { passive: true });
 
   })();

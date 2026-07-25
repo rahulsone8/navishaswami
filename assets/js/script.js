@@ -201,9 +201,16 @@
     });
   }
 
+  var isScrollTicking = false;
   window.addEventListener('scroll', function () {
-    updateProgress();
-    updateNav();
+    if (!isScrollTicking) {
+      window.requestAnimationFrame(function() {
+        updateProgress();
+        updateNav();
+        isScrollTicking = false;
+      });
+      isScrollTicking = true;
+    }
   }, { passive: true });
 
   if (backToTopBtn) {

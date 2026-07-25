@@ -507,17 +507,25 @@ em { font-style: italic; }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   REVEAL ANIMATION (scroll-triggered)
+   HIGH-PERFORMANCE REVEAL ANIMATION (GPU Accelerated)
    ═══════════════════════════════════════════════════════════ */
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: 600px;
+}
+
 .reveal {
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-              transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translate3d(0, 32px, 0);
+  will-change: opacity, transform;
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .reveal.visible,
 .hero .reveal {
   opacity: 1 !important;
+  transform: translate3d(0, 0, 0) !important;
+}
   transform: translateY(0) !important;
 }
 
