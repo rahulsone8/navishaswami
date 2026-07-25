@@ -1124,8 +1124,52 @@
       console.warn('IndexedDB unavailable, fallback to localStorage');
     }
 
+    var _partyPhotosCache = null;
+
+    function getCloudinaryThumbUrl(src, width) {
+      if (!src) return '';
+      var targetW = width || 400;
+      if (src.indexOf('res.cloudinary.com') !== -1 && src.indexOf('/upload/') !== -1) {
+        return src.replace('/upload/', '/upload/c_scale,w_' + targetW + ',q_auto,f_auto/');
+      }
+      return src;
+    }
+
+    function compressFileBeforeUpload(file, callback) {
+      if (!file || !file.type || file.type.indexOf('image') === -1) {
+        callback(file);
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          var maxDim = 1600;
+          var w = img.width;
+          var h = img.height;
+          if (w > h) {
+            if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+          } else {
+            if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          canvas.toBlob(function(blob) {
+            callback(blob || file);
+          }, 'image/jpeg', 0.82);
+        };
+        img.onerror = function() { callback(file); };
+        img.src = e.target.result;
+      };
+      reader.onerror = function() { callback(file); };
+      reader.readAsDataURL(file);
+    }
+
     function savePartyPhotoRecord(photoObj, callback) {
-      // 1. Save to LocalStorage immediately
+      _partyPhotosCache = null; // Invalidate cache
       saveToLocalStorageFallback(photoObj);
 
       // 2. Save to IndexedDB
@@ -1169,7 +1213,12 @@
       }
     }
 
-    function fetchAllPartyPhotos(callback) {
+    function fetchAllPartyPhotos(callback, forceRefresh) {
+      if (_partyPhotosCache && !forceRefresh) {
+        callback(_partyPhotosCache);
+        return;
+      }
+
       function processPhotosList(remotePhotos) {
         var localPhotos = [];
         try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
@@ -1190,6 +1239,7 @@
                   unique.push(item);
                 }
               });
+              _partyPhotosCache = unique;
               callback(unique);
             };
             req.onerror = function() {
@@ -1202,6 +1252,7 @@
                   unique.push(item);
                 }
               });
+              _partyPhotosCache = unique;
               callback(unique);
             };
             return;
@@ -1217,6 +1268,7 @@
             unique.push(item);
           }
         });
+        _partyPhotosCache = unique;
         callback(unique);
       }
 
@@ -1254,107 +1306,104 @@
       }
     };
 
-    // ── CLOUDINARY & PARTY SNAPS ALBUM LOGIC ──
+    // ── FAST CLOUDINARY UPLOAD WITH PRE-COMPRESSION ──
 
     function uploadToCloudinaryServer(file, uploaderName, callback) {
-      var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || localStorage.getItem('shivi_cloudinary_cloud_name') || 'dtsmry84';
-      var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || localStorage.getItem('shivi_cloudinary_preset') || 'shivi_party_snaps';
-      var apiKey = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_API_KEY) || localStorage.getItem('shivi_cloudinary_api_key') || '559857846832466';
-      var cleanFolder = uploaderName.replace(/[^a-zA-Z0-9_-]/g, '_');
+      compressFileBeforeUpload(file, function(preparedFile) {
+        var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || localStorage.getItem('shivi_cloudinary_cloud_name') || 'dtsmry84';
+        var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || localStorage.getItem('shivi_cloudinary_preset') || 'shivi_party_snaps';
+        var apiKey = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_API_KEY) || localStorage.getItem('shivi_cloudinary_api_key') || '559857846832466';
+        var cleanFolder = uploaderName.replace(/[^a-zA-Z0-9_-]/g, '_');
 
-      var formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', uploadPreset);
-      if (apiKey) formData.append('api_key', apiKey);
-      formData.append('folder', 'ShiviPartySnaps/' + cleanFolder);
+        var formData = new FormData();
+        formData.append('file', preparedFile);
+        formData.append('upload_preset', uploadPreset);
+        if (apiKey) formData.append('api_key', apiKey);
+        formData.append('folder', 'ShiviPartySnaps/' + cleanFolder);
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
 
-      xhr.onload = function() {
-        if (xhr.status === 200) {
-          try {
-            var res = JSON.parse(xhr.responseText);
-            console.log('✅ Cloudinary upload successful:', res.secure_url || res.url);
-            var photoObj = {
-              id: 'cld_' + (res.public_id || Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
-              uploader: uploaderName,
-              src: res.secure_url || res.url,
-              public_id: res.public_id,
-              bytes: res.bytes,
-              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-            };
-            callback(null, photoObj);
-            return;
-          } catch(e) {}
-        }
-
-        console.error('❌ Cloudinary upload failed (HTTP ' + xhr.status + '):', xhr.responseText);
-        
-        // Try fallback upload without folder parameter in case dynamic folders are restricted by preset
-        var fallbackFormData = new FormData();
-        fallbackFormData.append('file', file);
-        fallbackFormData.append('upload_preset', uploadPreset);
-
-        var fallbackXhr = new XMLHttpRequest();
-        fallbackXhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
-        fallbackXhr.onload = function() {
-          if (fallbackXhr.status === 200) {
+        xhr.onload = function() {
+          if (xhr.status === 200) {
             try {
-              var res2 = JSON.parse(fallbackXhr.responseText);
-              console.log('✅ Cloudinary fallback upload successful:', res2.secure_url || res2.url);
-              var photoObj2 = {
-                id: 'cld_' + (res2.public_id || Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+              var res = JSON.parse(xhr.responseText);
+              console.log('⚡ Fast Cloudinary upload successful:', res.secure_url || res.url);
+              var photoObj = {
+                id: 'cld_' + (res.public_id || Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
                 uploader: uploaderName,
-                src: res2.secure_url || res2.url,
-                public_id: res2.public_id,
-                bytes: res2.bytes,
+                src: res.secure_url || res.url,
+                public_id: res.public_id,
+                bytes: res.bytes,
                 date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
               };
-              callback(null, photoObj2);
+              callback(null, photoObj);
               return;
-            } catch(e2) {}
+            } catch(e) {}
           }
 
-          console.error('❌ Cloudinary fallback upload failed:', fallbackXhr.responseText);
-          compressPhotoFile(file, function(compressedUrl) {
-            var fallbackObj = {
-              id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
-              uploader: uploaderName,
-              src: compressedUrl,
-              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-            };
-            callback(null, fallbackObj);
-          });
-        };
-        fallbackXhr.onerror = function() {
-          compressPhotoFile(file, function(compressedUrl) {
-            var fallbackObj = {
-              id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
-              uploader: uploaderName,
-              src: compressedUrl,
-              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-            };
-            callback(null, fallbackObj);
-          });
-        };
-        fallbackXhr.send(fallbackFormData);
-      };
+          // Fallback upload without folder parameter
+          var fallbackFormData = new FormData();
+          fallbackFormData.append('file', preparedFile);
+          fallbackFormData.append('upload_preset', uploadPreset);
 
-      xhr.onerror = function() {
-        console.error('❌ Cloudinary network error');
-        compressPhotoFile(file, function(compressedUrl) {
-          var fallbackObj = {
-            id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
-            uploader: uploaderName,
-            src: compressedUrl,
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          var fallbackXhr = new XMLHttpRequest();
+          fallbackXhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
+          fallbackXhr.onload = function() {
+            if (fallbackXhr.status === 200) {
+              try {
+                var res2 = JSON.parse(fallbackXhr.responseText);
+                var photoObj2 = {
+                  id: 'cld_' + (res2.public_id || Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+                  uploader: uploaderName,
+                  src: res2.secure_url || res2.url,
+                  public_id: res2.public_id,
+                  bytes: res2.bytes,
+                  date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                };
+                callback(null, photoObj2);
+                return;
+              } catch(e2) {}
+            }
+
+            compressPhotoFile(file, function(compressedUrl) {
+              var fallbackObj = {
+                id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                uploader: uploaderName,
+                src: compressedUrl,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+              };
+              callback(null, fallbackObj);
+            });
           };
-          callback(null, fallbackObj);
-        });
-      };
+          fallbackXhr.onerror = function() {
+            compressPhotoFile(file, function(compressedUrl) {
+              var fallbackObj = {
+                id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                uploader: uploaderName,
+                src: compressedUrl,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+              };
+              callback(null, fallbackObj);
+            });
+          };
+          fallbackXhr.send(fallbackFormData);
+        };
 
-      xhr.send(formData);
+        xhr.onerror = function() {
+          compressPhotoFile(file, function(compressedUrl) {
+            var fallbackObj = {
+              id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+              uploader: uploaderName,
+              src: compressedUrl,
+              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            };
+            callback(null, fallbackObj);
+          });
+        };
+
+        xhr.send(formData);
+      });
     }
 
     // ── SUPABASE REALTIME MULTI-DEVICE LISTENERS ──
@@ -1542,7 +1591,7 @@
 
         Object.keys(grouped).forEach(function(uploaderName) {
           var list = grouped[uploaderName];
-          var coverSrc = list[0].src;
+          var coverSrc = getCloudinaryThumbUrl(list[0].src, 300);
 
           var folder = document.createElement('div');
           folder.className = 'os-album-folder';
@@ -1555,7 +1604,7 @@
               '<div class="os-folder-graphic">' +
                 '<div class="os-folder-tab"></div>' +
                 '<div class="os-folder-body">' +
-                  '<img src="' + coverSrc + '" alt="' + uploaderName + '" class="os-folder-thumb" />' +
+                  '<img src="' + coverSrc + '" alt="' + uploaderName + '" class="os-folder-thumb" loading="lazy" decoding="async" />' +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -1611,6 +1660,7 @@
         if (selectAllCb) selectAllCb.checked = false;
 
         filtered.forEach(function(item, idx) {
+          var thumbUrl = getCloudinaryThumbUrl(item.src, 400);
           var tile = document.createElement('div');
           tile.className = 'os-photo-tile';
           
@@ -1620,7 +1670,7 @@
             '</label>' +
             '<button type="button" class="os-photo-quick-dl" onclick="triggerDownload(\'' + item.src + '\', \'' + uploaderName + '_photo_' + (idx + 1) + '.jpg\'); event.stopPropagation();" title="Download Photo">⬇️</button>' +
             '<div class="os-photo-thumb-wrap" onclick="window.openPartyPhotoLightbox(' + idx + ')">' +
-              '<img src="' + item.src + '" alt="' + item.uploader + '" class="os-photo-img" />' +
+              '<img src="' + thumbUrl + '" alt="' + item.uploader + '" class="os-photo-img" loading="lazy" decoding="async" />' +
               '<div class="os-photo-hover-overlay"><span class="os-zoom-icon">🔍 View Full Photo</span></div>' +
             '</div>' +
             '<div class="os-photo-caption">📸 ' + uploaderName + ' • ' + (item.date || 'Photo') + '</div>';
