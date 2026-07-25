@@ -1468,16 +1468,41 @@
       return false;
     };
 
-    window.openCustomLightbox = function(src, caption) {
+    var partyAlbumActivePhotos = [];
+    var partyAlbumActiveIndex = 0;
+
+    window.openPartyPhotoLightbox = function(index) {
+      if (!partyAlbumActivePhotos || partyAlbumActivePhotos.length === 0) return;
+      partyAlbumActiveIndex = (index + partyAlbumActivePhotos.length) % partyAlbumActivePhotos.length;
+      var item = partyAlbumActivePhotos[partyAlbumActiveIndex];
+
       var lb = document.getElementById('lightbox');
       var lbFrame = document.getElementById('lightbox-frame');
       var lbCaption = document.getElementById('lightbox-caption');
+
       if (!lb || !lbFrame) return;
 
-      lbFrame.innerHTML = '<img src="' + src + '" style="max-width:100%; max-height:82vh; object-fit:contain; border-radius:16px; box-shadow:0 25px 70px rgba(0,0,0,0.6);" />';
-      if (lbCaption) lbCaption.textContent = caption || '';
+      var captionText = (item.uploader || 'Photo') + ' • ' + (item.date || '') + ' (' + (partyAlbumActiveIndex + 1) + ' of ' + partyAlbumActivePhotos.length + ')';
+
+      lbFrame.innerHTML = 
+        '<div style="position:relative; display:flex; flex-direction:column; align-items:center; width:100%;">' +
+          '<img src="' + item.src + '" style="max-width:90vw; max-height:75vh; object-fit:contain; border-radius:20px; box-shadow:0 25px 80px rgba(0,0,0,0.75);" />' +
+          '<a href="' + item.src + '" download="' + (item.uploader || 'photo') + '_shivi.jpg" onclick="triggerDownload(\'' + item.src + '\', \'' + (item.uploader || 'photo') + '.jpg\'); return false;" style="margin-top:1.2rem; padding:0.65rem 1.6rem; background:linear-gradient(135deg, #F59E0B, #D97706); color:#fff; font-weight:800; font-size:0.9rem; border-radius:50px; text-decoration:none; box-shadow:0 6px 22px rgba(245,158,11,0.45); display:inline-flex; align-items:center; gap:8px; transition:transform 0.2s;" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">⬇️ Download High-Res Photo</a>' +
+        '</div>';
+
+      if (lbCaption) lbCaption.textContent = captionText;
       lb.classList.add('is-open');
       document.body.style.overflow = 'hidden';
+    };
+
+    window.navigatePartyLightbox = function(direction) {
+      if (partyAlbumActivePhotos && partyAlbumActivePhotos.length > 0) {
+        window.openPartyPhotoLightbox(partyAlbumActiveIndex + direction);
+      }
+    };
+
+    window.openCustomLightbox = function(src, caption) {
+      window.openPartyPhotoLightbox(0);
     };
 
     window.renderPartyAlbums = function() {
@@ -1573,6 +1598,9 @@
       fetchAllPartyPhotos(function(albums) {
         var filtered = albums.filter(function(a) { return a.uploader === uploaderName; });
 
+        partyAlbumActivePhotos = filtered;
+        partyAlbumActiveIndex = 0;
+
         grid.style.display = 'none';
         wall.style.display = 'grid';
         if (downloadActions) downloadActions.style.display = 'flex';
@@ -1582,19 +1610,20 @@
         var selectAllCb = document.getElementById('party-select-all-cb');
         if (selectAllCb) selectAllCb.checked = false;
 
-        filtered.forEach(function(item) {
+        filtered.forEach(function(item, idx) {
           var tile = document.createElement('div');
           tile.className = 'os-photo-tile';
           
           tile.innerHTML = 
             '<label class="os-photo-select-badge" onclick="event.stopPropagation()">' +
-              '<input type="checkbox" class="photo-select-checkbox" data-src="' + item.src + '" data-name="' + uploaderName.replace(/[^a-zA-Z0-9]/g, '_') + '" onchange="window.updateSelectedCount()" class="party-select-cb" />' +
+              '<input type="checkbox" class="photo-select-checkbox" data-src="' + item.src + '" data-name="' + uploaderName.replace(/[^a-zA-Z0-9]/g, '_') + '" onchange="window.updateSelectedCount()" class="party-select-cb" /> Select' +
             '</label>' +
-            '<div class="os-photo-thumb-wrap" onclick="window.openCustomLightbox(\'' + item.src + '\', \'' + uploaderName + ' • ' + (item.date || '') + '\')">' +
+            '<button type="button" class="os-photo-quick-dl" onclick="triggerDownload(\'' + item.src + '\', \'' + uploaderName + '_photo_' + (idx + 1) + '.jpg\'); event.stopPropagation();" title="Download Photo">⬇️</button>' +
+            '<div class="os-photo-thumb-wrap" onclick="window.openPartyPhotoLightbox(' + idx + ')">' +
               '<img src="' + item.src + '" alt="' + item.uploader + '" class="os-photo-img" />' +
-              '<div class="os-photo-hover-overlay"><span class="os-zoom-icon">🔍</span></div>' +
+              '<div class="os-photo-hover-overlay"><span class="os-zoom-icon">🔍 View Full Photo</span></div>' +
             '</div>' +
-            '<div class="os-photo-caption">' + (item.date || uploaderName) + '</div>';
+            '<div class="os-photo-caption">📸 ' + uploaderName + ' • ' + (item.date || 'Photo') + '</div>';
 
           wall.appendChild(tile);
         });

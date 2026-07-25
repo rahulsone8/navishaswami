@@ -374,11 +374,19 @@
   }
 
   function lbNext() {
+    if (typeof window.navigatePartyLightbox === 'function') {
+      window.navigatePartyLightbox(1);
+      return;
+    }
     lbIndex = (lbIndex + 1) % lbTotal;
     updateLbContent();
   }
 
   function lbPrev() {
+    if (typeof window.navigatePartyLightbox === 'function') {
+      window.navigatePartyLightbox(-1);
+      return;
+    }
     lbIndex = (lbIndex - 1 + lbTotal) % lbTotal;
     updateLbContent();
   }
