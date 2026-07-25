@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20260725_v9" />
+  <link rel="stylesheet" href="style.css?v=20260725_v12" />
 </head>
 <body>
 
@@ -355,11 +355,11 @@
             </div>
 
             <!-- Jijaji & Nephew -->
-            <div class="ft-card ft-card--extended reveal" data-name="Jijaji" data-relation="Sister's Husband" data-role="Jijaji" data-avatar="👨🏻" data-img="">
+            <div class="ft-card ft-card--extended reveal" data-name="Jijaji" data-relation="Sister's Husband" data-role="Jijaji" data-avatar="👨🏻" data-img="jijaji.jpg">
               <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
               <span class="ft-card__role">Jijaji</span>
             </div>
-            <div class="ft-card ft-card--extended reveal" data-name="Baby Nephew" data-relation="Jijaji &amp; Didi's Son" data-role="Nephew" data-avatar="👶🏻" data-img="">
+            <div class="ft-card ft-card--extended reveal" data-name="Baby Nephew" data-relation="Jijaji &amp; Didi's Son" data-role="Nephew" data-avatar="👶🏻" data-img="nephew.jpg">
               <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👶🏻</span></div></div>
               <span class="ft-card__role">Nephew</span>
             </div>
@@ -533,6 +533,10 @@
           </h3>
           
           <div id="album-download-actions" style="display: none; gap: 0.6rem; flex-wrap: wrap; align-items: center;">
+            <label style="background: rgba(255,255,255,0.92); padding: 0.45rem 0.85rem; border-radius: 12px; border: 1.5px solid var(--gold); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 800; color: var(--plum); user-select: none;">
+              <input type="checkbox" id="party-select-all-cb" onchange="window.toggleSelectAllPhotos(this.checked)" style="width: 17px; height: 17px; accent-color: var(--plum); cursor: pointer;" />
+              Select All
+            </label>
             <button type="button" class="party-action-btn party-action-btn--download" onclick="downloadSelectedFolderPhotos()" style="padding: 0.45rem 0.9rem; font-size: 0.82rem; font-weight: 800;">
               ⬇️ Download Selected (<span id="selected-photos-count">0</span>)
             </button>
@@ -830,7 +834,7 @@
   <!-- ═══ CONFETTI CANVAS ═══ -->
   <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
-  <script src="script.js?v=20260725_v9"></script>
+  <script src="script.js?v=20260725_v12"></script>
   <script>
     window.selectedWishEmoji = '💖';
 
@@ -1018,6 +1022,95 @@
       reader.readAsDataURL(file);
     }
 
+    // ── INDEXEDDB UNLIMITED ALBUM STORAGE ENGINE ──
+    var partyDB = null;
+    try {
+      var dbReq = indexedDB.open('ShiviPartyGalleryDB_v2', 1);
+      dbReq.onupgradeneeded = function(e) {
+        var db = e.target.result;
+        if (!db.objectStoreNames.contains('albums')) {
+          db.createObjectStore('albums', { keyPath: 'id' });
+        }
+      };
+      dbReq.onsuccess = function(e) {
+        partyDB = e.target.result;
+        window.renderPartyAlbums();
+      };
+    } catch (err) {
+      console.warn('IndexedDB unavailable, fallback to localStorage');
+    }
+
+    function savePartyPhotoRecord(photoObj, callback) {
+      if (partyDB) {
+        try {
+          var tx = partyDB.transaction(['albums'], 'readwrite');
+          var store = tx.objectStore('albums');
+          store.put(photoObj);
+          tx.oncomplete = function() {
+            saveToLocalStorageFallback(photoObj);
+            if (callback) callback();
+          };
+          tx.onerror = function() {
+            saveToLocalStorageFallback(photoObj);
+            if (callback) callback();
+          };
+          return;
+        } catch(e) {
+          saveToLocalStorageFallback(photoObj);
+        }
+      } else {
+        saveToLocalStorageFallback(photoObj);
+      }
+      if (callback) callback();
+    }
+
+    function saveToLocalStorageFallback(photoObj) {
+      try {
+        var albums = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]');
+        albums.push(photoObj);
+        localStorage.setItem('shivi_photo_albums', JSON.stringify(albums));
+      } catch(e) {
+        console.warn('LocalStorage limit:', e);
+      }
+    }
+
+    function fetchAllPartyPhotos(callback) {
+      if (partyDB) {
+        try {
+          var tx = partyDB.transaction(['albums'], 'readonly');
+          var store = tx.objectStore('albums');
+          var req = store.getAll();
+          req.onsuccess = function() {
+            var dbPhotos = req.result || [];
+            var localPhotos = [];
+            try {
+              localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]');
+            } catch(e) {}
+
+            var combined = dbPhotos.concat(localPhotos);
+            var map = {};
+            var unique = [];
+            combined.forEach(function(item) {
+              if (item && item.id && !map[item.id]) {
+                map[item.id] = true;
+                unique.push(item);
+              }
+            });
+            callback(unique);
+          };
+          req.onerror = function() {
+            var localPhotos = [];
+            try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
+            callback(localPhotos);
+          };
+          return;
+        } catch(e) {}
+      }
+      var localPhotos = [];
+      try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
+      callback(localPhotos);
+    }
+
     // ── PARTY SNAPS ALBUM & UPLOAD LOGIC ──
     window.handlePartyUploadSubmit = function(e) {
       if (e && e.preventDefault) e.preventDefault();
@@ -1052,26 +1145,25 @@
 
       function processFileIndex(idx) {
         if (idx >= total) {
-          if (progressText) progressText.textContent = '🎉 Upload complete! ' + total + ' photos saved to ' + uploaderName + '\'s album!';
+          if (progressText) progressText.textContent = '🎉 Upload complete! Folder created for ' + uploaderName + '!';
           if (progressPercent) progressPercent.textContent = '100%';
           if (progressBar) progressBar.style.width = '100%';
 
           if (fileInput) fileInput.value = '';
-          window.renderPartyAlbums();
 
           if (typeof launchConfetti === 'function') {
             launchConfetti(window.innerWidth / 2, window.innerHeight * 0.4);
           }
 
+          // Instantly open the newly created album folder!
           setTimeout(function() {
             if (progressBox) progressBox.style.display = 'none';
-          }, 4500);
+            window.openPartyAlbumFolder(uploaderName);
+          }, 800);
           return;
         }
 
         var file = files[idx];
-        
-        // Show current uploading status
         var currentNum = idx + 1;
         var startPct = Math.round((idx / total) * 100);
         if (progressText) progressText.textContent = 'Uploading (' + currentNum + '/' + total + ') photos...';
@@ -1080,30 +1172,28 @@
 
         compressPhotoFile(file, function(compressedDataUrl) {
           if (compressedDataUrl) {
-            try {
-              var albums = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]');
-              albums.push({
-                id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                uploader: uploaderName,
-                src: compressedDataUrl,
-                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-              });
-              localStorage.setItem('shivi_photo_albums', JSON.stringify(albums));
-            } catch (err) {
-              console.warn('Storage quota limit reached:', err);
-            }
-          }
+            var photoObj = {
+              id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+              uploader: uploaderName,
+              src: compressedDataUrl,
+              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            };
+            savePartyPhotoRecord(photoObj, function() {
+              completed++;
+              var pct = Math.round((completed / total) * 100);
 
-          completed++;
-          var pct = Math.round((completed / total) * 100);
+              if (progressText) progressText.textContent = 'Uploading (' + completed + '/' + total + ') photos...';
+              if (progressPercent) progressPercent.textContent = pct + '%';
+              if (progressBar) progressBar.style.width = pct + '%';
 
-          if (progressText) progressText.textContent = 'Uploading (' + completed + '/' + total + ') photos...';
-          if (progressPercent) progressPercent.textContent = pct + '%';
-          if (progressBar) progressBar.style.width = pct + '%';
-
-          setTimeout(function() {
+              setTimeout(function() {
+                processFileIndex(idx + 1);
+              }, 80);
+            });
+          } else {
+            completed++;
             processFileIndex(idx + 1);
-          }, 100);
+          }
         });
       }
 
@@ -1119,61 +1209,75 @@
 
       if (!grid || !wall) return;
 
-      var albums = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]');
+      fetchAllPartyPhotos(function(albums) {
+        if (!albums || albums.length === 0) {
+          grid.style.display = 'grid';
+          wall.style.display = 'none';
+          if (downloadActions) downloadActions.style.display = 'none';
+          if (title) title.textContent = '📁 Shared Photo Albums';
 
-      if (albums.length === 0) {
+          grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color: var(--plum); opacity:0.85; font-weight:700; padding:1.5rem; background:rgba(255,255,255,0.65); border-radius:18px; border:1.5px dashed var(--gold);">No custom albums created yet. Upload your photos above to automatically create your album folder! 📸</p>';
+          return;
+        }
+
+        // Group photos by uploader
+        var grouped = {};
+        for (var i = 0; i < albums.length; i++) {
+          var item = albums[i];
+          var name = item.uploader || 'Family Guest';
+          if (!grouped[name]) grouped[name] = [];
+          grouped[name].push(item);
+        }
+
         grid.style.display = 'grid';
         wall.style.display = 'none';
         if (downloadActions) downloadActions.style.display = 'none';
-        if (title) title.textContent = '📁 Shared Photo Albums';
+        if (title) title.textContent = '📁 Shared Photo Albums (' + Object.keys(grouped).length + ')';
 
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color: var(--plum); opacity:0.85; font-weight:700; padding:1.5rem; background:rgba(255,255,255,0.6); border-radius:18px; border:1px dashed var(--gold);">No custom albums uploaded yet. Be the first to upload your photos above! 📸</p>';
-        return;
-      }
+        grid.innerHTML = '';
 
-      // Group photos by uploader
-      var grouped = {};
-      for (var i = 0; i < albums.length; i++) {
-        var item = albums[i];
-        var name = item.uploader || 'Family Guest';
-        if (!grouped[name]) grouped[name] = [];
-        grouped[name].push(item);
-      }
+        Object.keys(grouped).forEach(function(uploaderName) {
+          var list = grouped[uploaderName];
+          var coverSrc = list[0].src;
 
-      grid.style.display = 'grid';
-      wall.style.display = 'none';
-      if (downloadActions) downloadActions.style.display = 'none';
-      if (title) title.textContent = '📁 Shared Photo Albums (' + Object.keys(grouped).length + ')';
+          var folder = document.createElement('div');
+          folder.className = 'party-album-folder';
+          folder.onclick = function() {
+            window.openPartyAlbumFolder(uploaderName);
+          };
 
-      grid.innerHTML = '';
+          folder.innerHTML = 
+            '<div class="party-album-folder__cover">' +
+              '<img src="' + coverSrc + '" alt="' + uploaderName + '" />' +
+            '</div>' +
+            '<div>' +
+              '<h4 class="party-album-folder__name">📁 ' + uploaderName + '\'s Album</h4>' +
+              '<span class="party-album-folder__count">📸 ' + list.length + ' Photos</span>' +
+            '</div>';
 
-      Object.keys(grouped).forEach(function(uploaderName) {
-        var list = grouped[uploaderName];
-        var coverSrc = list[0].src;
-
-        var folder = document.createElement('div');
-        folder.className = 'party-album-folder';
-        folder.onclick = function() {
-          window.openPartyAlbumFolder(uploaderName);
-        };
-
-        folder.innerHTML = 
-          '<div class="party-album-folder__cover">' +
-            '<img src="' + coverSrc + '" alt="' + uploaderName + '" />' +
-          '</div>' +
-          '<div>' +
-            '<h4 class="party-album-folder__name">📁 ' + uploaderName + '\'s Album</h4>' +
-            '<span class="party-album-folder__count">📸 ' + list.length + ' Photos</span>' +
-          '</div>';
-
-        grid.appendChild(folder);
+          grid.appendChild(folder);
+        });
       });
     };
 
     window.updateSelectedCount = function() {
       var countEl = document.getElementById('selected-photos-count');
       var checked = document.querySelectorAll('.photo-select-checkbox:checked');
+      var selectAllCb = document.getElementById('party-select-all-cb');
+      var allCbs = document.querySelectorAll('.photo-select-checkbox');
+
       if (countEl) countEl.textContent = checked.length;
+      if (selectAllCb && allCbs.length > 0) {
+        selectAllCb.checked = (checked.length === allCbs.length);
+      }
+    };
+
+    window.toggleSelectAllPhotos = function(isChecked) {
+      var cbs = document.querySelectorAll('.photo-select-checkbox');
+      cbs.forEach(function(cb) {
+        cb.checked = isChecked;
+      });
+      window.updateSelectedCount();
     };
 
     window.openPartyAlbumFolder = function(uploaderName) {
@@ -1184,31 +1288,35 @@
 
       if (!grid || !wall) return;
 
-      var albums = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]');
-      var filtered = albums.filter(function(a) { return a.uploader === uploaderName; });
+      fetchAllPartyPhotos(function(albums) {
+        var filtered = albums.filter(function(a) { return a.uploader === uploaderName; });
 
-      grid.style.display = 'none';
-      wall.style.display = 'grid';
-      if (downloadActions) downloadActions.style.display = 'flex';
-      if (title) title.textContent = '📁 ' + uploaderName + '\'s Photo Album (' + filtered.length + ')';
+        grid.style.display = 'none';
+        wall.style.display = 'grid';
+        if (downloadActions) downloadActions.style.display = 'flex';
+        if (title) title.textContent = '📁 ' + uploaderName + '\'s Photo Album (' + filtered.length + ')';
 
-      wall.innerHTML = '';
-      window.updateSelectedCount();
+        wall.innerHTML = '';
+        var selectAllCb = document.getElementById('party-select-all-cb');
+        if (selectAllCb) selectAllCb.checked = false;
 
-      filtered.forEach(function(item, idx) {
-        var card = document.createElement('div');
-        card.className = 'polaroid';
-        card.style.setProperty('--rotate', (idx % 2 === 0 ? '-2deg' : '2deg'));
-        card.style.position = 'relative';
-        card.innerHTML = 
-          '<label style="position:absolute; top:8px; left:8px; z-index:10; background:rgba(255,255,255,0.9); padding:4px 8px; border-radius:8px; border:1px solid var(--gold); display:flex; align-items:center; gap:4px; cursor:pointer; font-size:0.75rem; font-weight:800; color:var(--plum);">' +
-            '<input type="checkbox" class="photo-select-checkbox" data-src="' + item.src + '" data-name="' + uploaderName.replace(/[^a-zA-Z0-9]/g, '_') + '" onchange="window.updateSelectedCount()" style="width:16px; height:16px; accent-color:var(--plum); cursor:pointer;" /> Select' +
-          '</label>' +
-          '<div class="polaroid__img">' +
-            '<img src="' + item.src + '" alt="' + item.uploader + '" style="width:100%; height:100%; object-fit:cover;" />' +
-          '</div>' +
-          '<p class="polaroid__caption">' + item.uploader + ' • ' + item.date + '</p>';
-        wall.appendChild(card);
+        filtered.forEach(function(item, idx) {
+          var card = document.createElement('div');
+          card.className = 'polaroid';
+          card.style.setProperty('--rotate', (idx % 2 === 0 ? '-2deg' : '2deg'));
+          card.style.position = 'relative';
+          card.innerHTML = 
+            '<label style="position:absolute; top:8px; left:8px; z-index:10; background:rgba(255,255,255,0.92); padding:4px 9px; border-radius:8px; border:1px solid var(--gold); display:flex; align-items:center; gap:5px; cursor:pointer; font-size:0.75rem; font-weight:800; color:var(--plum); box-shadow:0 3px 10px rgba(0,0,0,0.15);">' +
+              '<input type="checkbox" class="photo-select-checkbox" data-src="' + item.src + '" data-name="' + uploaderName.replace(/[^a-zA-Z0-9]/g, '_') + '" onchange="window.updateSelectedCount()" style="width:16px; height:16px; accent-color:var(--plum); cursor:pointer;" /> Select' +
+            '</label>' +
+            '<div class="polaroid__img" onclick="if(event.target.tagName !== \'INPUT\') { window.openLightbox && window.openLightbox(\'' + item.src + '\', \'' + uploaderName + '\'); }">' +
+              '<img src="' + item.src + '" alt="' + item.uploader + '" style="width:100%; height:100%; object-fit:cover;" />' +
+            '</div>' +
+            '<p class="polaroid__caption">' + item.uploader + ' • ' + item.date + '</p>';
+          wall.appendChild(card);
+        });
+
+        window.updateSelectedCount();
       });
     };
 

@@ -1064,6 +1064,10 @@
     img.onload = function() {
       imgBox.innerHTML = '<img src="' + dataImg + '" alt="' + (card.getAttribute('data-name') || '') + '" class="ft-circle__real-img" />';
     };
+    img.onerror = function() {
+      var avatar = card.getAttribute('data-avatar') || '👨🏻';
+      imgBox.innerHTML = '<span class="ft-circle__emoji">' + avatar + '</span>';
+    };
     img.src = dataImg;
   });
 

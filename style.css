@@ -1427,6 +1427,16 @@ em { font-style: italic; }
 }
 
 /* ─── Family Tree Responsive ─── */
+@media (max-width: 768px) {
+  body {
+    background-image: url('mobile_bg.jpg') !important;
+    background-attachment: scroll !important;
+    background-position: center top !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+  }
+}
+
 @media (max-width: 500px) {
   .ft-row--grandparents {
     flex-direction: column;
@@ -1469,17 +1479,26 @@ em { font-style: italic; }
   .ft-card--star .ft-card__name { font-size: 0.95rem; }
 
   .ft-row--extended {
-    gap: 0.5rem;
+    gap: 0.7rem 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
   }
 
   .ft-card--extended {
-    padding: 0.5rem 0.5rem;
-    min-width: 60px;
+    padding: 0.5rem 0.4rem;
+    min-width: 72px;
+    max-width: 88px;
   }
 
-  .ft-card--extended .ft-card__emoji { font-size: 1.2rem; }
-  .ft-card--extended .ft-card__name { font-size: 0.65rem; max-width: 60px; }
-  .ft-card--extended .ft-card__role { font-size: 0.6rem; }
+  .ft-card--extended .ft-circle {
+    width: 48px;
+    height: 48px;
+  }
+
+  .ft-card--extended .ft-card__role {
+    font-size: 0.68rem;
+    white-space: nowrap;
+  }
 }
 
 
