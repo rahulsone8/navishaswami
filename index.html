@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css?v=20260725_v16" />
+  <script src="config.js?v=20260725_v17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <!-- ═══ MOBILE DEDICATED BACKGROUND ═══ -->
@@ -487,36 +489,11 @@
         <p class="party-gallery__subtitle">Upload your photos under your name! Photos are saved into your own named album folder.</p>
       </div>
 
-      <!-- Upload Form with Name Field, Cloudinary Status & Live Upload Progress -->
+      <!-- Upload Form with Name Field & Live Upload Progress -->
       <div class="party-upload-box" style="background: rgba(255,255,255,0.72); backdrop-filter: blur(14px); border: 1.5px solid var(--gold); border-radius: 20px; padding: 1.2rem 1.5rem; margin-bottom: 1.8rem; text-align: left;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;">
-          <h4 style="font-family: var(--font-headline); font-style: italic; font-size: 1.1rem; color: var(--plum); margin: 0;">
-            ☁️ Upload Photos to Cloudinary Album Folder
-          </h4>
-          <button type="button" onclick="toggleCloudinarySettings()" style="background: rgba(255,255,255,0.9); border: 1.2px solid var(--gold); padding: 4px 10px; border-radius: 12px; font-size: 0.76rem; font-weight: 800; color: var(--plum); cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
-            <span>⚙️ Cloud Settings</span>
-            <span id="cloudinary-status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
-          </button>
-        </div>
-
-        <!-- Optional Custom Cloudinary Credentials Drawer -->
-        <div id="cloudinary-settings-drawer" style="display: none; background: rgba(255, 248, 240, 0.95); border: 1px dashed var(--gold); border-radius: 14px; padding: 0.8rem 1rem; margin-bottom: 1rem;">
-          <div style="font-size: 0.78rem; font-weight: 800; color: var(--plum); margin-bottom: 0.4rem;">☁️ Cloudinary Account Settings:</div>
-          <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 160px;">
-              <label style="font-size: 0.72rem; font-weight: 700; color: var(--plum); display: block;">Cloud Name</label>
-              <input type="text" id="cld-name-input" placeholder="shivi-party" style="width: 100%; padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid var(--lilac); font-size: 0.82rem;" />
-            </div>
-            <div style="flex: 1; min-width: 160px;">
-              <label style="font-size: 0.72rem; font-weight: 700; color: var(--plum); display: block;">Upload Preset</label>
-              <input type="text" id="cld-preset-input" placeholder="shivi_party_snaps" style="width: 100%; padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid var(--lilac); font-size: 0.82rem;" />
-            </div>
-            <div style="display: flex; align-items: flex-end;">
-              <button type="button" onclick="saveCloudinarySettings()" style="padding: 0.4rem 0.8rem; background: var(--plum); color: white; border-radius: 8px; font-size: 0.78rem; font-weight: 800; border: none; cursor: pointer;">Save Settings</button>
-            </div>
-          </div>
-          <p style="font-size: 0.7rem; color: var(--plum-light); margin-top: 0.4rem; margin-bottom: 0;">* Cloudinary auto-uploads under <code>ShiviPartySnaps/{uploaderName}</code> folder accessible anywhere.</p>
-        </div>
+        <h4 style="font-family: var(--font-headline); font-style: italic; font-size: 1.15rem; color: var(--plum); margin-top: 0; margin-bottom: 0.8rem;">
+          📤 Upload Photos to Your Album Folder
+        </h4>
         
         <form id="party-upload-form" onsubmit="handlePartyUploadSubmit(event)" style="display: flex; flex-direction: column; gap: 0.8rem;">
           <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
@@ -863,6 +840,19 @@
 
   <script src="script.js?v=20260725_v16"></script>
   <script>
+    // ── SUPABASE CLIENT INITIALIZATION ──
+    var supabaseClient = null;
+    try {
+      if (window.APP_CONFIG && window.APP_CONFIG.SUPABASE_URL && window.APP_CONFIG.SUPABASE_ANON_KEY &&
+          window.APP_CONFIG.SUPABASE_URL !== "https://your-supabase-project.supabase.co" &&
+          typeof supabase !== 'undefined' && supabase.createClient) {
+        supabaseClient = supabase.createClient(window.APP_CONFIG.SUPABASE_URL, window.APP_CONFIG.SUPABASE_ANON_KEY);
+        console.log('⚡ Supabase client initialized successfully!');
+      }
+    } catch (e) {
+      console.warn('Supabase client failed to initialize, falling back to LocalStorage:', e);
+    }
+
     window.selectedWishEmoji = '💖';
 
     window.selectWishEmoji = function(btnEl, char) {
@@ -879,29 +869,51 @@
       var grid = document.getElementById('all-wishes-modal-grid');
       if (!modal || !grid) return;
 
-      var wishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
-      grid.innerHTML = '';
-
-      if (wishes.length === 0) {
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color: var(--plum); font-weight:700;">No wishes posted yet. Be the first!</p>';
-      } else {
-        for (var i = 0; i < wishes.length; i++) {
-          var w = wishes[i];
-          var card = document.createElement('div');
-          card.className = 'wish-card';
-          var nameClean = (w.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          var msgClean = (w.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          card.innerHTML = 
-            '<div class="wish-card__header">' +
-              '<span class="wish-card__sender">' + nameClean + '</span>' +
-            '</div>' +
-            '<p class="wish-card__body">"' + msgClean + '"</p>' +
-            '<div class="wish-card__footer">' +
-              '<span>' + (w.date || 'Just now') + '</span>' +
-              '<span class="wish-card__emoji">' + (w.emoji || '💖') + '</span>' +
-            '</div>';
-          grid.appendChild(card);
+      function renderAllGrid(wishes) {
+        grid.innerHTML = '';
+        if (!wishes || wishes.length === 0) {
+          grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color: var(--plum); font-weight:700;">No wishes posted yet. Be the first!</p>';
+        } else {
+          for (var i = 0; i < wishes.length; i++) {
+            var w = wishes[i];
+            var card = document.createElement('div');
+            card.className = 'wish-card';
+            var nameClean = (w.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            var msgClean = (w.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            card.innerHTML = 
+              '<div class="wish-card__header">' +
+                '<span class="wish-card__sender">' + nameClean + '</span>' +
+              '</div>' +
+              '<p class="wish-card__body">"' + msgClean + '"</p>' +
+              '<div class="wish-card__footer">' +
+                '<span>' + (w.date || 'Just now') + '</span>' +
+                '<span class="wish-card__emoji">' + (w.emoji || '💖') + '</span>' +
+              '</div>';
+            grid.appendChild(card);
+          }
         }
+      }
+
+      if (supabaseClient) {
+        supabaseClient
+          .from('wishes')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .then(function(res) {
+            if (res.data && !res.error) {
+              renderAllGrid(res.data);
+            } else {
+              var wishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
+              renderAllGrid(wishes);
+            }
+          })
+          .catch(function() {
+            var wishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
+            renderAllGrid(wishes);
+          });
+      } else {
+        var wishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
+        renderAllGrid(wishes);
       }
 
       modal.classList.add('active');
@@ -923,36 +935,60 @@
       var swipeHint = document.getElementById('wishes-swipe-hint');
 
       if (!grid) return;
-      var wishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
-      grid.innerHTML = '';
 
-      if (wishes.length === 0) {
-        grid.innerHTML = '<p style="flex: 1; text-align:center; color: var(--plum); opacity:0.85; font-weight:700; padding:1.5rem; background:rgba(255,255,255,0.6); border-radius:18px; border:1px dashed var(--gold);">Be the first to leave a sweet wish for baby Shivi! Type your wish above 💌</p>';
-        if (viewAllBtn) viewAllBtn.style.display = 'none';
-        if (swipeHint) swipeHint.style.display = 'none';
-        return;
+      function renderWishesList(wishes) {
+        grid.innerHTML = '';
+        if (!wishes || wishes.length === 0) {
+          grid.innerHTML = '<p style="flex: 1; text-align:center; color: var(--plum); opacity:0.85; font-weight:700; padding:1.5rem; background:rgba(255,255,255,0.6); border-radius:18px; border:1px dashed var(--gold);">Be the first to leave a sweet wish for baby Shivi! Type your wish above 💌</p>';
+          if (viewAllBtn) viewAllBtn.style.display = 'none';
+          if (swipeHint) swipeHint.style.display = 'none';
+          return;
+        }
+
+        if (viewAllBtn) viewAllBtn.style.display = 'inline-flex';
+        if (countNum) countNum.textContent = wishes.length;
+        if (swipeHint) swipeHint.style.display = (wishes.length > 2) ? 'block' : 'none';
+
+        for (var i = 0; i < wishes.length; i++) {
+          var w = wishes[i];
+          var card = document.createElement('div');
+          card.className = 'wish-card';
+          var nameClean = (w.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          var msgClean = (w.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          card.innerHTML = 
+            '<div class="wish-card__header">' +
+              '<span class="wish-card__sender">' + nameClean + '</span>' +
+            '</div>' +
+            '<p class="wish-card__body">"' + msgClean + '"</p>' +
+            '<div class="wish-card__footer">' +
+              '<span>' + (w.date || 'Just now') + '</span>' +
+              '<span class="wish-card__emoji">' + (w.emoji || '💖') + '</span>' +
+            '</div>';
+          grid.appendChild(card);
+        }
       }
 
-      if (viewAllBtn) viewAllBtn.style.display = 'inline-flex';
-      if (countNum) countNum.textContent = wishes.length;
-      if (swipeHint) swipeHint.style.display = (wishes.length > 2) ? 'block' : 'none';
-
-      for (var i = 0; i < wishes.length; i++) {
-        var w = wishes[i];
-        var card = document.createElement('div');
-        card.className = 'wish-card';
-        var nameClean = (w.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        var msgClean = (w.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        card.innerHTML = 
-          '<div class="wish-card__header">' +
-            '<span class="wish-card__sender">' + nameClean + '</span>' +
-          '</div>' +
-          '<p class="wish-card__body">"' + msgClean + '"</p>' +
-          '<div class="wish-card__footer">' +
-            '<span>' + (w.date || 'Just now') + '</span>' +
-            '<span class="wish-card__emoji">' + (w.emoji || '💖') + '</span>' +
-          '</div>';
-        grid.appendChild(card);
+      if (supabaseClient) {
+        supabaseClient
+          .from('wishes')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .then(function(res) {
+            if (res.data && !res.error) {
+              localStorage.setItem('shivi_wishes', JSON.stringify(res.data));
+              renderWishesList(res.data);
+            } else {
+              var localWishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
+              renderWishesList(localWishes);
+            }
+          })
+          .catch(function() {
+            var localWishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
+            renderWishesList(localWishes);
+          });
+      } else {
+        var localWishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
+        renderWishesList(localWishes);
       }
     };
 
@@ -980,6 +1016,18 @@
       var wishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
       wishes.unshift(newWish);
       localStorage.setItem('shivi_wishes', JSON.stringify(wishes));
+
+      if (supabaseClient) {
+        supabaseClient
+          .from('wishes')
+          .insert([newWish])
+          .then(function(res) {
+            if (res.error) console.warn('Supabase wish insert error:', res.error);
+          })
+          .catch(function(err) {
+            console.warn('Supabase wish insert error:', err);
+          });
+      }
 
       // Reset inputs
       if (nameEl) nameEl.value = '';
@@ -1068,6 +1116,18 @@
     }
 
     function savePartyPhotoRecord(photoObj, callback) {
+      if (supabaseClient) {
+        supabaseClient
+          .from('party_photos')
+          .upsert([photoObj])
+          .then(function(res) {
+            if (res.error) console.warn('Supabase photo insert error:', res.error);
+          })
+          .catch(function(err) {
+            console.warn('Supabase photo insert error:', err);
+          });
+      }
+
       if (partyDB) {
         try {
           var tx = partyDB.transaction(['albums'], 'readwrite');
@@ -1102,69 +1162,84 @@
     }
 
     function fetchAllPartyPhotos(callback) {
-      if (partyDB) {
-        try {
-          var tx = partyDB.transaction(['albums'], 'readonly');
-          var store = tx.objectStore('albums');
-          var req = store.getAll();
-          req.onsuccess = function() {
-            var dbPhotos = req.result || [];
-            var localPhotos = [];
-            try {
-              localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]');
-            } catch(e) {}
+      function processPhotosList(remotePhotos) {
+        if (partyDB) {
+          try {
+            var tx = partyDB.transaction(['albums'], 'readonly');
+            var store = tx.objectStore('albums');
+            var req = store.getAll();
+            req.onsuccess = function() {
+              var dbPhotos = req.result || [];
+              var localPhotos = [];
+              try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
 
-            var combined = dbPhotos.concat(localPhotos);
-            var map = {};
-            var unique = [];
-            combined.forEach(function(item) {
-              if (item && item.id && !map[item.id]) {
-                map[item.id] = true;
-                unique.push(item);
-              }
-            });
-            callback(unique);
-          };
-          req.onerror = function() {
-            var localPhotos = [];
-            try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
-            callback(localPhotos);
-          };
-          return;
-        } catch(e) {}
+              var combined = (remotePhotos || []).concat(dbPhotos).concat(localPhotos);
+              var map = {};
+              var unique = [];
+              combined.forEach(function(item) {
+                if (item && item.id && !map[item.id]) {
+                  map[item.id] = true;
+                  unique.push(item);
+                }
+              });
+              callback(unique);
+            };
+            req.onerror = function() {
+              var localPhotos = [];
+              try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
+              var combined = (remotePhotos || []).concat(localPhotos);
+              var map = {};
+              var unique = [];
+              combined.forEach(function(item) {
+                if (item && item.id && !map[item.id]) {
+                  map[item.id] = true;
+                  unique.push(item);
+                }
+              });
+              callback(unique);
+            };
+            return;
+          } catch(e) {}
+        }
+        var localPhotos = [];
+        try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
+        var combined = (remotePhotos || []).concat(localPhotos);
+        var map = {};
+        var unique = [];
+        combined.forEach(function(item) {
+          if (item && item.id && !map[item.id]) {
+            map[item.id] = true;
+            unique.push(item);
+          }
+        });
+        callback(unique);
       }
-      var localPhotos = [];
-      try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
-      callback(localPhotos);
+
+      if (supabaseClient) {
+        supabaseClient
+          .from('party_photos')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .then(function(res) {
+            if (res.data && !res.error) {
+              processPhotosList(res.data);
+            } else {
+              processPhotosList([]);
+            }
+          })
+          .catch(function() {
+            processPhotosList([]);
+          });
+      } else {
+        processPhotosList([]);
+      }
     }
 
     // ── CLOUDINARY & PARTY SNAPS ALBUM LOGIC ──
-    window.toggleCloudinarySettings = function() {
-      var drawer = document.getElementById('cloudinary-settings-drawer');
-      if (drawer) {
-        drawer.style.display = (drawer.style.display === 'none' || !drawer.style.display) ? 'block' : 'none';
-        var cldName = localStorage.getItem('shivi_cloudinary_cloud_name') || 'dju6e6g3j';
-        var cldPreset = localStorage.getItem('shivi_cloudinary_preset') || 'shivi_party_snaps';
-        var nameIn = document.getElementById('cld-name-input');
-        var presetIn = document.getElementById('cld-preset-input');
-        if (nameIn) nameIn.value = cldName;
-        if (presetIn) presetIn.value = cldPreset;
-      }
-    };
-
-    window.saveCloudinarySettings = function() {
-      var nameIn = document.getElementById('cld-name-input');
-      var presetIn = document.getElementById('cld-preset-input');
-      if (nameIn && nameIn.value.trim()) localStorage.setItem('shivi_cloudinary_cloud_name', nameIn.value.trim());
-      if (presetIn && presetIn.value.trim()) localStorage.setItem('shivi_cloudinary_preset', presetIn.value.trim());
-      alert('Cloudinary settings saved successfully! ☁️');
-      var drawer = document.getElementById('cloudinary-settings-drawer');
-      if (drawer) drawer.style.display = 'none';
-    };
 
     function uploadToCloudinaryServer(file, uploaderName, callback) {
-      var cloudName = localStorage.getItem('shivi_cloudinary_cloud_name') || 'dju6e6g3j';
-      var uploadPreset = localStorage.getItem('shivi_cloudinary_preset') || 'shivi_party_snaps';
+      var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || localStorage.getItem('shivi_cloudinary_cloud_name') || 'dju6e6g3j';
+      var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || localStorage.getItem('shivi_cloudinary_preset') || 'shivi_party_snaps';
       var cleanFolder = uploaderName.replace(/[^a-zA-Z0-9_-]/g, '_');
 
       var formData = new FormData();
@@ -1216,6 +1291,29 @@
       };
 
       xhr.send(formData);
+    }
+
+    // ── SUPABASE REALTIME MULTI-DEVICE LISTENERS ──
+    if (supabaseClient) {
+      try {
+        supabaseClient
+          .channel('public:wishes')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'wishes' }, function(payload) {
+            console.log('⚡ Realtime wish received:', payload);
+            window.loadWishes();
+          })
+          .subscribe();
+
+        supabaseClient
+          .channel('public:party_photos')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'party_photos' }, function(payload) {
+            console.log('⚡ Realtime photo uploaded:', payload);
+            window.renderPartyAlbums();
+          })
+          .subscribe();
+      } catch (err) {
+        console.warn('Realtime subscription error:', err);
+      }
     }
 
     window.handlePartyUploadSubmit = function(e) {
