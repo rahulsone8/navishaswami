@@ -903,6 +903,9 @@
     if (partyModal) {
       partyModal.classList.add('active');
       document.body.style.overflow = 'hidden';
+      if (typeof window.renderPartyAlbums === 'function') {
+        window.renderPartyAlbums();
+      }
     }
   }
 

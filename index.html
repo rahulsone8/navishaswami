@@ -1257,15 +1257,20 @@
     }
 
     function fetchAllPartyPhotos(callback, forceRefresh) {
-      if (_partyPhotosCache && !forceRefresh) {
-        callback(_partyPhotosCache);
+      if (_partyPhotosCache && _partyPhotosCache.length > 0 && !forceRefresh) {
+        if (callback) callback(_partyPhotosCache);
         return;
       }
 
-      function processPhotosList(remotePhotos) {
-        var localPhotos = [];
-        try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
+      var localPhotos = [];
+      try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
 
+      // Deliver local cached photos immediately for 0ms instant display!
+      if (!_partyPhotosCache && localPhotos.length > 0 && callback) {
+        callback(localPhotos);
+      }
+
+      function processPhotosList(remotePhotos) {
         var remoteClean = (remotePhotos || []).filter(function(p) {
           return p && p.uploader !== '__SYS_SITE_SETTINGS__';
         });
@@ -1287,7 +1292,7 @@
                 }
               });
               _partyPhotosCache = unique;
-              callback(unique);
+              if (callback) callback(unique);
             };
             req.onerror = function() {
               var combined = remoteClean.concat(localPhotos);
@@ -1300,7 +1305,7 @@
                 }
               });
               _partyPhotosCache = unique;
-              callback(unique);
+              if (callback) callback(unique);
             };
             return;
           } catch(e) {}
@@ -1316,7 +1321,7 @@
           }
         });
         _partyPhotosCache = unique;
-        callback(unique);
+        if (callback) callback(unique);
       }
 
       if (supabaseClient) {
