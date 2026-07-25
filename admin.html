@@ -800,34 +800,32 @@
 
       if (box) box.style.opacity = '0.5';
 
+      function finishUpload(url) {
+        if (box) box.style.opacity = '1';
+        if (input) input.value = url;
+        updatePreview(key, url);
+        setTimeout(saveAllImageOverrides, 300);
+      }
+
       var xhr = new XMLHttpRequest();
       xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
       xhr.onload = function() {
-        if (box) box.style.opacity = '1';
         if (xhr.status === 200) {
           try {
             var res = JSON.parse(xhr.responseText);
             var url = res.secure_url || res.url;
-            if (input) input.value = url;
-            updatePreview(key, url);
+            finishUpload(url);
             return;
           } catch(e) {}
         }
 
         var reader = new FileReader();
-        reader.onload = function(e) {
-          if (input) input.value = e.target.result;
-          updatePreview(key, e.target.result);
-        };
+        reader.onload = function(e) { finishUpload(e.target.result); };
         reader.readAsDataURL(file);
       };
       xhr.onerror = function() {
-        if (box) box.style.opacity = '1';
         var reader = new FileReader();
-        reader.onload = function(e) {
-          if (input) input.value = e.target.result;
-          updatePreview(key, e.target.result);
-        };
+        reader.onload = function(e) { finishUpload(e.target.result); };
         reader.readAsDataURL(file);
       };
       xhr.send(formData);
@@ -851,34 +849,32 @@
 
       if (box) box.style.opacity = '0.5';
 
+      function finishMilestoneUpload(url) {
+        if (box) box.style.opacity = '1';
+        if (input) input.value = url;
+        updateMilestonePreview(idx, url);
+        setTimeout(saveAllImageOverrides, 300);
+      }
+
       var xhr = new XMLHttpRequest();
       xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
       xhr.onload = function() {
-        if (box) box.style.opacity = '1';
         if (xhr.status === 200) {
           try {
             var res = JSON.parse(xhr.responseText);
             var url = res.secure_url || res.url;
-            if (input) input.value = url;
-            updateMilestonePreview(idx, url);
+            finishMilestoneUpload(url);
             return;
           } catch(e) {}
         }
 
         var reader = new FileReader();
-        reader.onload = function(e) {
-          if (input) input.value = e.target.result;
-          updateMilestonePreview(idx, e.target.result);
-        };
+        reader.onload = function(e) { finishMilestoneUpload(e.target.result); };
         reader.readAsDataURL(file);
       };
       xhr.onerror = function() {
-        if (box) box.style.opacity = '1';
         var reader = new FileReader();
-        reader.onload = function(e) {
-          if (input) input.value = e.target.result;
-          updateMilestonePreview(idx, e.target.result);
-        };
+        reader.onload = function(e) { finishMilestoneUpload(e.target.result); };
         reader.readAsDataURL(file);
       };
       xhr.send(formData);
@@ -889,8 +885,11 @@
       var overrides = {};
       Object.keys(ALL_CONFIG).forEach(function(key) {
         var input = document.getElementById('input-' + key);
-        if (input && input.value) {
-          overrides[key] = input.value.trim();
+        var val = input ? input.value.trim() : '';
+        if (val) {
+          overrides[key] = val;
+        } else if (ALL_CONFIG[key] && ALL_CONFIG[key].defaultSrc) {
+          overrides[key] = ALL_CONFIG[key].defaultSrc;
         }
       });
       localStorage.setItem('shivi_img_overrides', JSON.stringify(overrides));
