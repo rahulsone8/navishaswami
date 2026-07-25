@@ -288,6 +288,16 @@ em { font-style: italic; }
     pointer-events: none;
   }
 
+  /* Completely hide mobile dock when Reels modal or Party Gallery Modal is active */
+  body.reels-open .mobile-dock,
+  #reels-modal.active ~ .mobile-dock,
+  .party-gallery-modal.active ~ .mobile-dock {
+    transform: translate(-50%, calc(100% + 60px)) scale(0.8) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
   .mobile-dock__item {
     display: flex;
     align-items: center;

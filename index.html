@@ -61,41 +61,43 @@
           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
       </span>
+      <span class="mobile-dock__label">Home</span>
     </a>
 
     <a href="#" class="mobile-dock__item" id="dock-reels-btn" title="Reels">
       <span class="mobile-dock__icon">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+          <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
         </svg>
       </span>
+      <span class="mobile-dock__label">Reels</span>
     </a>
 
-    <a href="#" class="mobile-dock__item" id="dock-party-snaps-btn" title="Party Snaps">
-      <span class="mobile-dock__icon" style="position:relative;">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-          <polyline points="2 17 12 22 22 17"></polyline>
-          <polyline points="2 12 12 17 22 12"></polyline>
+    <a href="#" class="mobile-dock__item" id="dock-party-snaps-btn" title="Snaps">
+      <span class="mobile-dock__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
         </svg>
-        <span class="dock-badge">3</span>
       </span>
+      <span class="mobile-dock__label">Snaps</span>
     </a>
 
     <a href="#birthday" class="mobile-dock__item" id="dock-birthday-btn" title="Event">
       <span class="mobile-dock__icon">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/>
         </svg>
       </span>
+      <span class="mobile-dock__label">Event</span>
     </a>
 
     <a href="#wishes" class="mobile-dock__item" id="dock-wishes-btn" title="Wishes">
-      <div class="dock-avatar-wrap">
-        <img src="assets/images/shivi_cutout.png" alt="Shivi" class="dock-avatar-img" />
-        <span class="dock-avatar-dot"></span>
-      </div>
+      <span class="mobile-dock__icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </span>
+      <span class="mobile-dock__label">Wishes</span>
     </a>
   </div>
 
@@ -2324,6 +2326,7 @@
     window.openReelsModal = function() {
       if (!reelsModal) return;
       reelsModal.classList.add('active');
+      document.body.classList.add('reels-open');
       document.body.style.overflow = 'hidden';
       if (!reelsLoaded) {
         fetchAndRenderReels();
@@ -2341,6 +2344,7 @@
     window.closeReelsModal = function() {
       if (!reelsModal) return;
       reelsModal.classList.remove('active');
+      document.body.classList.remove('reels-open');
       document.body.style.overflow = '';
       // Pause all videos
       reelsStack.querySelectorAll('.reel-video').forEach(function(v) { v.pause(); });
@@ -2840,6 +2844,7 @@
     // ── FAST UNIFIED MOBILE DOCK CONTROLLER ──────────────────────
     function closeAllActiveModals() {
       if (typeof window.closeReelsModal === 'function') window.closeReelsModal();
+      document.body.classList.remove('reels-open');
       var partyModal = document.getElementById('party-gallery-modal');
       if (partyModal) partyModal.classList.remove('active');
       var wishesModal = document.getElementById('all-wishes-modal');
