@@ -1428,12 +1428,29 @@ em { font-style: italic; }
 
 /* ─── Family Tree Responsive ─── */
 @media (max-width: 768px) {
-  body {
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
     background-image: url('mobile_bg.jpg') !important;
-    background-attachment: scroll !important;
     background-position: center top !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
+    z-index: -10;
+    pointer-events: none;
+  }
+
+  body {
+    background-image: none !important;
+    background-color: transparent !important;
+  }
+
+  .hero, .section, .journey, .remembering, .wishes, .family-tree-section {
+    background: transparent !important;
   }
 }
 
