@@ -1267,6 +1267,10 @@
         return;
       }
 
+      function processPhotosList(remotePhotos) {
+        var localPhotos = [];
+        try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
+
         var remoteClean = (remotePhotos || []).filter(function(p) {
           return p && p.uploader !== '__SYS_SITE_SETTINGS__';
         });
@@ -1291,7 +1295,7 @@
               callback(unique);
             };
             req.onerror = function() {
-              var combined = (remotePhotos || []).concat(localPhotos);
+              var combined = remoteClean.concat(localPhotos);
               var map = {};
               var unique = [];
               combined.forEach(function(item) {
@@ -1307,7 +1311,7 @@
           } catch(e) {}
         }
 
-        var combined = (remotePhotos || []).concat(localPhotos);
+        var combined = remoteClean.concat(localPhotos);
         var map = {};
         var unique = [];
         combined.forEach(function(item) {
