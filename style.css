@@ -1426,27 +1426,29 @@ em { font-style: italic; }
   font-size: 0.68rem;
 }
 
+#mobile-bg-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  object-fit: cover;
+  object-position: center top;
+  z-index: -999;
+  pointer-events: none;
+  display: none;
+}
+
 /* ─── Family Tree Responsive ─── */
 @media (max-width: 768px) {
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    background-image: url('mobile_bg.jpg') !important;
-    background-position: center top !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    z-index: -10;
-    pointer-events: none;
+  #mobile-bg-img {
+    display: block !important;
   }
 
-  body {
-    background-image: none !important;
+  html, body {
     background-color: transparent !important;
+    background-image: none !important;
   }
 
   .hero, .section, .journey, .remembering, .wishes, .family-tree-section {
