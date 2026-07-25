@@ -464,53 +464,25 @@ em { font-style: italic; }
   line-height: 1;
 }
 
-.shivi-inline-photo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85), rgba(240, 185, 61, 0.18), rgba(227, 214, 245, 0.65));
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-  border-radius: 20px;
-  padding: 0.35rem 0.85rem;
-  margin: 0.4rem 0.4rem;
-  vertical-align: middle;
-  box-shadow: 
-    0 10px 25px rgba(91, 58, 102, 0.15),
-    0 4px 12px rgba(240, 185, 61, 0.2),
-    inset 0 1px 10px rgba(255, 255, 255, 0.9);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.hero__shivi-title {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 800;
+  font-size: clamp(3.2rem, 8.5vw, 6.2rem);
+  background: linear-gradient(135deg, var(--plum) 0%, #7A5387 40%, #D97706 80%, #F0B93D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin-top: 0.2rem;
+  text-shadow: none;
+  filter: drop-shadow(0 6px 20px rgba(91, 58, 102, 0.22));
+  transition: transform 0.3s ease;
 }
 
-.shivi-inline-photo::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 22px;
-  background: linear-gradient(135deg, rgba(240, 185, 61, 0.45), rgba(255, 255, 255, 0.8), rgba(91, 58, 102, 0.25));
-  z-index: -1;
-  opacity: 0.75;
-  filter: blur(8px);
-}
-
-.shivi-cutout-img {
-  height: clamp(60px, 14vw, 120px);
-  width: auto;
-  display: block;
-  margin: 0 auto;
-  mix-blend-mode: multiply;
-  filter: drop-shadow(0 6px 14px rgba(91, 58, 102, 0.25));
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.shivi-inline-photo:hover {
-  transform: scale(1.05) translateY(-3px);
-  box-shadow: 
-    0 15px 35px rgba(91, 58, 102, 0.22),
-    0 6px 18px rgba(240, 185, 61, 0.35),
-    inset 0 2px 14px rgba(255, 255, 255, 1);
+.hero__shivi-title:hover {
+  transform: scale(1.03);
 }
 
 .hero__unicorn-emoji {
