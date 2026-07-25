@@ -37,7 +37,7 @@ body {
   font-weight: 500;
   color: var(--plum);
   background-color: var(--cream);
-  background-image: url('family_bg.jpg');
+  background-image: url('../images/family_bg.jpg');
   background-attachment: fixed;
   background-position: center top;
   background-repeat: no-repeat;
