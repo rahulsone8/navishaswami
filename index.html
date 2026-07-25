@@ -13,6 +13,7 @@
   <script src="assets/js/config.js?v=20260725_v17"></script>
   <script src="/api/config.js" onerror="console.log('Static config fallback active')"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body>
   <!-- ═══ MOBILE DEDICATED BACKGROUND ═══ -->
@@ -1136,36 +1137,8 @@
     }
 
     function compressFileBeforeUpload(file, callback) {
-      if (!file || !file.type || file.type.indexOf('image') === -1) {
-        callback(file);
-        return;
-      }
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        var img = new Image();
-        img.onload = function() {
-          var canvas = document.createElement('canvas');
-          var maxDim = 1600;
-          var w = img.width;
-          var h = img.height;
-          if (w > h) {
-            if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-          } else {
-            if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          var ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-          canvas.toBlob(function(blob) {
-            callback(blob || file);
-          }, 'image/jpeg', 0.82);
-        };
-        img.onerror = function() { callback(file); };
-        img.src = e.target.result;
-      };
-      reader.onerror = function() { callback(file); };
-      reader.readAsDataURL(file);
+      // Pass the 100% original untouched file to preserve full 2.5MB+ photo quality
+      callback(file);
     }
 
     function savePartyPhotoRecord(photoObj, callback) {
@@ -1685,6 +1658,7 @@
     function triggerDownload(url, filename) {
       if (!url) return;
       var cleanName = filename || 'shivi_party_photo.jpg';
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
       if (url.indexOf('res.cloudinary.com') !== -1) {
         fetch(url)
@@ -1697,25 +1671,103 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 2000);
+            setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 3000);
           })
           .catch(function() {
-            var a = document.createElement('a');
-            a.href = url;
-            a.target = '_blank';
-            a.download = cleanName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            if (isMobile) {
+              window.open(url, '_blank');
+            } else {
+              var a = document.createElement('a');
+              a.href = url;
+              a.target = '_blank';
+              a.download = cleanName;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            }
           });
       } else {
-        var a = document.createElement('a');
-        a.href = url;
-        a.download = cleanName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        if (isMobile) {
+          window.open(url, '_blank');
+        } else {
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = cleanName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
       }
+    }
+
+    function batchDownloadAsZip(elementsList, zipFileName) {
+      if (!elementsList || elementsList.length === 0) return;
+
+      var total = elementsList.length;
+      var count = 0;
+      var zip = (typeof JSZip !== 'undefined') ? new JSZip() : null;
+
+      if (!zip) {
+        elementsList.forEach(function(cb, i) {
+          setTimeout(function() {
+            var src = cb.getAttribute('data-src');
+            var name = cb.getAttribute('data-name') || 'shivi_photo';
+            triggerDownload(src, name + '_photo_' + (i + 1) + '.jpg');
+          }, i * 400);
+        });
+        return;
+      }
+
+      var progressBox = document.getElementById('party-upload-progress');
+      var progressText = document.getElementById('party-upload-text');
+      var progressPercent = document.getElementById('party-upload-percent');
+      var progressBar = document.getElementById('party-upload-bar');
+
+      if (progressBox) progressBox.style.display = 'block';
+      if (progressText) progressText.textContent = '📦 Packaging (0/' + total + ') photos into ZIP...';
+      if (progressPercent) progressPercent.textContent = '0%';
+      if (progressBar) progressBar.style.width = '0%';
+
+      var promises = [];
+      elementsList.forEach(function(cb, i) {
+        var src = cb.getAttribute('data-src');
+        var name = (cb.getAttribute('data-name') || 'shivi_photo') + '_photo_' + (i + 1) + '.jpg';
+
+        if (src) {
+          var p = fetch(src)
+            .then(function(res) { return res.blob(); })
+            .then(function(blob) {
+              zip.file(name, blob);
+              count++;
+              var pct = Math.round((count / total) * 100);
+              if (progressText) progressText.textContent = '📦 Packaging (' + count + '/' + total + ') photos into ZIP...';
+              if (progressPercent) progressPercent.textContent = pct + '%';
+              if (progressBar) progressBar.style.width = pct + '%';
+            })
+            .catch(function(e) {
+              count++;
+            });
+          promises.push(p);
+        }
+      });
+
+      Promise.all(promises).then(function() {
+        if (progressText) progressText.textContent = '⚡ Generating ZIP download...';
+        zip.generateAsync({ type: 'blob' }).then(function(content) {
+          var blobUrl = URL.createObjectURL(content);
+          var a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = (zipFileName || 'Shivi_Party_Photos') + '.zip';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+
+          setTimeout(function() {
+            URL.revokeObjectURL(blobUrl);
+            if (progressBox) progressBox.style.display = 'none';
+          }, 3000);
+        });
+      });
     }
 
     window.downloadSelectedFolderPhotos = function() {
@@ -1724,13 +1776,7 @@
         alert('Please select at least 1 photo checkbox to download!');
         return;
       }
-      checked.forEach(function(cb, i) {
-        setTimeout(function() {
-          var src = cb.getAttribute('data-src');
-          var name = cb.getAttribute('data-name') || 'shivi_photo';
-          triggerDownload(src, name + '_photo_' + (i + 1) + '.jpg');
-        }, i * 350);
-      });
+      batchDownloadAsZip(checked, 'Shivi_Selected_Photos');
     };
 
     window.downloadAllFolderPhotos = function() {
@@ -1739,13 +1785,21 @@
         alert('No photos in this album to download!');
         return;
       }
-      all.forEach(function(cb, i) {
-        setTimeout(function() {
-          var src = cb.getAttribute('data-src');
-          var name = cb.getAttribute('data-name') || 'shivi_photo';
-          triggerDownload(src, name + '_photo_' + (i + 1) + '.jpg');
-        }, i * 350);
-      });
+      batchDownloadAsZip(all, 'Shivi_Album_All_Photos');
+    };
+
+    window.showAllAlbumsView = function() {
+      var grid = document.getElementById('party-albums-grid');
+      var wall = document.getElementById('party-photos-wall');
+      var downloadActions = document.getElementById('album-download-actions');
+      var title = document.getElementById('albums-section-title');
+
+      if (wall) wall.style.display = 'none';
+      if (grid) grid.style.display = 'grid';
+      if (downloadActions) downloadActions.style.display = 'none';
+      if (title) title.textContent = '📁 Shared Photo Albums';
+
+      window.renderPartyAlbums();
     };
 
     window.applySiteImageOverrides = function() {
