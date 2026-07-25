@@ -464,25 +464,27 @@ em { font-style: italic; }
   line-height: 1;
 }
 
-.hero__shivi-title {
-  font-family: var(--font-headline);
-  font-style: italic;
-  font-weight: 800;
-  font-size: clamp(3.2rem, 8.5vw, 6.2rem);
-  background: linear-gradient(135deg, var(--plum) 0%, #7A5387 40%, #D97706 80%, #F0B93D 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.shivi-inline-photo {
   display: inline-block;
-  line-height: 1.12;
-  letter-spacing: -0.01em;
-  margin-top: 0.2rem;
-  text-shadow: none;
-  filter: drop-shadow(0 6px 20px rgba(91, 58, 102, 0.22));
-  transition: transform 0.3s ease;
+  position: relative;
+  margin: 0.5rem auto;
+  padding: 0;
+  background: transparent;
 }
 
-.hero__shivi-title:hover {
-  transform: scale(1.03);
+.shivi-cutout-img {
+  height: clamp(100px, 20vw, 180px);
+  width: auto;
+  max-width: min(920px, 94vw);
+  display: block;
+  margin: 0 auto;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 10px 25px rgba(91, 58, 102, 0.25));
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.shivi-cutout-img:hover {
+  transform: scale(1.04);
 }
 
 .hero__unicorn-emoji {
