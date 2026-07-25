@@ -3759,7 +3759,7 @@ em { font-style: italic; }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PREMIUM LIQUID GLASS READABILITY & ZERO-LEAK ENGINE
+   PREMIUM INDIVIDUAL LIQUID GLASS PRO MAX ENGINE
    ═══════════════════════════════════════════════════════════ */
 
 /* 1. Global High-Contrast Typography & Text Protection */
@@ -3776,12 +3776,107 @@ p, span, label, .about__desc, .hero__tagline, .memory-card__sub, .memorial-card_
   color: #32163F;
 }
 
-/* 2. Liquid Glass Panels for All Content Sections */
-.hero__content,
-.about__text,
+/* 2. HERO SECTION: Transparent container, EVERY item has its own compact Liquid Glass Pro Max Capsule */
+.hero__content {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0 !important;
+  max-width: 860px;
+}
+
+/* Compact Pill Badge for "Turning 1 on 4th August" */
+.hero__badge {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+  border: 1.5px solid var(--gold) !important;
+  box-shadow: 0 8px 25px rgba(91, 58, 102, 0.18), inset 0 1px 1px #fff !important;
+  padding: 0.45rem 1.3rem !important;
+  border-radius: 50px !important;
+  color: #2E123B !important;
+  font-weight: 800 !important;
+}
+
+/* Compact Glass Pill for "Meet SHIVI" */
+.hero__meet-text {
+  background: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(20px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 8px 24px rgba(91, 58, 102, 0.16), inset 0 1px 1px #fff !important;
+  padding: 0.35rem 1.6rem !important;
+  border-radius: 40px !important;
+  display: inline-block !important;
+  margin-bottom: 0.6rem !important;
+}
+
+/* Compact Glass Capsule for "A tiny miracle turning ONE..." */
+.hero__tagline {
+  background: rgba(255, 255, 255, 0.84) !important;
+  backdrop-filter: blur(20px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 8px 24px rgba(91, 58, 102, 0.15), inset 0 1px 1px #fff !important;
+  padding: 0.5rem 1.8rem !important;
+  border-radius: 50px !important;
+  display: inline-block !important;
+  margin-top: 0.8rem !important;
+  margin-bottom: 2rem !important;
+  color: #2E123B !important;
+  font-weight: 800 !important;
+}
+
+/* Compact Floating Glass Pill for Stats Grid */
+.hero__stats {
+  background: rgba(255, 255, 255, 0.86) !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  border: 1.5px solid var(--gold) !important;
+  box-shadow: 0 12px 35px rgba(91, 58, 102, 0.18), inset 0 1px 1px #fff !important;
+  padding: 0.75rem 2.2rem !important;
+  border-radius: 50px !important;
+}
+
+/* Compact Glass Badge for "Scroll to explore ↓" */
+.hero__scroll-hint {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 6px 18px rgba(91, 58, 102, 0.12) !important;
+  padding: 0.4rem 1.2rem !important;
+  border-radius: 40px !important;
+  color: #2E123B !important;
+  font-weight: 800 !important;
+  display: inline-block !important;
+  margin-top: 1.5rem !important;
+}
+
+/* 3. FAMILY TREE SECTION: Transparent Section, Only Header & Nodes are Capsules */
+.family-tree-wrap {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+}
+
+.family-tree__header {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border: 1.5px solid var(--gold) !important;
+  border-radius: 30px !important;
+  padding: 1rem 2rem !important;
+  display: inline-block !important;
+  box-shadow: 0 10px 30px rgba(91, 58, 102, 0.15) !important;
+  margin-bottom: 1.8rem !important;
+}
+
+/* 4. Compact Liquid Glass for Cards across all sections */
 .fact-card,
-.family-tree-wrap,
-.ft-inline-info,
 .memory-card,
 .memorial-card,
 .party-upload-card,
@@ -3789,32 +3884,32 @@ p, span, label, .about__desc, .hero__tagline, .memory-card__sub, .memorial-card_
 .polaroid,
 .wishes__form-card,
 .wish-card,
-.countdown__ring,
-.hero__stats,
-.hero__badge {
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(24px) saturate(200%) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+.countdown__ring {
+  background: rgba(255, 255, 255, 0.86) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
   border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
   box-shadow: 
-    0 16px 45px rgba(91, 58, 102, 0.18),
-    0 4px 14px rgba(240, 185, 61, 0.15),
+    0 12px 36px rgba(91, 58, 102, 0.16),
+    0 4px 14px rgba(240, 185, 61, 0.12),
     inset 0 1.5px 1.5px rgba(255, 255, 255, 1) !important;
 }
 
-/* 3. Section Titles Liquid Glass Badges */
+/* 5. Section Title Capsules */
 .ft-section-title,
 .section-label {
-  background: rgba(255, 255, 255, 0.94) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(18px) saturate(190%) !important;
   -webkit-backdrop-filter: blur(18px) saturate(190%) !important;
   border: 1.5px solid var(--gold) !important;
-  box-shadow: 0 6px 18px rgba(91, 58, 102, 0.14) !important;
+  box-shadow: 0 6px 20px rgba(91, 58, 102, 0.14) !important;
   color: #2E123B !important;
   font-weight: 800 !important;
+  padding: 0.4rem 1.6rem !important;
+  border-radius: 50px !important;
 }
 
-/* 4. Polaroids & Photo Cards Protection */
+/* 6. Polaroids & Photo Cards Protection */
 .polaroid, .memory-card__img-wrap, .memorial-card__frame, .party-album-folder__cover {
   border-radius: 16px;
   box-shadow: 0 8px 25px rgba(91, 58, 102, 0.2);
@@ -3825,17 +3920,8 @@ p, span, label, .about__desc, .hero__tagline, .memory-card__sub, .memorial-card_
   font-weight: 800 !important;
 }
 
-/* 5. Mobile & Laptop Alignment Safety */
 @media (max-width: 768px) {
-  .hero__content {
-    padding: 1.8rem 1.2rem !important;
-    border-radius: 26px !important;
-    margin: 0 0.5rem !important;
-    width: auto !important;
-  }
-
-  .family-tree-wrap, .about__text, .wishes__form-card, .party-upload-card {
-    padding: 1.4rem 1rem !important;
-    border-radius: 22px !important;
+  .hero__stats {
+    padding: 0.6rem 1.2rem !important;
   }
 }
