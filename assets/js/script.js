@@ -102,11 +102,11 @@
   var reveals = document.querySelectorAll('.reveal');
 
   if ('IntersectionObserver' in window) {
-    var revealObserver = new IntersectionObserver(function (entries) {
+    window.revealObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target);
+          window.revealObserver.unobserve(entry.target);
 
           if (!countTriggered && entry.target.closest('#stat-days')) {
             countTriggered = true;
@@ -121,15 +121,29 @@
       var siblings = parent ? parent.querySelectorAll(':scope > .reveal') : [];
       var idx = Array.prototype.indexOf.call(siblings, el);
       el.style.transitionDelay = (idx * 0.08) + 's';
-      revealObserver.observe(el);
+      window.revealObserver.observe(el);
     });
 
     var statEl = document.getElementById('stat-days');
-    if (statEl) revealObserver.observe(statEl);
+    if (statEl) window.revealObserver.observe(statEl);
   } else {
     reveals.forEach(function (el) { el.classList.add('visible'); });
     if (statDays) statDays.textContent = daysOld;
   }
+
+  // Expose helper so dynamic content can register into scroll reveal
+  window.observeNewRevealEls = function(container) {
+    if (!container) return;
+    var newEls = container.querySelectorAll('.reveal:not(.visible)');
+    newEls.forEach(function(el, idx) {
+      el.style.transitionDelay = (idx * 0.1) + 's';
+      if (window.revealObserver) {
+        window.revealObserver.observe(el);
+      } else {
+        el.classList.add('visible');
+      }
+    });
+  };
 
   // ── SCROLL PROGRESS BAR ──────────────────────────────────
   var progressBar = document.getElementById('scroll-progress');

@@ -76,7 +76,7 @@
       </div>
       <h1 class="hero__name reveal">
         <span class="hero__meet-text">Meet</span>
-        <span class="shivi-inline-photo"><img src="assets/images/shivi_cutout.png" alt="SHIVI" class="shivi-cutout-img shivi-cutout-photo-text" /></span>
+        <span class="shivi-inline-photo"><img src="assets/images/shivi_cutout.png" alt="Shivi" class="shivi-cutout-img" /></span>
       </h1>
       <p class="hero__tagline reveal">
         A tiny miracle turning <strong class="gold">ONE</strong> on <strong>4th August 2026</strong> 💕
@@ -1924,7 +1924,7 @@
       var track = document.getElementById('journey-track');
       if (!track) return;
 
-      var savedMilestones = [];
+      var savedMilestones = null;
       try {
         savedMilestones = JSON.parse(localStorage.getItem('shivi_milestones') || 'null');
       } catch(e) {}
@@ -1947,25 +1947,27 @@
           var numStr = (idx + 1 < 10) ? ('0' + (idx + 1)) : ('' + (idx + 1));
 
           var itemDiv = document.createElement('div');
-          itemDiv.className = 'milestone ' + side + ' reveal is-visible';
+          // Add 'visible' directly — dynamic elements won't pass through the initial IntersectionObserver
+          itemDiv.className = 'milestone ' + side + ' reveal visible';
+          itemDiv.style.transitionDelay = (idx * 0.08) + 's';
 
           var imgWrapInner = '';
           if (m.img) {
-            imgWrapInner = 
-              '<img src="' + m.img + '" alt="' + (m.title || 'Milestone') + '" class="memory-card__img" />' +
+            imgWrapInner =
+              '<img src="' + m.img + '" alt="' + (m.title || 'Milestone') + '" class="memory-card__img" loading="lazy" />' +
               '<span class="memory-card__date-badge">' + (m.date || '') + '</span>';
           } else {
-            imgWrapInner = 
+            imgWrapInner =
               '<div class="memory-card__placeholder">' +
                 '<span>' + (m.emoji || '✨') + '</span>' +
-                '<p>' + (m.title || 'Milestone') + '</p>' +
+                '<p>' + (m.title || 'Milestone') + ' Photo</p>' +
               '</div>' +
               '<span class="memory-card__date-badge">' + (m.date || '') + '</span>';
           }
 
-          itemDiv.innerHTML = 
+          itemDiv.innerHTML =
             '<div class="milestone__marker"><span class="milestone__num">' + numStr + '</span></div>' +
-            '<div class="memory-card" data-img="' + (m.img || '') + '" onclick="' + (m.img ? 'window.openPartyPhotoLightbox(0)' : '') + '">' +
+            '<div class="memory-card">' +
               '<div class="memory-card__img-wrap">' +
                 imgWrapInner +
               '</div>' +
@@ -1981,7 +1983,7 @@
 
       render(list);
 
-      // Cloud database sync (Phone -> Laptop real-time fetch)
+      // Cloud database sync — Phone → Laptop cross-device real-time fetch
       if (window.supabaseClient) {
         window.supabaseClient
           .from('site_settings')
