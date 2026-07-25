@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <script src="assets/js/config.js?v=20260725_v17"></script>
+  <script src="assets/js/config.js?v=20260726_v18"></script>
   <script src="/api/config.js" onerror="console.log('Static config fallback')"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -126,10 +126,10 @@
     /* Admin Dashboard Panel */
     .admin-dashboard {
       display: none;
-      max-width: 1100px;
+      max-width: 1200px;
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 1.5rem 4rem;
+      padding: 2.5rem 1.5rem 5rem;
     }
 
     .admin-header {
@@ -198,23 +198,23 @@
 
     .image-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
     }
 
     .image-item-card {
-      background: rgba(250, 245, 255, 0.7);
+      background: rgba(250, 245, 255, 0.75);
       border: 1.5px solid rgba(190, 160, 220, 0.4);
       border-radius: 18px;
-      padding: 1.2rem;
+      padding: 1.1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.8rem;
+      gap: 0.7rem;
     }
 
     .image-preview-box {
       width: 100%;
-      height: 160px;
+      height: 150px;
       border-radius: 12px;
       overflow: hidden;
       background: #F3E8FF;
@@ -231,9 +231,14 @@
       object-fit: cover;
     }
 
+    .image-preview-placeholder {
+      font-size: 3rem;
+      opacity: 0.6;
+    }
+
     .image-title {
       font-weight: 800;
-      font-size: 1rem;
+      font-size: 0.98rem;
       margin: 0;
     }
 
@@ -245,18 +250,18 @@
 
     .file-upload-btn-wrap {
       display: flex;
-      gap: 0.6rem;
+      gap: 0.5rem;
       align-items: center;
     }
 
     .btn-small-upload {
-      padding: 0.45rem 0.9rem;
+      padding: 0.45rem 0.85rem;
       border-radius: 50px;
       border: 1px solid var(--plum);
       background: rgba(91, 58, 102, 0.08);
       color: var(--plum);
       font-weight: 800;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       cursor: pointer;
       transition: all 0.2s ease;
     }
@@ -269,7 +274,7 @@
     .save-bar {
       position: sticky;
       bottom: 1.5rem;
-      background: rgba(91, 58, 102, 0.92);
+      background: rgba(91, 58, 102, 0.94);
       backdrop-filter: blur(16px);
       padding: 1rem 2rem;
       border-radius: 50px;
@@ -313,7 +318,7 @@
   <div class="auth-container" id="auth-screen">
     <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔐</div>
     <h2 class="auth-title">Admin Login</h2>
-    <p class="auth-subtitle">Manage Family Tree photos &amp; website images</p>
+    <p class="auth-subtitle">Manage all Family Tree photos &amp; website images</p>
 
     <form onsubmit="handleLoginSubmit(event)">
       <div class="form-group">
@@ -337,7 +342,7 @@
     <div class="admin-header">
       <div>
         <h1 class="admin-title">👑 Shivi's Site Admin Panel</h1>
-        <p style="margin: 0.2rem 0 0; color: var(--plum-light); font-weight: 600;">Update Family Tree member photos &amp; website background images</p>
+        <p style="margin: 0.2rem 0 0; color: var(--plum-light); font-weight: 600;">Upload and update photos for every Family Tree member, milestones &amp; backgrounds</p>
       </div>
 
       <div class="header-actions">
@@ -346,45 +351,97 @@
       </div>
     </div>
 
-    <!-- CATEGORY 1: FAMILY TREE MEMBERS -->
+    <!-- CATEGORY 1: GRANDPARENTS & PARENTS -->
     <div class="section-card">
-      <h2 class="section-card-title">👨‍👩‍👧‍👦 Shivi's Family Tree Members</h2>
-      <div class="image-grid" id="family-tree-grid">
-        <!-- Dynamically rendered family tree fields -->
-      </div>
+      <h2 class="section-card-title">👵🏻👴🏻 Grandparents, Parents &amp; Shivi</h2>
+      <div class="image-grid" id="main-family-grid"></div>
     </div>
 
-    <!-- CATEGORY 2: WEBSITE BACKGROUNDS & HERO IMAGES -->
+    <!-- CATEGORY 2: PATERNAL SIDE (Dada's Family) -->
+    <div class="section-card">
+      <h2 class="section-card-title">🚩 Dada's Side (Paternal Uncles &amp; Aunts)</h2>
+      <div class="image-grid" id="paternal-grid"></div>
+    </div>
+
+    <!-- CATEGORY 3: MATERNAL SIDE (Nana's Family) -->
+    <div class="section-card">
+      <h2 class="section-card-title">🌸 Nana's Side (Maternal Uncles &amp; Aunts)</h2>
+      <div class="image-grid" id="maternal-grid"></div>
+    </div>
+
+    <!-- CATEGORY 4: BROTHERS & SISTERS -->
+    <div class="section-card">
+      <h2 class="section-card-title">👦🏻👧🏻 Brothers, Sisters &amp; Nephew</h2>
+      <div class="image-grid" id="siblings-grid"></div>
+    </div>
+
+    <!-- CATEGORY 5: WEBSITE BACKGROUNDS & MILESTONES -->
     <div class="section-card">
       <h2 class="section-card-title">🖼️ Website Backgrounds &amp; Milestones</h2>
-      <div class="image-grid" id="site-images-grid">
-        <!-- Dynamically rendered site image fields -->
-      </div>
+      <div class="image-grid" id="site-images-grid"></div>
     </div>
 
     <!-- STICKY SAVE BAR -->
     <div class="save-bar">
-      <span class="save-bar-text">✨ Update photos &amp; click save to apply across the whole website!</span>
+      <span class="save-bar-text">✨ Upload photos &amp; click save to update the website in real-time!</span>
       <button type="button" class="btn-save" onclick="saveAllImageOverrides()">💾 Save All Changes</button>
     </div>
   </div>
 
   <script>
-    // DEFAULT CONFIG & KEYS
-    var DEFAULT_IMAGES = {
-      // Family Tree Members
-      'dada': { title: '👴🏻 Dada', sub: 'Paternal Grandfather', defaultSrc: 'assets/images/shivi_dada.jpg' },
-      'dadi': { title: '👵🏻 Dadi', sub: 'Paternal Grandmother', defaultSrc: 'assets/images/shivi_dadi.png' },
-      'bade_papa': { title: '👨🏻 Bade Papa 1', sub: 'Elder Paternal Uncle', defaultSrc: 'assets/images/shivi_bade_papa.jpg' },
-      'badi_mami': { title: '👩🏻 Badi Mummy 1', sub: 'Elder Paternal Aunt', defaultSrc: 'assets/images/shivi_badi_mami.jpg' },
-      'bua_memorial': { title: '🌹 Bhua 1 (In Loving Memory 🕊️)', sub: 'Paternal Aunt Memorial', defaultSrc: 'assets/images/shivi_bua_memorial.jpg' },
-      'shivi_main': { title: '🦄 Navisha Shivi (Birthday Princess)', sub: 'Star of the Show', defaultSrc: 'assets/images/shivi_lollipop.jpg' },
+    // FULL CONFIG OF ALL FAMILY MEMBERS & SITE IMAGES
+    var ALL_CONFIG = {
+      // 1. Main Family
+      'shivi_main': { cat: 'main', emoji: '🦄', title: 'Navisha Shivi (Birthday Princess ⭐)', sub: 'Star of the Show', defaultSrc: 'assets/images/shivi_lollipop.jpg' },
+      'papa': { cat: 'main', emoji: '👨🏻', title: 'Papa', sub: 'Father', defaultSrc: '' },
+      'mumma': { cat: 'main', emoji: '👩🏻', title: 'Mumma', sub: 'Mother', defaultSrc: '' },
+      'dada': { cat: 'main', emoji: '👴🏻', title: 'Dada', sub: 'Paternal Grandfather', defaultSrc: 'assets/images/shivi_dada.jpg' },
+      'dadi': { cat: 'main', emoji: '👵🏻', title: 'Dadi', sub: 'Paternal Grandmother', defaultSrc: 'assets/images/shivi_dadi.png' },
+      'nana': { cat: 'main', emoji: '👴🏻', title: 'Nana', sub: 'Maternal Grandfather', defaultSrc: '' },
+      'nani': { cat: 'main', emoji: '👵🏻', title: 'Nani', sub: 'Maternal Grandmother', defaultSrc: '' },
 
-      // Site Backgrounds & Main Photos
-      'family_bg': { title: '👨‍👩‍👧 Hero Desktop Background', sub: 'Main Desktop Header Background', defaultSrc: 'assets/images/family_bg.jpg' },
-      'mobile_bg': { title: '📱 Mobile Background', sub: 'Dedicated Mobile Background Image', defaultSrc: 'assets/images/mobile_bg.jpg' },
-      'shivi_first_day': { title: '🌸 Milestone 1: First Day', sub: 'First Day in This World Memory', defaultSrc: 'assets/images/shivi_first_day.jpg' },
-      'shivi_cutout': { title: '✂️ Shivi Title Cutout Image', sub: 'Inline Header Cutout Badge', defaultSrc: 'assets/images/shivi_cutout.png' }
+      // 2. Paternal Side
+      'bade_papa_1': { cat: 'paternal', emoji: '👨🏻', title: 'Bade Papa 1', sub: 'Elder Paternal Uncle', defaultSrc: 'assets/images/shivi_bade_papa.jpg' },
+      'badi_mami_1': { cat: 'paternal', emoji: '👩🏻', title: 'Badi Mummy 1', sub: 'Elder Paternal Aunt', defaultSrc: 'assets/images/shivi_badi_mami.jpg' },
+      'bade_papa_2': { cat: 'paternal', emoji: '👨🏻', title: 'Bade Papa 2 🕊️', sub: 'Elder Paternal Uncle (Memorial)', defaultSrc: '' },
+      'badi_mami_2': { cat: 'paternal', emoji: '👩🏻', title: 'Badi Mummy 2', sub: 'Elder Paternal Aunt', defaultSrc: '' },
+      'bade_papa_3': { cat: 'paternal', emoji: '👨🏻', title: 'Bade Papa 3', sub: 'Elder Paternal Uncle', defaultSrc: '' },
+      'badi_mami_3': { cat: 'paternal', emoji: '👩🏻', title: 'Badi Mummy 3', sub: 'Elder Paternal Aunt', defaultSrc: '' },
+      'bua_memorial': { cat: 'paternal', emoji: '🌹', title: 'Bhua 1 (In Loving Memory 🕊️)', sub: 'Paternal Aunt Memorial', defaultSrc: 'assets/images/shivi_bua_memorial.jpg' },
+      'phuphaji_1': { cat: 'paternal', emoji: '👨🏻', title: 'Phuphaji 1', sub: 'Bhua\'s Husband', defaultSrc: '' },
+      'bua_2': { cat: 'paternal', emoji: '👩🏻', title: 'Bhua 2', sub: 'Paternal Aunt', defaultSrc: '' },
+      'phuphaji_2': { cat: 'paternal', emoji: '👨🏻', title: 'Phuphaji 2', sub: 'Bhua\'s Husband', defaultSrc: '' },
+
+      // 3. Maternal Side
+      'mama_1': { cat: 'maternal', emoji: '👨🏻', title: 'Mama 1', sub: 'Maternal Uncle', defaultSrc: '' },
+      'mami_1': { cat: 'maternal', emoji: '👩🏻', title: 'Mami 1', sub: 'Mama\'s Wife', defaultSrc: '' },
+      'mama_2': { cat: 'maternal', emoji: '👨🏻', title: 'Mama 2', sub: 'Maternal Uncle', defaultSrc: '' },
+      'mami_2': { cat: 'maternal', emoji: '👩🏻', title: 'Mami 2', sub: 'Mama\'s Wife', defaultSrc: '' },
+      'maasi': { cat: 'maternal', emoji: '👩🏻', title: 'Maasi', sub: 'Maternal Aunt', defaultSrc: '' },
+      'maasaji': { cat: 'maternal', emoji: '👨🏻', title: 'Maasaji', sub: 'Maasi\'s Husband', defaultSrc: '' },
+
+      // 4. Siblings
+      'bhaiya_1': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 1', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_2': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 2', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_3': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 3', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_4': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 4', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_5': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 5', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_6': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 6', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_7': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 7', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_8': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 8', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_9': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 9', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_10': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 10', sub: 'Brother / Cousin', defaultSrc: '' },
+      'bhaiya_11': { cat: 'siblings', emoji: '👦🏻', title: 'Bhaiya 11', sub: 'Brother / Cousin', defaultSrc: '' },
+      'didi_1': { cat: 'siblings', emoji: '👧🏻', title: 'Didi 1', sub: 'Sister / Cousin', defaultSrc: '' },
+      'didi_2': { cat: 'siblings', emoji: '👧🏻', title: 'Didi 2', sub: 'Sister / Cousin', defaultSrc: '' },
+      'nephew_1': { cat: 'siblings', emoji: '👶🏻', title: 'Nephew 1', sub: 'Nephew', defaultSrc: '' },
+
+      // 5. Site Images & Backgrounds
+      'family_bg': { cat: 'site', emoji: '🖼️', title: 'Hero Desktop Background', sub: 'Main Desktop Header Background', defaultSrc: 'assets/images/family_bg.jpg' },
+      'mobile_bg': { cat: 'site', emoji: '📱', title: 'Mobile Dedicated Background', sub: 'Mobile Screen Background Image', defaultSrc: 'assets/images/mobile_bg.jpg' },
+      'shivi_first_day': { cat: 'site', emoji: '🌸', title: 'Milestone 1: First Day', sub: 'First Day in This World Memory', defaultSrc: 'assets/images/shivi_first_day.jpg' },
+      'shivi_lollipop': { cat: 'site', emoji: '🍭', title: 'Milestone 2: Turning 1 Year Old', sub: 'One Year Milestone Photo', defaultSrc: 'assets/images/shivi_lollipop.jpg' },
+      'shivi_cutout': { cat: 'site', emoji: '✂️', title: 'Shivi Title Cutout Image', sub: 'Inline Header Cutout Badge', defaultSrc: 'assets/images/shivi_cutout.png' }
     };
 
     // AUTHENTICATION LOGIC
@@ -419,69 +476,80 @@
       checkAuth();
     }
 
-    // DASHBOARD INITIALIZATION
+    // DASHBOARD RENDER LOGIC
     function initDashboard() {
-      var ftGrid = document.getElementById('family-tree-grid');
-      var siteGrid = document.getElementById('site-images-grid');
+      var grids = {
+        'main': document.getElementById('main-family-grid'),
+        'paternal': document.getElementById('paternal-grid'),
+        'maternal': document.getElementById('maternal-grid'),
+        'siblings': document.getElementById('siblings-grid'),
+        'site': document.getElementById('site-images-grid')
+      };
 
-      if (!ftGrid || !siteGrid) return;
-      ftGrid.innerHTML = '';
-      siteGrid.innerHTML = '';
+      Object.keys(grids).forEach(function(g) {
+        if (grids[g]) grids[g].innerHTML = '';
+      });
 
       var saved = JSON.parse(localStorage.getItem('shivi_img_overrides') || '{}');
 
-      Object.keys(DEFAULT_IMAGES).forEach(function(key) {
-        var item = DEFAULT_IMAGES[key];
-        var currentSrc = saved[key] || item.defaultSrc;
+      Object.keys(ALL_CONFIG).forEach(function(key) {
+        var item = ALL_CONFIG[key];
+        var currentSrc = saved[key] || item.defaultSrc || '';
+        var targetGrid = grids[item.cat];
+
+        if (!targetGrid) return;
 
         var card = document.createElement('div');
         card.className = 'image-item-card';
 
+        var previewHtml = currentSrc
+          ? '<img src="' + currentSrc + '" id="preview-' + key + '" alt="' + item.title + '" />'
+          : '<div id="preview-' + key + '" class="image-preview-placeholder">' + item.emoji + '</div>';
+
         var html = 
-          '<h4 class="image-title">' + item.title + '</h4>' +
+          '<h4 class="image-title">' + item.emoji + ' ' + item.title + '</h4>' +
           '<span class="image-subtitle">' + item.sub + '</span>' +
-          '<div class="image-preview-box">' +
-            '<img src="' + currentSrc + '" id="preview-' + key + '" alt="' + item.title + '" />' +
-          '</div>' +
-          '<div class="form-group" style="margin-bottom:0.5rem;">' +
+          '<div class="image-preview-box" id="box-' + key + '">' + previewHtml + '</div>' +
+          '<div class="form-group" style="margin-bottom:0.4rem;">' +
             '<label class="form-label" style="font-size:0.75rem;">Image URL</label>' +
-            '<input type="text" id="input-' + key + '" value="' + currentSrc + '" class="form-input" style="font-size:0.82rem;" onchange="updatePreview(\'' + key + '\', this.value)" />' +
+            '<input type="text" id="input-' + key + '" value="' + currentSrc + '" class="form-input" style="font-size:0.8rem;" onchange="updatePreview(\'' + key + '\', this.value)" placeholder="Paste URL or upload photo below" />' +
           '</div>' +
           '<div class="file-upload-btn-wrap">' +
             '<input type="file" id="file-' + key + '" accept="image/*" style="display:none;" onchange="uploadImageFile(\'' + key + '\', this)" />' +
-            '<button type="button" class="btn-small-upload" onclick="document.getElementById(\'file-' + key + '\').click()">📸 Upload New Photo</button>' +
+            '<button type="button" class="btn-small-upload" onclick="document.getElementById(\'file-' + key + '\').click()">📸 Upload Photo</button>' +
             '<button type="button" class="btn-small-upload" style="border-color:#ccc; color:#777;" onclick="resetToDefault(\'' + key + '\')">↺ Reset</button>' +
           '</div>';
 
         card.innerHTML = html;
-
-        if (['dada', 'dadi', 'bade_papa', 'badi_mami', 'bua_memorial', 'shivi_main'].indexOf(key) !== -1) {
-          ftGrid.appendChild(card);
-        } else {
-          siteGrid.appendChild(card);
-        }
+        targetGrid.appendChild(card);
       });
     }
 
     function updatePreview(key, url) {
-      var img = document.getElementById('preview-' + key);
-      if (img && url) img.src = url;
+      var box = document.getElementById('box-' + key);
+      var item = ALL_CONFIG[key];
+      if (!box || !item) return;
+
+      if (url) {
+        box.innerHTML = '<img src="' + url + '" id="preview-' + key + '" alt="' + item.title + '" />';
+      } else {
+        box.innerHTML = '<div id="preview-' + key + '" class="image-preview-placeholder">' + item.emoji + '</div>';
+      }
     }
 
     function resetToDefault(key) {
-      var item = DEFAULT_IMAGES[key];
+      var item = ALL_CONFIG[key];
       if (!item) return;
       var input = document.getElementById('input-' + key);
-      var img = document.getElementById('preview-' + key);
-      if (input) input.value = item.defaultSrc;
-      if (img) img.src = item.defaultSrc;
+      if (input) input.value = item.defaultSrc || '';
+      updatePreview(key, item.defaultSrc || '');
     }
 
     function uploadImageFile(key, inputEl) {
       if (!inputEl || !inputEl.files || inputEl.files.length === 0) return;
       var file = inputEl.files[0];
       var input = document.getElementById('input-' + key);
-      var img = document.getElementById('preview-' + key);
+      var box = document.getElementById('box-' + key);
 
       var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || 'dtsmry84';
       var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || 'shivi_party_snaps';
@@ -491,38 +559,38 @@
       formData.append('file', file);
       formData.append('upload_preset', uploadPreset);
       if (apiKey) formData.append('api_key', apiKey);
-      formData.append('folder', 'ShiviSiteAssets');
+      formData.append('folder', 'ShiviFamilyTree');
 
-      if (img) img.style.opacity = '0.5';
+      if (box) box.style.opacity = '0.5';
 
       var xhr = new XMLHttpRequest();
       xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
       xhr.onload = function() {
-        if (img) img.style.opacity = '1';
+        if (box) box.style.opacity = '1';
         if (xhr.status === 200) {
           try {
             var res = JSON.parse(xhr.responseText);
             var url = res.secure_url || res.url;
             if (input) input.value = url;
-            if (img) img.src = url;
+            updatePreview(key, url);
             return;
           } catch(e) {}
         }
 
-        // Local Data URL fallback if network upload fails
+        // Local Data URL fallback if network fails
         var reader = new FileReader();
         reader.onload = function(e) {
           if (input) input.value = e.target.result;
-          if (img) img.src = e.target.result;
+          updatePreview(key, e.target.result);
         };
         reader.readAsDataURL(file);
       };
       xhr.onerror = function() {
-        if (img) img.style.opacity = '1';
+        if (box) box.style.opacity = '1';
         var reader = new FileReader();
         reader.onload = function(e) {
           if (input) input.value = e.target.result;
-          if (img) img.src = e.target.result;
+          updatePreview(key, e.target.result);
         };
         reader.readAsDataURL(file);
       };
@@ -531,7 +599,7 @@
 
     function saveAllImageOverrides() {
       var overrides = {};
-      Object.keys(DEFAULT_IMAGES).forEach(function(key) {
+      Object.keys(ALL_CONFIG).forEach(function(key) {
         var input = document.getElementById('input-' + key);
         if (input && input.value) {
           overrides[key] = input.value.trim();
@@ -549,8 +617,8 @@
           .catch(function() {});
       }
 
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      alert('🎉 Success! All Family Tree and Website image changes have been saved!');
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      alert('🎉 Success! All Family Member photos and Website Image changes have been saved!');
     }
 
     // Initialize Auth check

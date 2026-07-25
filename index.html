@@ -1704,70 +1704,52 @@
         overrides = JSON.parse(localStorage.getItem('shivi_img_overrides') || '{}');
       } catch(e) {}
 
+      var KEY_TO_NAME_MAP = {
+        'shivi_main': 'Navisha Swami',
+        'papa': 'Papa',
+        'mumma': 'Mumma',
+        'dada': 'Dada',
+        'dadi': 'Dadi',
+        'nana': 'Nana',
+        'nani': 'Nani',
+        'bade_papa_1': 'Bade Papa 1',
+        'badi_mami_1': 'Badi Mummy 1',
+        'bade_papa_2': 'Bade Papa 2',
+        'badi_mami_2': 'Badi Mummy 2',
+        'bade_papa_3': 'Bade Papa 3',
+        'badi_mami_3': 'Badi Mummy 3',
+        'bua_memorial': 'Bhua 1',
+        'phuphaji_1': 'Phuphaji 1',
+        'bua_2': 'Bhua 2',
+        'phuphaji_2': 'Phuphaji 2',
+        'mama_1': 'Mama 1',
+        'mami_1': 'Mami 1',
+        'mama_2': 'Mama 2',
+        'mami_2': 'Mami 2',
+        'maasi': 'Maasi',
+        'maasaji': 'Maasaji',
+        'didi_1': 'Didi 1',
+        'didi_2': 'Didi 2',
+        'nephew_1': 'Nephew 1'
+      };
+
+      for (var b = 1; b <= 11; b++) {
+        KEY_TO_NAME_MAP['bhaiya_' + b] = 'Bhaiya ' + b;
+      }
+
       function applyOverrides(map) {
         if (!map) return;
-        
+
+        // Backgrounds & Badges
         if (map['mobile_bg']) {
           var mobileBg = document.getElementById('mobile-bg-img');
           if (mobileBg) mobileBg.src = map['mobile_bg'];
         }
-
-        if (map['dada']) {
-          document.querySelectorAll('.ft-card[data-role="Dada"]').forEach(function(card) {
-            card.setAttribute('data-img', map['dada']);
-            var img = card.querySelector('img.ft-circle__real-img');
-            if (img) img.src = map['dada'];
+        if (map['shivi_cutout']) {
+          document.querySelectorAll('.shivi-cutout-img').forEach(function(img) {
+            img.src = map['shivi_cutout'];
           });
         }
-
-        if (map['dadi']) {
-          document.querySelectorAll('.ft-card[data-role="Dadi"]').forEach(function(card) {
-            card.setAttribute('data-img', map['dadi']);
-            var img = card.querySelector('img.ft-circle__real-img');
-            if (img) img.src = map['dadi'];
-          });
-        }
-
-        if (map['bade_papa']) {
-          document.querySelectorAll('.ft-card[data-role="Bade Papa 1"]').forEach(function(card) {
-            card.setAttribute('data-img', map['bade_papa']);
-            var img = card.querySelector('img.ft-circle__real-img');
-            if (img) img.src = map['bade_papa'];
-          });
-        }
-
-        if (map['badi_mami']) {
-          document.querySelectorAll('.ft-card[data-role="Badi Mummy 1"]').forEach(function(card) {
-            card.setAttribute('data-img', map['badi_mami']);
-            var img = card.querySelector('img.ft-circle__real-img');
-            if (img) img.src = map['badi_mami'];
-          });
-        }
-
-        if (map['bua_memorial']) {
-          document.querySelectorAll('.ft-card[data-role="Bhua 1 🕊️"]').forEach(function(card) {
-            card.setAttribute('data-img', map['bua_memorial']);
-            var img = card.querySelector('img.ft-circle__real-img');
-            if (img) img.src = map['bua_memorial'];
-          });
-          document.querySelectorAll('.memorial-card').forEach(function(card) {
-            card.setAttribute('data-img', map['bua_memorial']);
-            var img = card.querySelector('img.memorial-card__real-img');
-            if (img) img.src = map['bua_memorial'];
-          });
-        }
-
-        if (map['shivi_main']) {
-          document.querySelectorAll('.ft-card[data-role="Shivi 🦄"]').forEach(function(card) {
-            card.setAttribute('data-img', map['shivi_main']);
-            var img = card.querySelector('img.ft-circle__real-img');
-            if (img) img.src = map['shivi_main'];
-          });
-          document.querySelectorAll('.happy-sticker-img').forEach(function(img) {
-            img.src = map['shivi_main'];
-          });
-        }
-
         if (map['shivi_first_day']) {
           document.querySelectorAll('.memory-card[data-img*="shivi_first_day"]').forEach(function(card) {
             card.setAttribute('data-img', map['shivi_first_day']);
@@ -1775,12 +1757,44 @@
             if (img) img.src = map['shivi_first_day'];
           });
         }
-
-        if (map['shivi_cutout']) {
-          document.querySelectorAll('.shivi-cutout-img').forEach(function(img) {
-            img.src = map['shivi_cutout'];
+        if (map['shivi_lollipop']) {
+          document.querySelectorAll('.memory-card[data-img*="shivi_lollipop"]').forEach(function(card) {
+            card.setAttribute('data-img', map['shivi_lollipop']);
+            var img = card.querySelector('img.memory-card__img');
+            if (img) img.src = map['shivi_lollipop'];
           });
         }
+
+        // Family Tree Member Cards
+        Object.keys(KEY_TO_NAME_MAP).forEach(function(key) {
+          var targetName = KEY_TO_NAME_MAP[key];
+          var newUrl = map[key];
+          if (!newUrl) return;
+
+          document.querySelectorAll('.ft-card[data-name="' + targetName + '"]').forEach(function(card) {
+            card.setAttribute('data-img', newUrl);
+            var imgBox = card.querySelector('.ft-circle__img-box');
+            if (imgBox) {
+              imgBox.innerHTML = '<img src="' + newUrl + '" alt="' + targetName + '" class="ft-circle__real-img" />';
+            }
+          });
+
+          // Special handlers for Bhua Memorial card in memorial section
+          if (key === 'bua_memorial') {
+            document.querySelectorAll('.memorial-card').forEach(function(card) {
+              card.setAttribute('data-img', newUrl);
+              var img = card.querySelector('img.memorial-card__real-img');
+              if (img) img.src = newUrl;
+            });
+          }
+
+          // Special handlers for Shivi sticker
+          if (key === 'shivi_main') {
+            document.querySelectorAll('.happy-sticker-img').forEach(function(img) {
+              img.src = newUrl;
+            });
+          }
+        });
       }
 
       applyOverrides(overrides);
