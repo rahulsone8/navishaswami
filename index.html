@@ -1125,6 +1125,19 @@
     }
 
     function savePartyPhotoRecord(photoObj, callback) {
+      // 1. Save to LocalStorage immediately
+      saveToLocalStorageFallback(photoObj);
+
+      // 2. Save to IndexedDB
+      if (partyDB) {
+        try {
+          var tx = partyDB.transaction(['albums'], 'readwrite');
+          var store = tx.objectStore('albums');
+          store.put(photoObj);
+        } catch(e) {}
+      }
+
+      // 3. Save to Supabase async if initialized
       if (supabaseClient) {
         supabaseClient
           .from('party_photos')
@@ -1137,34 +1150,20 @@
           });
       }
 
-      if (partyDB) {
-        try {
-          var tx = partyDB.transaction(['albums'], 'readwrite');
-          var store = tx.objectStore('albums');
-          store.put(photoObj);
-          tx.oncomplete = function() {
-            saveToLocalStorageFallback(photoObj);
-            if (callback) callback();
-          };
-          tx.onerror = function() {
-            saveToLocalStorageFallback(photoObj);
-            if (callback) callback();
-          };
-          return;
-        } catch(e) {
-          saveToLocalStorageFallback(photoObj);
-        }
-      } else {
-        saveToLocalStorageFallback(photoObj);
-      }
       if (callback) callback();
     }
 
     function saveToLocalStorageFallback(photoObj) {
       try {
         var albums = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]');
-        albums.push(photoObj);
-        localStorage.setItem('shivi_photo_albums', JSON.stringify(albums));
+        var exists = false;
+        for (var i = 0; i < albums.length; i++) {
+          if (albums[i].id === photoObj.id) { exists = true; break; }
+        }
+        if (!exists) {
+          albums.push(photoObj);
+          localStorage.setItem('shivi_photo_albums', JSON.stringify(albums));
+        }
       } catch(e) {
         console.warn('LocalStorage limit:', e);
       }
@@ -1172,6 +1171,9 @@
 
     function fetchAllPartyPhotos(callback) {
       function processPhotosList(remotePhotos) {
+        var localPhotos = [];
+        try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
+
         if (partyDB) {
           try {
             var tx = partyDB.transaction(['albums'], 'readonly');
@@ -1179,9 +1181,6 @@
             var req = store.getAll();
             req.onsuccess = function() {
               var dbPhotos = req.result || [];
-              var localPhotos = [];
-              try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
-
               var combined = (remotePhotos || []).concat(dbPhotos).concat(localPhotos);
               var map = {};
               var unique = [];
@@ -1194,8 +1193,6 @@
               callback(unique);
             };
             req.onerror = function() {
-              var localPhotos = [];
-              try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
               var combined = (remotePhotos || []).concat(localPhotos);
               var map = {};
               var unique = [];
@@ -1210,8 +1207,7 @@
             return;
           } catch(e) {}
         }
-        var localPhotos = [];
-        try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
+
         var combined = (remotePhotos || []).concat(localPhotos);
         var map = {};
         var unique = [];
@@ -1230,7 +1226,7 @@
           .select('*')
           .order('created_at', { ascending: false })
           .then(function(res) {
-            if (res.data && !res.error) {
+            if (res.data && !res.error && res.data.length > 0) {
               processPhotosList(res.data);
             } else {
               processPhotosList([]);
@@ -1242,6 +1238,8 @@
       } else {
         processPhotosList([]);
       }
+    }
+
     window.handlePartyFileSelect = function(inputEl) {
       var t = document.getElementById('file-chosen-text');
       if (!t || !inputEl) return;
@@ -1420,6 +1418,12 @@
           if (progressBar) progressBar.style.width = '100%';
 
           if (fileInput) fileInput.value = '';
+          var dropzoneText = document.getElementById('file-chosen-text');
+          if (dropzoneText) {
+            dropzoneText.textContent = 'Choose Photos or Drag & Drop';
+            dropzoneText.style.fontWeight = '';
+            dropzoneText.style.color = '';
+          }
 
           if (typeof launchConfetti === 'function') {
             launchConfetti(window.innerWidth / 2, window.innerHeight * 0.4);
