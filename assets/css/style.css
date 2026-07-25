@@ -465,34 +465,42 @@ em { font-style: italic; }
 }
 
 .shivi-inline-photo {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   background: transparent;
   padding: 0;
-  margin: 0;
-  width: fit-content;
-  height: fit-content;
-  line-height: 0; /* removes inline gap below img */
+  margin: 0.5rem auto;
+  width: 100%;
+  max-width: 860px;
+  line-height: 0;
   font-size: 0;
 }
 
 .shivi-cutout-img {
-  height: clamp(140px, 30vw, 290px);
-  width: auto;
-  max-width: min(960px, 96vw);
+  width: 96vw;
+  max-width: 820px;
+  height: auto;
+  max-height: 310px;
+  min-height: 95px;
   display: block;
-  margin: 0.3rem 0;
-  /* multiply blends letter-shape gaps with the white glassmorphism card behind them,
-     making the card background invisible through the transparent letter gaps */
+  margin: 0 auto;
+  object-fit: contain;
   mix-blend-mode: multiply;
-  filter: drop-shadow(0 12px 30px rgba(91, 58, 102, 0.28));
-  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 14px 35px rgba(91, 58, 102, 0.32)) drop-shadow(0 4px 14px rgba(240, 185, 61, 0.22));
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s;
+  animation: shiviNameFloat 4s ease-in-out infinite alternate;
+}
+
+@keyframes shiviNameFloat {
+  0% { transform: translateY(0) scale(1); }
+  100% { transform: translateY(-6px) scale(1.015); }
 }
 
 .shivi-cutout-img:hover {
-  transform: scale(1.04) rotate(-1deg);
+  transform: translateY(-8px) scale(1.03) rotate(-0.5deg);
+  filter: drop-shadow(0 18px 45px rgba(91, 58, 102, 0.4)) drop-shadow(0 6px 20px rgba(240, 185, 61, 0.35));
 }
 
 .hero__unicorn-emoji {
