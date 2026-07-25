@@ -797,7 +797,7 @@
         Made with all the love in the world for our little <em>Shivi</em> 🦄
       </p>
       <p class="footer__sub">
-        © The Swami Family · Navisha's corner of the internet
+        © The Swami Family · Navisha's corner of the internet · <a href="admin.html" style="color: var(--plum); opacity: 0.75; text-decoration: none; font-weight: 700;" target="_blank">🔐 Admin</a>
       </p>
     </div>
   </footer>
@@ -1669,15 +1669,117 @@
       });
     };
 
-    window.showAllAlbumsView = function() {
-      window.renderPartyAlbums();
+    window.applySiteImageOverrides = function() {
+      var overrides = {};
+      try {
+        overrides = JSON.parse(localStorage.getItem('shivi_img_overrides') || '{}');
+      } catch(e) {}
+
+      function applyOverrides(map) {
+        if (!map) return;
+        
+        if (map['mobile_bg']) {
+          var mobileBg = document.getElementById('mobile-bg-img');
+          if (mobileBg) mobileBg.src = map['mobile_bg'];
+        }
+
+        if (map['dada']) {
+          document.querySelectorAll('.ft-card[data-role="Dada"]').forEach(function(card) {
+            card.setAttribute('data-img', map['dada']);
+            var img = card.querySelector('img.ft-circle__real-img');
+            if (img) img.src = map['dada'];
+          });
+        }
+
+        if (map['dadi']) {
+          document.querySelectorAll('.ft-card[data-role="Dadi"]').forEach(function(card) {
+            card.setAttribute('data-img', map['dadi']);
+            var img = card.querySelector('img.ft-circle__real-img');
+            if (img) img.src = map['dadi'];
+          });
+        }
+
+        if (map['bade_papa']) {
+          document.querySelectorAll('.ft-card[data-role="Bade Papa 1"]').forEach(function(card) {
+            card.setAttribute('data-img', map['bade_papa']);
+            var img = card.querySelector('img.ft-circle__real-img');
+            if (img) img.src = map['bade_papa'];
+          });
+        }
+
+        if (map['badi_mami']) {
+          document.querySelectorAll('.ft-card[data-role="Badi Mummy 1"]').forEach(function(card) {
+            card.setAttribute('data-img', map['badi_mami']);
+            var img = card.querySelector('img.ft-circle__real-img');
+            if (img) img.src = map['badi_mami'];
+          });
+        }
+
+        if (map['bua_memorial']) {
+          document.querySelectorAll('.ft-card[data-role="Bhua 1 🕊️"]').forEach(function(card) {
+            card.setAttribute('data-img', map['bua_memorial']);
+            var img = card.querySelector('img.ft-circle__real-img');
+            if (img) img.src = map['bua_memorial'];
+          });
+          document.querySelectorAll('.memorial-card').forEach(function(card) {
+            card.setAttribute('data-img', map['bua_memorial']);
+            var img = card.querySelector('img.memorial-card__real-img');
+            if (img) img.src = map['bua_memorial'];
+          });
+        }
+
+        if (map['shivi_main']) {
+          document.querySelectorAll('.ft-card[data-role="Shivi 🦄"]').forEach(function(card) {
+            card.setAttribute('data-img', map['shivi_main']);
+            var img = card.querySelector('img.ft-circle__real-img');
+            if (img) img.src = map['shivi_main'];
+          });
+          document.querySelectorAll('.happy-sticker-img').forEach(function(img) {
+            img.src = map['shivi_main'];
+          });
+        }
+
+        if (map['shivi_first_day']) {
+          document.querySelectorAll('.memory-card[data-img*="shivi_first_day"]').forEach(function(card) {
+            card.setAttribute('data-img', map['shivi_first_day']);
+            var img = card.querySelector('img.memory-card__img');
+            if (img) img.src = map['shivi_first_day'];
+          });
+        }
+
+        if (map['shivi_cutout']) {
+          document.querySelectorAll('.shivi-cutout-img').forEach(function(img) {
+            img.src = map['shivi_cutout'];
+          });
+        }
+      }
+
+      applyOverrides(overrides);
+
+      if (window.supabaseClient) {
+        window.supabaseClient
+          .from('site_settings')
+          .select('*')
+          .eq('id', 'img_overrides')
+          .then(function(res) {
+            if (res.data && res.data[0] && res.data[0].value) {
+              try {
+                var remoteOverrides = JSON.parse(res.data[0].value);
+                applyOverrides(remoteOverrides);
+                localStorage.setItem('shivi_img_overrides', res.data[0].value);
+              } catch(e) {}
+            }
+          });
+      }
     };
 
     document.addEventListener('DOMContentLoaded', function() {
       window.loadWishes();
       window.renderPartyAlbums();
+      window.applySiteImageOverrides();
     });
     window.loadWishes();
+    window.applySiteImageOverrides();
     window.renderPartyAlbums();
   </script>
 </body>

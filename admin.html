@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Shivi's World</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Quicksand:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="assets/js/config.js?v=20260725_v17"></script>
+  <script src="/api/config.js" onerror="console.log('Static config fallback')"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --plum: #5B3A66;
+      --plum-light: #7A5387;
+      --gold: #F0B93D;
+      --bg: #FAF5FF;
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --font-main: 'Quicksand', sans-serif;
+      --font-head: 'Fraunces', serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-main);
+      background: linear-gradient(135deg, #FAF5FF 0%, #F4EAFF 50%, #FAF0F8 100%);
+      color: var(--plum);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Auth Screen */
+    .auth-container {
+      margin: auto;
+      width: 100%;
+      max-width: 440px;
+      padding: 2.5rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border-radius: 28px;
+      border: 1.5px solid var(--gold);
+      box-shadow: 0 20px 60px rgba(91, 58, 102, 0.15);
+      text-align: center;
+    }
+
+    .auth-title {
+      font-family: var(--font-head);
+      font-style: italic;
+      font-size: 2rem;
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-subtitle {
+      font-size: 0.9rem;
+      color: var(--plum-light);
+      margin-bottom: 1.8rem;
+      font-weight: 600;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 1.2rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 14px;
+      border: 1.5px solid rgba(190, 160, 220, 0.5);
+      background: #fff;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--plum);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--plum);
+      box-shadow: 0 0 0 4px rgba(91, 58, 102, 0.12);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, var(--plum), #4A2B56);
+      color: #fff;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(91, 58, 102, 0.25);
+      transition: all 0.25s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(91, 58, 102, 0.35);
+    }
+
+    .auth-error {
+      color: #EF4444;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    /* Admin Dashboard Panel */
+    .admin-dashboard {
+      display: none;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .admin-title {
+      font-family: var(--font-head);
+      font-style: italic;
+      font-size: 2.2rem;
+      margin: 0;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .btn-secondary {
+      padding: 0.55rem 1.2rem;
+      border-radius: 50px;
+      border: 1.5px solid var(--gold);
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--plum);
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--plum);
+      color: #fff;
+      border-color: var(--plum);
+    }
+
+    .section-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      border: 1.5px solid rgba(240, 185, 61, 0.5);
+      padding: 1.8rem;
+      margin-bottom: 2.2rem;
+      box-shadow: 0 12px 40px rgba(91, 58, 102, 0.08);
+    }
+
+    .section-card-title {
+      font-family: var(--font-head);
+      font-style: italic;
+      font-size: 1.4rem;
+      margin-top: 0;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .image-item-card {
+      background: rgba(250, 245, 255, 0.7);
+      border: 1.5px solid rgba(190, 160, 220, 0.4);
+      border-radius: 18px;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .image-preview-box {
+      width: 100%;
+      height: 160px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #F3E8FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      position: relative;
+    }
+
+    .image-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-title {
+      font-weight: 800;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .image-subtitle {
+      font-size: 0.78rem;
+      color: var(--plum-light);
+      font-weight: 600;
+    }
+
+    .file-upload-btn-wrap {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .btn-small-upload {
+      padding: 0.45rem 0.9rem;
+      border-radius: 50px;
+      border: 1px solid var(--plum);
+      background: rgba(91, 58, 102, 0.08);
+      color: var(--plum);
+      font-weight: 800;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-small-upload:hover {
+      background: var(--plum);
+      color: #fff;
+    }
+
+    .save-bar {
+      position: sticky;
+      bottom: 1.5rem;
+      background: rgba(91, 58, 102, 0.92);
+      backdrop-filter: blur(16px);
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 15px 40px rgba(91, 58, 102, 0.4);
+      border: 1.5px solid var(--gold);
+      margin-top: 2rem;
+      z-index: 100;
+    }
+
+    .save-bar-text {
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .btn-save {
+      padding: 0.65rem 1.8rem;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .btn-save:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.55);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AUTHENTICATION SCREEN -->
+  <div class="auth-container" id="auth-screen">
+    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔐</div>
+    <h2 class="auth-title">Admin Login</h2>
+    <p class="auth-subtitle">Manage Family Tree photos &amp; website images</p>
+
+    <form onsubmit="handleLoginSubmit(event)">
+      <div class="form-group">
+        <label class="form-label" for="admin-username">Username</label>
+        <input type="text" id="admin-username" class="form-input" placeholder="Enter username" required autofocus />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="admin-password">Password</label>
+        <input type="password" id="admin-password" class="form-input" placeholder="Enter password" required />
+      </div>
+
+      <div class="auth-error" id="auth-error">Incorrect username or password!</div>
+
+      <button type="submit" class="btn-primary">Unlock Dashboard 🔑</button>
+    </form>
+  </div>
+
+  <!-- ADMIN DASHBOARD PANEL -->
+  <div class="admin-dashboard" id="admin-dashboard">
+    <div class="admin-header">
+      <div>
+        <h1 class="admin-title">👑 Shivi's Site Admin Panel</h1>
+        <p style="margin: 0.2rem 0 0; color: var(--plum-light); font-weight: 600;">Update Family Tree member photos &amp; website background images</p>
+      </div>
+
+      <div class="header-actions">
+        <a href="index.html" class="btn-secondary" target="_blank">🌐 View Website</a>
+        <button type="button" class="btn-secondary" onclick="handleLogout()">🚪 Logout</button>
+      </div>
+    </div>
+
+    <!-- CATEGORY 1: FAMILY TREE MEMBERS -->
+    <div class="section-card">
+      <h2 class="section-card-title">👨‍👩‍👧‍👦 Shivi's Family Tree Members</h2>
+      <div class="image-grid" id="family-tree-grid">
+        <!-- Dynamically rendered family tree fields -->
+      </div>
+    </div>
+
+    <!-- CATEGORY 2: WEBSITE BACKGROUNDS & HERO IMAGES -->
+    <div class="section-card">
+      <h2 class="section-card-title">🖼️ Website Backgrounds &amp; Milestones</h2>
+      <div class="image-grid" id="site-images-grid">
+        <!-- Dynamically rendered site image fields -->
+      </div>
+    </div>
+
+    <!-- STICKY SAVE BAR -->
+    <div class="save-bar">
+      <span class="save-bar-text">✨ Update photos &amp; click save to apply across the whole website!</span>
+      <button type="button" class="btn-save" onclick="saveAllImageOverrides()">💾 Save All Changes</button>
+    </div>
+  </div>
+
+  <script>
+    // DEFAULT CONFIG & KEYS
+    var DEFAULT_IMAGES = {
+      // Family Tree Members
+      'dada': { title: '👴🏻 Dada', sub: 'Paternal Grandfather', defaultSrc: 'assets/images/shivi_dada.jpg' },
+      'dadi': { title: '👵🏻 Dadi', sub: 'Paternal Grandmother', defaultSrc: 'assets/images/shivi_dadi.png' },
+      'bade_papa': { title: '👨🏻 Bade Papa 1', sub: 'Elder Paternal Uncle', defaultSrc: 'assets/images/shivi_bade_papa.jpg' },
+      'badi_mami': { title: '👩🏻 Badi Mummy 1', sub: 'Elder Paternal Aunt', defaultSrc: 'assets/images/shivi_badi_mami.jpg' },
+      'bua_memorial': { title: '🌹 Bhua 1 (In Loving Memory 🕊️)', sub: 'Paternal Aunt Memorial', defaultSrc: 'assets/images/shivi_bua_memorial.jpg' },
+      'shivi_main': { title: '🦄 Navisha Shivi (Birthday Princess)', sub: 'Star of the Show', defaultSrc: 'assets/images/shivi_lollipop.jpg' },
+
+      // Site Backgrounds & Main Photos
+      'family_bg': { title: '👨‍👩‍👧 Hero Desktop Background', sub: 'Main Desktop Header Background', defaultSrc: 'assets/images/family_bg.jpg' },
+      'mobile_bg': { title: '📱 Mobile Background', sub: 'Dedicated Mobile Background Image', defaultSrc: 'assets/images/mobile_bg.jpg' },
+      'shivi_first_day': { title: '🌸 Milestone 1: First Day', sub: 'First Day in This World Memory', defaultSrc: 'assets/images/shivi_first_day.jpg' },
+      'shivi_cutout': { title: '✂️ Shivi Title Cutout Image', sub: 'Inline Header Cutout Badge', defaultSrc: 'assets/images/shivi_cutout.png' }
+    };
+
+    // AUTHENTICATION LOGIC
+    function checkAuth() {
+      if (sessionStorage.getItem('shivi_admin_auth') === 'true') {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('admin-dashboard').style.display = 'block';
+        initDashboard();
+      } else {
+        document.getElementById('auth-screen').style.display = 'block';
+        document.getElementById('admin-dashboard').style.display = 'none';
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      var u = document.getElementById('admin-username').value.trim();
+      var p = document.getElementById('admin-password').value.trim();
+      var err = document.getElementById('auth-error');
+
+      if (u === 'swaminavisha' && p === '7230967198') {
+        sessionStorage.setItem('shivi_admin_auth', 'true');
+        if (err) err.style.display = 'none';
+        checkAuth();
+      } else {
+        if (err) err.style.display = 'block';
+      }
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('shivi_admin_auth');
+      checkAuth();
+    }
+
+    // DASHBOARD INITIALIZATION
+    function initDashboard() {
+      var ftGrid = document.getElementById('family-tree-grid');
+      var siteGrid = document.getElementById('site-images-grid');
+
+      if (!ftGrid || !siteGrid) return;
+      ftGrid.innerHTML = '';
+      siteGrid.innerHTML = '';
+
+      var saved = JSON.parse(localStorage.getItem('shivi_img_overrides') || '{}');
+
+      Object.keys(DEFAULT_IMAGES).forEach(function(key) {
+        var item = DEFAULT_IMAGES[key];
+        var currentSrc = saved[key] || item.defaultSrc;
+
+        var card = document.createElement('div');
+        card.className = 'image-item-card';
+
+        var html = 
+          '<h4 class="image-title">' + item.title + '</h4>' +
+          '<span class="image-subtitle">' + item.sub + '</span>' +
+          '<div class="image-preview-box">' +
+            '<img src="' + currentSrc + '" id="preview-' + key + '" alt="' + item.title + '" />' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom:0.5rem;">' +
+            '<label class="form-label" style="font-size:0.75rem;">Image URL</label>' +
+            '<input type="text" id="input-' + key + '" value="' + currentSrc + '" class="form-input" style="font-size:0.82rem;" onchange="updatePreview(\'' + key + '\', this.value)" />' +
+          '</div>' +
+          '<div class="file-upload-btn-wrap">' +
+            '<input type="file" id="file-' + key + '" accept="image/*" style="display:none;" onchange="uploadImageFile(\'' + key + '\', this)" />' +
+            '<button type="button" class="btn-small-upload" onclick="document.getElementById(\'file-' + key + '\').click()">📸 Upload New Photo</button>' +
+            '<button type="button" class="btn-small-upload" style="border-color:#ccc; color:#777;" onclick="resetToDefault(\'' + key + '\')">↺ Reset</button>' +
+          '</div>';
+
+        card.innerHTML = html;
+
+        if (['dada', 'dadi', 'bade_papa', 'badi_mami', 'bua_memorial', 'shivi_main'].indexOf(key) !== -1) {
+          ftGrid.appendChild(card);
+        } else {
+          siteGrid.appendChild(card);
+        }
+      });
+    }
+
+    function updatePreview(key, url) {
+      var img = document.getElementById('preview-' + key);
+      if (img && url) img.src = url;
+    }
+
+    function resetToDefault(key) {
+      var item = DEFAULT_IMAGES[key];
+      if (!item) return;
+      var input = document.getElementById('input-' + key);
+      var img = document.getElementById('preview-' + key);
+      if (input) input.value = item.defaultSrc;
+      if (img) img.src = item.defaultSrc;
+    }
+
+    function uploadImageFile(key, inputEl) {
+      if (!inputEl || !inputEl.files || inputEl.files.length === 0) return;
+      var file = inputEl.files[0];
+      var input = document.getElementById('input-' + key);
+      var img = document.getElementById('preview-' + key);
+
+      var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || 'dtsmry84';
+      var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || 'shivi_party_snaps';
+      var apiKey = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_API_KEY) || '559857846832466';
+
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+      if (apiKey) formData.append('api_key', apiKey);
+      formData.append('folder', 'ShiviSiteAssets');
+
+      if (img) img.style.opacity = '0.5';
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
+      xhr.onload = function() {
+        if (img) img.style.opacity = '1';
+        if (xhr.status === 200) {
+          try {
+            var res = JSON.parse(xhr.responseText);
+            var url = res.secure_url || res.url;
+            if (input) input.value = url;
+            if (img) img.src = url;
+            return;
+          } catch(e) {}
+        }
+
+        // Local Data URL fallback if network upload fails
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          if (input) input.value = e.target.result;
+          if (img) img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      };
+      xhr.onerror = function() {
+        if (img) img.style.opacity = '1';
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          if (input) input.value = e.target.result;
+          if (img) img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      };
+      xhr.send(formData);
+    }
+
+    function saveAllImageOverrides() {
+      var overrides = {};
+      Object.keys(DEFAULT_IMAGES).forEach(function(key) {
+        var input = document.getElementById('input-' + key);
+        if (input && input.value) {
+          overrides[key] = input.value.trim();
+        }
+      });
+
+      localStorage.setItem('shivi_img_overrides', JSON.stringify(overrides));
+
+      // Sync to Supabase site_settings if available
+      if (window.supabaseClient) {
+        window.supabaseClient
+          .from('site_settings')
+          .upsert([{ id: 'img_overrides', value: JSON.stringify(overrides) }])
+          .then(function() {})
+          .catch(function() {});
+      }
+
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      alert('🎉 Success! All Family Tree and Website image changes have been saved!');
+    }
+
+    // Initialize Auth check
+    checkAuth();
+  </script>
+</body>
+</html>
