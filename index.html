@@ -2868,11 +2868,15 @@
       'dock-party-snaps-btn': function() {
         closeAllActiveModals();
         setTimeout(function() {
-          var partyModal = document.getElementById('party-gallery-modal');
-          if (partyModal) {
-            partyModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            if (window.renderPartyAlbums) window.renderPartyAlbums();
+          if (typeof window.openPartyModal === 'function') {
+            window.openPartyModal();
+          } else {
+            var partyModal = document.getElementById('party-gallery-modal');
+            if (partyModal) {
+              partyModal.classList.add('active');
+              document.body.style.overflow = 'hidden';
+              if (window.renderPartyAlbums) window.renderPartyAlbums();
+            }
           }
         }, 10);
       },

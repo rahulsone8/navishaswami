@@ -915,6 +915,7 @@
       }
     }
   }
+  window.openPartyModal = openPartyModal;
 
   function closePartyModal() {
     if (partyModal) {
@@ -922,6 +923,7 @@
       document.body.style.overflow = '';
     }
   }
+  window.closePartyModal = closePartyModal;
 
   ['nav-gallery-btn', 'nav-party-snaps-btn', 'mobile-gallery-btn', 'mobile-party-snaps-btn'].forEach(function(id) {
     var btn = document.getElementById(id);
