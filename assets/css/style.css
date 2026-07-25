@@ -473,13 +473,13 @@ em { font-style: italic; }
 }
 
 .shivi-cutout-img {
-  height: clamp(100px, 20vw, 180px);
+  height: clamp(180px, 34vw, 310px);
   width: auto;
-  max-width: min(920px, 94vw);
+  max-width: min(980px, 94vw);
   display: block;
-  margin: 0 auto;
+  margin: 0.6rem auto 1rem;
   mix-blend-mode: multiply;
-  filter: drop-shadow(0 10px 25px rgba(91, 58, 102, 0.25));
+  filter: drop-shadow(0 14px 32px rgba(91, 58, 102, 0.3));
   transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
