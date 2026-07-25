@@ -1039,7 +1039,21 @@
         var targetPos = target.getBoundingClientRect().top + window.scrollY - navHeight;
         window.scrollTo({ top: targetPos, behavior: 'smooth' });
       }
-    });
+  // ── AUTOMATIC FAMILY TREE IMAGE BINDING ──
+  document.querySelectorAll('.ft-card[data-img]').forEach(function(card) {
+    var dataImg = card.getAttribute('data-img');
+    if (!dataImg) return;
+
+    var imgBox = card.querySelector('.ft-circle__img-box');
+    if (!imgBox) return;
+
+    if (imgBox.querySelector('img')) return;
+
+    var img = new Image();
+    img.onload = function() {
+      imgBox.innerHTML = '<img src="' + dataImg + '" alt="' + (card.getAttribute('data-name') || '') + '" class="ft-circle__real-img" />';
+    };
+    img.src = dataImg;
   });
 
 })();
