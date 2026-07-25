@@ -260,34 +260,57 @@ em { font-style: italic; }
     transform: scale(0.92);
   }
 
-  /* Floating Bottom Instagram Ultra-Refractive Liquid Glass Pro Max Dock */
+  /* ═══════════════════════════════════════════════════════════
+     APPLE VISIONOS HYPER-REALISTIC LIQUID GLASS PRO MAX DOCK
+     ═══════════════════════════════════════════════════════════ */
   .mobile-dock {
     display: flex;
     position: fixed;
     bottom: 18px;
     left: 50%;
     transform: translate(-50%, 0);
-    width: min(385px, calc(100% - 24px));
-    height: 56px;
+    width: min(390px, calc(100% - 24px));
+    height: 58px;
     z-index: 100050;
-    /* Ultra-Refractive Dark Liquid Glass Core */
-    background: linear-gradient(135deg, rgba(28, 28, 30, 0.88) 0%, rgba(14, 14, 16, 0.94) 100%);
-    backdrop-filter: blur(50px) saturate(240%) brightness(1.12);
-    -webkit-backdrop-filter: blur(50px) saturate(240%) brightness(1.12);
-    /* Specular Spec Glass Edge Light */
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-top: 1px solid rgba(255, 255, 255, 0.38);
+    /* VisionOS Deep Dark Liquid Glass Core */
+    background: linear-gradient(135deg, rgba(32, 32, 36, 0.88) 0%, rgba(14, 14, 18, 0.95) 100%);
+    backdrop-filter: blur(65px) saturate(280%) contrast(108%) brightness(1.15);
+    -webkit-backdrop-filter: blur(65px) saturate(280%) contrast(108%) brightness(1.15);
+    /* Sub-pixel 3D Bevel Glass Edge Rim */
+    border: 1.2px solid rgba(255, 255, 255, 0.25);
+    border-top: 1.5px solid rgba(255, 255, 255, 0.55);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
     border-radius: 40px;
     padding: 4px 6px;
     align-items: center;
     justify-content: space-between;
-    /* Multi-Stage Ray-traced Depth Shadows */
+    /* Ray-traced Deep Physical Ambient Shadows & Inset Highlights */
     box-shadow: 
-      0 24px 65px rgba(0, 0, 0, 0.85),
-      0 8px 25px rgba(0, 0, 0, 0.45),
-      inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35),
-      inset 0 -1px 1px rgba(0, 0, 0, 0.6);
+      0 30px 80px rgba(0, 0, 0, 0.88),
+      0 10px 30px rgba(0, 0, 0, 0.55),
+      0 2px 6px rgba(0, 0, 0, 0.35),
+      inset 0 1.5px 2px rgba(255, 255, 255, 0.45),
+      inset 0 -1.5px 2px rgba(0, 0, 0, 0.7);
     transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease, visibility 0.35s ease;
+    overflow: hidden;
+  }
+
+  /* Prismatic Glass Specular Light Reflection Sweep */
+  .mobile-dock::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.18) 50%, transparent 60%);
+    pointer-events: none;
+    animation: glassShimmer 8s infinite ease-in-out;
+  }
+
+  @keyframes glassShimmer {
+    0% { transform: translateX(0); }
+    30%, 100% { transform: translateX(100%); }
   }
 
   /* Auto-minimize when scrolling down */
@@ -309,18 +332,25 @@ em { font-style: italic; }
 
   .mobile-dock__item {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 0.12rem;
     text-decoration: none;
     color: #ffffff;
-    opacity: 0.82;
-    transition: all 0.22s ease;
+    opacity: 0.78;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s, background 0.25s, box-shadow 0.25s;
     flex: 1;
     height: 100%;
-    border-radius: 26px;
+    border-radius: 28px;
     position: relative;
     border: none;
     background: transparent;
+    z-index: 1;
+  }
+
+  .mobile-dock__item:active {
+    transform: scale(0.91) translateY(1px);
   }
 
   .mobile-dock__icon {
@@ -330,24 +360,42 @@ em { font-style: italic; }
     width: 24px;
     height: 24px;
     color: #ffffff;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s;
   }
 
+  .mobile-dock__label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    opacity: 0.85;
+    line-height: 1;
+    transition: opacity 0.2s, color 0.2s;
+  }
+
+  /* Active Liquid Frosted Glass Capsule */
   .mobile-dock__item.active {
     opacity: 1;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.14) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.32);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.12) 100%);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
     box-shadow: 
-      0 4px 16px rgba(0, 0, 0, 0.3),
-      inset 0 1px 1px rgba(255, 255, 255, 0.6),
-      inset 0 -1px 1px rgba(0, 0, 0, 0.3);
+      0 6px 20px rgba(0, 0, 0, 0.35),
+      inset 0 1.5px 1.5px rgba(255, 255, 255, 0.75),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.4);
   }
 
   .mobile-dock__item.active .mobile-dock__icon {
     color: #ffffff;
-    transform: scale(1.08);
+    transform: scale(1.1);
+    filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.6));
+  }
+
+  .mobile-dock__item.active .mobile-dock__label {
+    opacity: 1;
+    color: #ffffff;
+    font-weight: 800;
   }
 
   /* Red Badge Notification Counter */
