@@ -394,11 +394,21 @@ em { font-style: italic; }
   align-items: center;
   justify-content: center;
   text-align: center;
-  max-width: 820px;
+  max-width: 780px;
   width: 100%;
   margin: 0 auto;
   position: relative;
   z-index: 2;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 20px 60px rgba(91, 58, 102, 0.2),
+    0 6px 20px rgba(240, 185, 61, 0.12),
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 1);
+  border-radius: 32px;
+  padding: 2.2rem 1.8rem;
 }
 
 .hero__badge {
@@ -3746,4 +3756,86 @@ em { font-style: italic; }
 
 @media (max-width: 500px) {
   .happy-widget__badge { display: none; } /* On small screens show circle button */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PREMIUM LIQUID GLASS READABILITY & ZERO-LEAK ENGINE
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. Global High-Contrast Typography & Text Protection */
+h1, h2, h3, h4, h5, h6,
+.hero__title, .section-title, .ft-section-title,
+.about__title, .journey__title, .wishes__title,
+.memory-card__title, .wish-card__sender, .memorial-card__name,
+.family-tree__heading {
+  color: #2E123B !important;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.95), 0 1px 3px rgba(46, 18, 59, 0.18) !important;
+}
+
+p, span, label, .about__desc, .hero__tagline, .memory-card__sub, .memorial-card__quote, .family-tree__hint {
+  color: #32163F;
+}
+
+/* 2. Liquid Glass Panels for All Content Sections */
+.hero__content,
+.about__text,
+.fact-card,
+.family-tree-wrap,
+.ft-inline-info,
+.memory-card,
+.memorial-card,
+.party-upload-card,
+.party-album-folder,
+.polaroid,
+.wishes__form-card,
+.wish-card,
+.countdown__ring,
+.hero__stats,
+.hero__badge {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 
+    0 16px 45px rgba(91, 58, 102, 0.18),
+    0 4px 14px rgba(240, 185, 61, 0.15),
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 1) !important;
+}
+
+/* 3. Section Titles Liquid Glass Badges */
+.ft-section-title,
+.section-label {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(18px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(190%) !important;
+  border: 1.5px solid var(--gold) !important;
+  box-shadow: 0 6px 18px rgba(91, 58, 102, 0.14) !important;
+  color: #2E123B !important;
+  font-weight: 800 !important;
+}
+
+/* 4. Polaroids & Photo Cards Protection */
+.polaroid, .memory-card__img-wrap, .memorial-card__frame, .party-album-folder__cover {
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(91, 58, 102, 0.2);
+}
+
+.polaroid__caption, .memory-card__footer {
+  color: #2E123B !important;
+  font-weight: 800 !important;
+}
+
+/* 5. Mobile & Laptop Alignment Safety */
+@media (max-width: 768px) {
+  .hero__content {
+    padding: 1.8rem 1.2rem !important;
+    border-radius: 26px !important;
+    margin: 0 0.5rem !important;
+    width: auto !important;
+  }
+
+  .family-tree-wrap, .about__text, .wishes__form-card, .party-upload-card {
+    padding: 1.4rem 1rem !important;
+    border-radius: 22px !important;
+  }
 }
