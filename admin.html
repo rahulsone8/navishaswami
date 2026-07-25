@@ -922,20 +922,44 @@
 
       // 3. Save to Supabase Cloud Database for Phone <-> Laptop real-time sync
       if (window.supabaseClient) {
+        var overridesJson = JSON.stringify(overrides);
+        var milestonesJson = JSON.stringify(milestonesList);
+
         window.supabaseClient
           .from('site_settings')
           .upsert([
-            { id: 'img_overrides', value: JSON.stringify(overrides), updated_at: new Date().toISOString() },
-            { id: 'milestones', value: JSON.stringify(milestonesList), updated_at: new Date().toISOString() }
+            { id: 'img_overrides', value: overridesJson, updated_at: new Date().toISOString() },
+            { id: 'milestones', value: milestonesJson, updated_at: new Date().toISOString() }
           ])
-          .then(function() {
-            if (statusText) statusText.textContent = '✅ Synced to cloud! Your laptop & phone now show the updated site!';
+          .then(function(res) {
+            if (res && res.error) {
+              saveSettingsToPartyPhotosFallback(overridesJson, milestonesJson);
+            } else {
+              if (statusText) statusText.textContent = '✅ Synced to cloud! Live real-time updates active for all users!';
+            }
           })
           .catch(function(err) {
-            console.warn('Supabase save error:', err);
-            if (statusText) statusText.textContent = 'Local saved! (Cloud sync error)';
+            saveSettingsToPartyPhotosFallback(overridesJson, milestonesJson);
           });
       }
+
+    function saveSettingsToPartyPhotosFallback(overridesJson, milestonesJson) {
+      if (!window.supabaseClient) return;
+      var statusText = document.getElementById('save-status-text');
+
+      window.supabaseClient
+        .from('party_photos')
+        .insert([
+          { id: 'sys_ov_' + Date.now(), uploader: '__SYS_SITE_SETTINGS__', public_id: 'img_overrides', src: overridesJson, date: new Date().toISOString() },
+          { id: 'sys_ms_' + Date.now(), uploader: '__SYS_SITE_SETTINGS__', public_id: 'milestones', src: milestonesJson, date: new Date().toISOString() }
+        ])
+        .then(function() {
+          if (statusText) statusText.textContent = '✅ Synced to cloud! Live real-time updates active for all users!';
+        })
+        .catch(function(err) {
+          if (statusText) statusText.textContent = 'Local saved!';
+        });
+    }
 
       confetti({ particleCount: 140, spread: 85, origin: { y: 0.6 } });
       alert('🎉 Success! All Family Member photos, Milestones & Website Image changes have been saved & synced!');

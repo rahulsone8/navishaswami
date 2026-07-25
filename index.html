@@ -1243,9 +1243,9 @@
         return;
       }
 
-      function processPhotosList(remotePhotos) {
-        var localPhotos = [];
-        try { localPhotos = JSON.parse(localStorage.getItem('shivi_photo_albums') || '[]'); } catch(e) {}
+        var remoteClean = (remotePhotos || []).filter(function(p) {
+          return p && p.uploader !== '__SYS_SITE_SETTINGS__';
+        });
 
         if (partyDB) {
           try {
@@ -1254,7 +1254,7 @@
             var req = store.getAll();
             req.onsuccess = function() {
               var dbPhotos = req.result || [];
-              var combined = (remotePhotos || []).concat(dbPhotos).concat(localPhotos);
+              var combined = remoteClean.concat(dbPhotos).concat(localPhotos);
               var map = {};
               var unique = [];
               combined.forEach(function(item) {
@@ -2091,7 +2091,40 @@
                 localStorage.setItem('shivi_img_overrides', res.data[0].value);
                 if (window.applySiteImageOverrides) window.applySiteImageOverrides(remoteOverrides);
               } catch(e){}
+            } else {
+              sb.from('party_photos')
+                .select('*')
+                .eq('uploader', '__SYS_SITE_SETTINGS__')
+                .eq('public_id', 'img_overrides')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .then(function(fb) {
+                  if (fb.data && fb.data[0] && fb.data[0].src) {
+                    try {
+                      var remoteOverrides = JSON.parse(fb.data[0].src);
+                      localStorage.setItem('shivi_img_overrides', fb.data[0].src);
+                      if (window.applySiteImageOverrides) window.applySiteImageOverrides(remoteOverrides);
+                    } catch(e){}
+                  }
+                });
             }
+          })
+          .catch(function() {
+            sb.from('party_photos')
+              .select('*')
+              .eq('uploader', '__SYS_SITE_SETTINGS__')
+              .eq('public_id', 'img_overrides')
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .then(function(fb) {
+                if (fb.data && fb.data[0] && fb.data[0].src) {
+                  try {
+                    var remoteOverrides = JSON.parse(fb.data[0].src);
+                    localStorage.setItem('shivi_img_overrides', fb.data[0].src);
+                    if (window.applySiteImageOverrides) window.applySiteImageOverrides(remoteOverrides);
+                  } catch(e){}
+                }
+              });
           });
       };
 
@@ -2105,6 +2138,21 @@
                 localStorage.setItem('shivi_milestones', res.data[0].value);
                 if (window.renderDynamicMilestones) window.renderDynamicMilestones();
               } catch(e){}
+            } else {
+              sb.from('party_photos')
+                .select('*')
+                .eq('uploader', '__SYS_SITE_SETTINGS__')
+                .eq('public_id', 'milestones')
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .then(function(fb) {
+                  if (fb.data && fb.data[0] && fb.data[0].src) {
+                    try {
+                      localStorage.setItem('shivi_milestones', fb.data[0].src);
+                      if (window.renderDynamicMilestones) window.renderDynamicMilestones();
+                    } catch(e){}
+                  }
+                });
             }
           });
       };
