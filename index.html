@@ -481,19 +481,30 @@
   <!-- PARTY SNAPS & GALLERY MODAL OVERLAY (Opens on Click Only!) -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- ═══ GALLERY REELS MODAL (Instagram-style) ═══ -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
   <div id="reels-modal" role="dialog" aria-modal="true" aria-label="Shivi's Video Reels Gallery">
+
+    <!-- Cinema backdrop video layer for desktop -->
+    <div class="reels-cinema-bg" id="reels-cinema-bg">
+      <video id="reels-cinema-video" muted loop playsinline></video>
+    </div>
 
     <!-- Topbar -->
     <div class="reels-topbar">
-      <div class="reels-topbar-title"><span>🎬</span> Shivi's Reels</div>
+      <div class="reels-topbar-brand">
+        <div class="reels-topbar-logo">🦄</div>
+        <div class="reels-topbar-title">Shivi's Reels <span class="reels-topbar-badge">LIVE</span></div>
+      </div>
       <button class="reels-close-btn" id="reels-close-btn" aria-label="Close Reels">✕</button>
     </div>
 
     <!-- Loading -->
     <div class="reels-loader" id="reels-loader">
       <div class="reels-spinner"></div>
+      <p>Loading Shivi's Magical Reels... ✨</p>
     </div>
+
+    <!-- Toast Notification -->
+    <div class="reels-toast" id="reels-toast">✨ Link Copied!</div>
 
     <!-- Reel Stack -->
     <div class="reels-stack" id="reels-stack"></div>
@@ -516,9 +527,22 @@
   <div class="reel-comment-drawer" id="reel-comment-drawer">
     <div class="drawer-handle"></div>
     <div class="drawer-title">
-      <span>💬 Comments</span>
+      <span>💬 Comments &amp; Wishes</span>
       <button class="drawer-close" id="drawer-close-btn">✕</button>
     </div>
+
+    <!-- Quick Emoji Bar -->
+    <div class="drawer-emoji-bar" id="drawer-emoji-bar">
+      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('❤️')">❤️</button>
+      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('💖')">💖</button>
+      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('🎂')">🎂</button>
+      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('🥳')">🥳</button>
+      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('🤩')">🤩</button>
+      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('👏')">👏</button>
+      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('👶🏻')">👶🏻</button>
+      <button class="drawer-emoji-btn" type="button" onclick="insertCommentEmoji('✨')">✨</button>
+    </div>
+
     <div class="drawer-comments-list" id="drawer-comments-list">
       <p class="drawer-no-comments">Be the first to comment! 💕</p>
     </div>
@@ -2236,6 +2260,7 @@
     var activeReelIdx = 0;
     var activeCommentReelId = null;
     var reelObserver = null;
+    var lastTapTime = 0;
     var sessionId = localStorage.getItem('shivi_session_id') || (function() {
       var id = 'sess_' + Math.random().toString(36).slice(2) + Date.now();
       localStorage.setItem('shivi_session_id', id);
@@ -2263,6 +2288,23 @@
     var drawerInput   = document.getElementById('drawer-comment-input');
     var drawerSend    = document.getElementById('drawer-send-btn');
     var drawerClose   = document.getElementById('drawer-close-btn');
+    var cinemaVideo   = document.getElementById('reels-cinema-video');
+
+    // ── Toast Alert Helper ────────────────────────────────────────
+    window.showReelsToast = function(msg) {
+      var toast = document.getElementById('reels-toast');
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2600);
+    };
+
+    window.insertCommentEmoji = function(char) {
+      if (drawerInput) {
+        drawerInput.value += char;
+        drawerInput.focus();
+      }
+    };
 
     // ── Open / Close Modal ────────────────────────────────────────
     window.openReelsModal = function() {
@@ -2277,6 +2319,7 @@
         if (vids[activeReelIdx]) {
           vids[activeReelIdx].muted = isMuted;
           vids[activeReelIdx].play().catch(function(){});
+          syncCinemaVideo(vids[activeReelIdx].src);
         }
       }
     };
@@ -2287,13 +2330,22 @@
       document.body.style.overflow = '';
       // Pause all videos
       reelsStack.querySelectorAll('.reel-video').forEach(function(v) { v.pause(); });
+      if (cinemaVideo) cinemaVideo.pause();
       closeCommentDrawer();
     };
 
     if (reelsCloseBtn) reelsCloseBtn.addEventListener('click', window.closeReelsModal);
 
+    function syncCinemaVideo(src) {
+      if (cinemaVideo && src) {
+        cinemaVideo.src = src;
+        cinemaVideo.muted = true;
+        cinemaVideo.play().catch(function(){});
+      }
+    }
+
     // ── Fetch Reels from Supabase ─────────────────────────────────
-    function fetchAndRenderReels() {
+    window.fetchAndRenderReels = function() {
       if (!sb) {
         renderReels([]);
         return;
@@ -2309,7 +2361,8 @@
           reelsLoaded = true;
           renderReels([]);
         });
-    }
+    };
+    window.refreshLiveReels = window.fetchAndRenderReels;
 
     // ── Render Reel Items ─────────────────────────────────────────
     function renderReels(data) {
@@ -2341,16 +2394,19 @@
           var idx = parseInt(entry.target.getAttribute('data-idx'), 10);
           if (entry.isIntersecting) {
             activeReelIdx = idx;
-            if (vid) { vid.muted = isMuted; vid.play().catch(function(){}); }
+            if (vid) {
+              vid.muted = isMuted;
+              vid.play().catch(function(){});
+              syncCinemaVideo(vid.src);
+            }
             updateDots(idx);
             updateArrows(idx, data.length);
-            // Fetch live like count for this reel
             fetchLikeCount(data[idx].id, idx);
           } else {
             if (vid) vid.pause();
           }
         });
-      }, { threshold: 0.6 });
+      }, { threshold: 0.65 });
 
       data.forEach(function(reel, idx) {
         var item = buildReelItem(reel, idx);
@@ -2380,56 +2436,120 @@
 
       var likedKey = 'liked_' + reel.id;
       var alreadyLiked = localStorage.getItem(likedKey) === '1';
+      var desc = reel.description || reel.title || 'A precious memory 💕';
+      var isLongDesc = desc.length > 60;
 
       item.innerHTML =
         '<video class="reel-video" src="' + (reel.video_url || '') + '" playsinline muted loop preload="metadata"></video>' +
         '<div class="reel-tap-overlay" id="tap-' + idx + '"></div>' +
         '<div class="reel-play-icon" id="play-icon-' + idx + '">▶</div>' +
+        (idx === 0 ? '<div class="reel-swipe-hint"><span>Swipe up for more reels 👆</span></div>' : '') +
 
         '<div class="reel-actions">' +
-          '<button class="reel-action-btn' + (alreadyLiked ? ' liked' : '') + '" id="like-btn-' + idx + '" data-reel-id="' + reel.id + '" data-idx="' + idx + '" aria-label="Like">' +
+          '<button class="reel-action-btn' + (alreadyLiked ? ' liked' : '') + '" id="like-btn-' + idx + '" aria-label="Like">' +
             '<div class="reel-action-icon">' + (alreadyLiked ? '❤️' : '🤍') + '</div>' +
             '<span class="reel-action-label" id="like-count-' + idx + '">...</span>' +
           '</button>' +
-          '<button class="reel-action-btn" id="comment-btn-' + idx + '" data-reel-id="' + reel.id + '" data-idx="' + idx + '" aria-label="Comment">' +
+          '<button class="reel-action-btn" id="comment-btn-' + idx + '" aria-label="Comment">' +
             '<div class="reel-action-icon">💬</div>' +
             '<span class="reel-action-label" id="comment-count-' + idx + '">0</span>' +
           '</button>' +
+          '<button class="reel-action-btn" id="share-btn-' + idx + '" aria-label="Share">' +
+            '<div class="reel-action-icon">↗️</div>' +
+            '<span class="reel-action-label">Share</span>' +
+          '</button>' +
+          '<div class="reel-disc-wrapper" title="Shivi\'s Original Audio">' +
+            '<img src="assets/images/shivi_cutout.png" class="reel-disc-thumb" alt="Disc" />' +
+          '</div>' +
         '</div>' +
 
         '<div class="reel-bottom-overlay">' +
-          '<div class="reel-username">🦄 Shivi\'s World</div>' +
-          '<div class="reel-description">' + (reel.description || reel.title || 'A precious memory 💕') + '</div>' +
+          '<div class="reel-user-row">' +
+            '<div class="reel-user-avatar"><span>🦄</span></div>' +
+            '<div class="reel-username">Shivi\'s World</div>' +
+            '<span class="reel-badge-follow">Birthday ⭐</span>' +
+          '</div>' +
+
+          '<div class="reel-description-box">' +
+            '<div class="reel-description" id="desc-' + idx + '">' + desc + '</div>' +
+            (isLongDesc ? '<button class="reel-more-btn" id="more-' + idx + '">...more</button>' : '') +
+          '</div>' +
+
+          '<div class="reel-audio-row">' +
+            '<span class="reel-audio-icon">🎵</span>' +
+            '<div class="reel-audio-marquee">Shivi\'s Original Audio • Birthday Celebration 🎂</div>' +
+          '</div>' +
         '</div>' +
 
-        '<div class="reel-progress-bar"><div class="reel-progress-fill" id="prog-' + idx + '"></div></div>';
+        '<div class="reel-progress-bar" id="bar-' + idx + '"><div class="reel-progress-fill" id="prog-' + idx + '"></div></div>';
 
-      // Tap to play/pause
+      // Tap / Double Tap Logic (Instagram Double-Tap Heart Pop)
       var tap = item.querySelector('#tap-' + idx);
       var vid = item.querySelector('.reel-video');
       var playIcon = item.querySelector('#play-icon-' + idx);
 
       if (tap && vid) {
-        tap.addEventListener('click', function() {
-          if (vid.paused) {
-            vid.play().catch(function(){});
-            playIcon.className = 'reel-play-icon show';
-            setTimeout(function() { playIcon.className = 'reel-play-icon hide'; }, 600);
+        tap.addEventListener('click', function(e) {
+          var currentTime = new Date().getTime();
+          var tapLength = currentTime - lastTapTime;
+
+          if (tapLength < 320 && tapLength > 0) {
+            // DOUBLE TAP DETECTED -> BIG HEART POP + LIKE!
+            e.preventDefault();
+            triggerDoubleTapHeart(item, e);
+            if (localStorage.getItem('liked_' + reel.id) !== '1') {
+              handleLike(reel.id, idx);
+            }
           } else {
-            vid.pause();
-            playIcon.textContent = '⏸';
-            playIcon.className = 'reel-play-icon show';
+            // SINGLE TAP -> PLAY / PAUSE TOGGLE
+            setTimeout(function() {
+              if (new Date().getTime() - lastTapTime >= 320) {
+                if (vid.paused) {
+                  vid.play().catch(function(){});
+                  playIcon.textContent = '▶';
+                  playIcon.className = 'reel-play-icon show';
+                  setTimeout(function() { playIcon.className = 'reel-play-icon hide'; }, 550);
+                } else {
+                  vid.pause();
+                  playIcon.textContent = '⏸';
+                  playIcon.className = 'reel-play-icon show';
+                }
+              }
+            }, 320);
+          }
+          lastTapTime = currentTime;
+        });
+      }
+
+      // Progress bar & Click seeking
+      var progressBar = item.querySelector('#bar-' + idx);
+      var progressFill = item.querySelector('#prog-' + idx);
+
+      if (vid && progressFill) {
+        vid.addEventListener('timeupdate', function() {
+          if (vid.duration) {
+            progressFill.style.width = ((vid.currentTime / vid.duration) * 100) + '%';
           }
         });
       }
 
-      // Progress bar
-      if (vid) {
-        vid.addEventListener('timeupdate', function() {
-          var prog = document.getElementById('prog-' + idx);
-          if (prog && vid.duration) {
-            prog.style.width = ((vid.currentTime / vid.duration) * 100) + '%';
-          }
+      if (progressBar && vid) {
+        progressBar.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var rect = progressBar.getBoundingClientRect();
+          var pos = (e.clientX - rect.left) / rect.width;
+          if (vid.duration) vid.currentTime = pos * vid.duration;
+        });
+      }
+
+      // Expandable description "...more"
+      var moreBtn = item.querySelector('#more-' + idx);
+      var descEl = item.querySelector('#desc-' + idx);
+      if (moreBtn && descEl) {
+        moreBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          descEl.classList.toggle('expanded');
+          moreBtn.textContent = descEl.classList.contains('expanded') ? 'less' : '...more';
         });
       }
 
@@ -2451,7 +2571,46 @@
         });
       }
 
+      // Share button
+      var shareBtn = item.querySelector('#share-btn-' + idx);
+      if (shareBtn) {
+        shareBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          handleShare(reel);
+        });
+      }
+
       return item;
+    }
+
+    // Double Tap Center Heart Pop Animation
+    function triggerDoubleTapHeart(container, e) {
+      var heart = document.createElement('div');
+      heart.className = 'reel-double-tap-heart';
+      heart.textContent = '💖';
+      container.appendChild(heart);
+      setTimeout(function() { heart.remove(); }, 850);
+    }
+
+    // Share Handler
+    function handleShare(reel) {
+      var title = reel.title || "Shivi's Magical Reel";
+      var url = window.location.href;
+
+      if (navigator.share) {
+        navigator.share({
+          title: title,
+          text: 'Check out Shivi\'s birthday reel! 💕',
+          url: url
+        }).catch(function(){});
+      } else {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(url);
+          showReelsToast("✨ Link Copied! Share with Family 💕");
+        } else {
+          showReelsToast("✨ Shivi's Reel Link Ready! 💕");
+        }
+      }
     }
 
     // ── Like Logic ────────────────────────────────────────────────
@@ -2528,7 +2687,7 @@
 
     function loadComments(reelId) {
       if (!drawerList) return;
-      drawerList.innerHTML = '<p class="drawer-no-comments" style="color:rgba(255,255,255,0.3);">Loading... 💬</p>';
+      drawerList.innerHTML = '<p class="drawer-no-comments" style="color:rgba(255,255,255,0.4);">Loading comments... 💬</p>';
 
       if (!sb) {
         drawerList.innerHTML = '<p class="drawer-no-comments">Be the first to comment! 💕</p>';
@@ -2630,8 +2789,8 @@
     }
 
     function updateArrows(idx, total) {
-      if (arrowUp) arrowUp.style.opacity = idx === 0 ? '0.2' : '0.6';
-      if (arrowDown) arrowDown.style.opacity = idx === total - 1 ? '0.2' : '0.6';
+      if (arrowUp) arrowUp.style.opacity = idx === 0 ? '0.2' : '0.7';
+      if (arrowDown) arrowDown.style.opacity = idx === total - 1 ? '0.2' : '0.7';
     }
 
     function scrollToReel(idx) {
@@ -2655,7 +2814,6 @@
     ['nav-gallery-btn', 'mobile-gallery-btn'].forEach(function(id) {
       var btn = document.getElementById(id);
       if (btn) {
-        // Remove any existing party-snaps click listeners by cloning
         var newBtn = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtn, btn);
         newBtn.addEventListener('click', function(e) {
@@ -2664,7 +2822,6 @@
           var mm = document.getElementById('mobile-menu');
           if (mm) mm.classList.remove('open');
           document.body.style.overflow = '';
-          // re-lock after slight delay
           setTimeout(function() {
             if (reelsModal && reelsModal.classList.contains('active')) {
               document.body.style.overflow = 'hidden';
