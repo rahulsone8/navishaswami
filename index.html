@@ -1853,11 +1853,13 @@
       window.renderPartyAlbums();
     };
 
-    window.applySiteImageOverrides = function() {
-      var overrides = {};
-      try {
-        overrides = JSON.parse(localStorage.getItem('shivi_img_overrides') || '{}');
-      } catch(e) {}
+    window.applySiteImageOverrides = function(passedMap) {
+      var overrides = passedMap || {};
+      if (!passedMap) {
+        try {
+          overrides = JSON.parse(localStorage.getItem('shivi_img_overrides') || '{}');
+        } catch(e) {}
+      }
 
       var KEY_TO_NAME_MAP = {
         'shivi_main': 'Navisha Swami',
@@ -2056,14 +2058,122 @@
 
     document.addEventListener('DOMContentLoaded', function() {
       window.loadWishes();
-      window.renderPartyAlbums();
-      window.applySiteImageOverrides();
-      window.renderDynamicMilestones();
+      setupRealtimeCloudSync();
     });
     window.loadWishes();
     window.applySiteImageOverrides();
     window.renderDynamicMilestones();
     window.renderPartyAlbums();
+    setupRealtimeCloudSync();
+
+    // ═══ LIVE REAL-TIME CLOUD SYNC ENGINE ═══
+    function setupRealtimeCloudSync() {
+      if (window._realtimeSyncInitialized) return;
+      window._realtimeSyncInitialized = true;
+
+      var sb = window.supabaseClient || (
+        typeof supabase !== 'undefined' && window.APP_CONFIG &&
+        supabase.createClient(window.APP_CONFIG.SUPABASE_URL, window.APP_CONFIG.SUPABASE_ANON_KEY)
+      );
+      if (!sb) return;
+
+      console.log('⚡ Initializing Live Real-Time Multi-Device Cloud Sync...');
+
+      // Refresh handlers
+      window.refreshLiveImageOverrides = function() {
+        sb.from('site_settings')
+          .select('*')
+          .eq('id', 'img_overrides')
+          .then(function(res) {
+            if (res.data && res.data[0] && res.data[0].value) {
+              try {
+                var remoteOverrides = JSON.parse(res.data[0].value);
+                localStorage.setItem('shivi_img_overrides', res.data[0].value);
+                if (window.applySiteImageOverrides) window.applySiteImageOverrides(remoteOverrides);
+              } catch(e){}
+            }
+          });
+      };
+
+      window.refreshLiveMilestones = function() {
+        sb.from('site_settings')
+          .select('*')
+          .eq('id', 'milestones')
+          .then(function(res) {
+            if (res.data && res.data[0] && res.data[0].value) {
+              try {
+                localStorage.setItem('shivi_milestones', res.data[0].value);
+                if (window.renderDynamicMilestones) window.renderDynamicMilestones();
+              } catch(e){}
+            }
+          });
+      };
+
+      window.refreshLivePartyAlbums = function() {
+        if (typeof fetchAllPartyPhotos === 'function') {
+          fetchAllPartyPhotos(function() {
+            if (window.renderPartyAlbums) window.renderPartyAlbums();
+          }, true);
+        }
+      };
+
+      // 1. Supabase Realtime WebSocket Listener (Instant Live Updates <1s)
+      try {
+        var channel = sb.channel('public-live-sync-' + Math.random().toString(36).substring(2));
+
+        channel
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, function(payload) {
+            console.log('⚡ Live Cloud Event (site_settings):', payload);
+            window.refreshLiveImageOverrides();
+            window.refreshLiveMilestones();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'party_photos' }, function(payload) {
+            console.log('⚡ Live Cloud Event (party_photos):', payload);
+            window.refreshLivePartyAlbums();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'reels' }, function(payload) {
+            console.log('⚡ Live Cloud Event (reels):', payload);
+            if (window.refreshLiveReels) window.refreshLiveReels();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'wishes' }, function(payload) {
+            console.log('⚡ Live Cloud Event (wishes):', payload);
+            if (window.loadWishes) window.loadWishes();
+          })
+          .subscribe(function(status) {
+            console.log('📡 Live Sync Subscription Status:', status);
+          });
+      } catch(e) {
+        console.warn('Realtime channel error:', e);
+      }
+
+      // 2. Smart High-Frequency Polling Fallback (Every 5 seconds)
+      var lastHash = '';
+      setInterval(function() {
+        sb.from('site_settings')
+          .select('id, value')
+          .then(function(res) {
+            if (res.data) {
+              var currentHash = JSON.stringify(res.data);
+              if (lastHash && currentHash !== lastHash) {
+                console.log('🔄 Live Sync: Cloud update detected! Auto-updating UI for all users...');
+                window.refreshLiveImageOverrides();
+                window.refreshLiveMilestones();
+              }
+              lastHash = currentHash;
+            }
+          })
+          .catch(function(){});
+      }, 5000);
+
+      // 3. Tab Visibility Change / Focus Sync
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+          window.refreshLiveImageOverrides();
+          window.refreshLiveMilestones();
+          window.refreshLivePartyAlbums();
+        }
+      });
+    }
   </script>
 
   <!-- ═══ GALLERY REELS ENGINE ═══ -->

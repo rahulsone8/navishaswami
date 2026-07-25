@@ -925,8 +925,8 @@
         window.supabaseClient
           .from('site_settings')
           .upsert([
-            { id: 'img_overrides', value: JSON.stringify(overrides) },
-            { id: 'milestones', value: JSON.stringify(milestonesList) }
+            { id: 'img_overrides', value: JSON.stringify(overrides), updated_at: new Date().toISOString() },
+            { id: 'milestones', value: JSON.stringify(milestonesList), updated_at: new Date().toISOString() }
           ])
           .then(function() {
             if (statusText) statusText.textContent = '✅ Synced to cloud! Your laptop & phone now show the updated site!';
