@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shivi — Navisha Swami</title>
+  <meta name="description" content="The little world of Navisha 'Shivi' Swami — a year of wonder, tiny firsts, and endless love." />
+  <meta name="theme-color" content="#5B3A66" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=20260725_v5" />
+</head>
+<body>
+
+  <!-- ═══ SCROLL PROGRESS BAR ═══ -->
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ═══ SPARKLE CURSOR CANVAS ═══ -->
+  <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
+
+  <!-- ═══ NAVIGATION ═══ -->
+  <nav class="nav" id="nav">
+    <a href="#top" class="nav__logo">
+      <span class="nav__logo-icon">🦄</span>
+      <span class="nav__logo-text">Shivi</span>
+    </a>
+    <div class="nav__links">
+      <a href="#about" class="nav__link">About</a>
+      <a href="#journey" class="nav__link">Journey</a>
+      <a href="#" class="nav__link" id="nav-gallery-btn">Gallery</a>
+      <a href="#birthday" class="nav__link nav__link--highlight">Birthday 🎂</a>
+      <a href="#" class="nav__link nav__link--party" id="nav-party-snaps-btn">Party Snaps 📸</a>
+    </div>
+    <button class="nav__burger" id="nav-burger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ═══ MOBILE MENU ═══ -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#about" class="mobile-menu__link">About</a>
+    <a href="#journey" class="mobile-menu__link">Journey</a>
+    <a href="#" class="mobile-menu__link" id="mobile-gallery-btn">Gallery</a>
+    <a href="#birthday" class="mobile-menu__link">Birthday 🎂</a>
+    <a href="#" class="mobile-menu__link" id="mobile-party-snaps-btn">Party Snaps 📸</a>
+    <a href="#wishes" class="mobile-menu__link">Send Wishes 💌</a>
+  </div>
+
+  <!-- ═══ FLOATING DECORATIONS ═══ -->
+  <div class="floating-decor" aria-hidden="true">
+    <div class="orb orb--pink"></div>
+    <div class="orb orb--lilac"></div>
+    <div class="orb orb--mint"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- HERO — It's about HER, not an event                       -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section id="top" class="hero">
+    <div class="hero__bg-shapes" aria-hidden="true">
+      <div class="hero__circle hero__circle--1"></div>
+      <div class="hero__circle hero__circle--2"></div>
+      <div class="hero__circle hero__circle--3"></div>
+    </div>
+    <div class="hero__content">
+      <div class="hero__badge reveal">
+        <span class="hero__badge-dot"></span>
+        Turning 1 on 4th August 🎂
+      </div>
+      <h1 class="hero__name reveal">
+        <span class="hero__meet-text">Meet</span>
+        <span class="shivi-inline-photo"><img src="shivi_cutout.png" alt="Shivi" class="shivi-cutout-img" /></span>
+      </h1>
+      <p class="hero__tagline reveal">
+        A tiny miracle turning <strong class="gold">ONE</strong> on <strong>4th August 2026</strong> 💕
+      </p>
+      <div class="hero__stats reveal">
+        <div class="stat" id="stat-days">
+          <span class="stat__number" data-target="0">0</span>
+          <span class="stat__label">days old</span>
+        </div>
+        <div class="stat__divider"></div>
+        <div class="stat" id="stat-smiles">
+          <span class="stat__number">∞</span>
+          <span class="stat__label">smiles given</span>
+        </div>
+        <div class="stat__divider"></div>
+        <div class="stat">
+          <span class="stat__number">1</span>
+          <span class="stat__label">magical year</span>
+        </div>
+      </div>
+      <a href="#about" class="hero__scroll-hint reveal">
+        <span>Scroll to explore</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ABOUT — Who is Shivi?                                      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section id="about" class="section about">
+    <div class="container">
+      <div class="section-label reveal"><span>01</span> About</div>
+      <div class="about__layout">
+        <div class="about__text">
+          <h2 class="about__title reveal">
+            Meet <em>Navisha</em>,<br/>
+            but everyone calls her <span class="gold">Shivi</span>.
+          </h2>
+          <p class="about__desc reveal">
+            Born on 4th August 2025 — the day the world got a whole lot brighter. 
+            She's curious, giggly, and has already figured out how to wrap 
+            everyone around her tiny little finger.
+          </p>
+        </div>
+      </div>
+
+      <!-- ─── FAMILY TREE CONSTELLATION ─── -->
+      <div id="family-tree" class="family-tree-wrap reveal">
+        <div class="family-tree__header">
+          <h3 class="family-tree__heading">
+            <span class="family-tree__icon">🌳</span>
+            Shivi's Family Tree
+          </h3>
+          <p class="family-tree__hint">
+            Tap any circular photo node below to view relation details! ✨
+          </p>
+        </div>
+
+        <!-- Inline Detail Drawer (No Popup Modal!) -->
+        <div id="ft-inline-info" class="ft-inline-info" style="display:none;">
+          <div class="ft-inline-info__avatar" id="ft-info-avatar-box">
+            <img id="ft-info-img" src="" alt="Family Member" />
+          </div>
+          <div class="ft-inline-info__text">
+            <span class="ft-inline-info__role" id="ft-info-role">Dada</span>
+            <h4 class="ft-inline-info__name" id="ft-info-name">Dada</h4>
+            <p class="ft-inline-info__relation" id="ft-info-relation">Paternal Grandfather</p>
+            <p class="ft-inline-info__note" id="ft-info-note">"Shivi's beloved family member!"</p>
+          </div>
+        </div>
+
+        <div class="family-tree">
+          <!-- ── 1. GRANDPARENTS ROW ── -->
+          <div class="ft-section-title">👵🏻👴🏻 Grandparents</div>
+          <div class="ft-row ft-row--grandparents">
+            <!-- Paternal Grandparents -->
+            <div class="ft-pair">
+              <div class="ft-card reveal" data-name="Dada" data-relation="Paternal Grandfather" data-role="Dada" data-avatar="👴🏻" data-img="shivi_dada.jpg">
+                <div class="ft-circle"><div class="ft-circle__img-box"><img src="shivi_dada.jpg" alt="Dada" class="ft-circle__real-img" /></div></div>
+                <span class="ft-card__role">Dada</span>
+              </div>
+              <div class="ft-card reveal" data-name="Dadi" data-relation="Paternal Grandmother" data-role="Dadi" data-avatar="👵🏻" data-img="shivi_dadi.png">
+                <div class="ft-circle"><div class="ft-circle__img-box"><img src="shivi_dadi.png" alt="Dadi" class="ft-circle__real-img" /></div></div>
+                <span class="ft-card__role">Dadi</span>
+              </div>
+            </div>
+
+            <!-- Maternal Grandparents -->
+            <div class="ft-pair">
+              <div class="ft-card reveal" data-name="Nana" data-relation="Maternal Grandfather" data-role="Nana" data-avatar="👴🏻" data-img="">
+                <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👴🏻</span></div></div>
+                <span class="ft-card__role">Nana</span>
+              </div>
+              <div class="ft-card reveal" data-name="Nani" data-relation="Maternal Grandmother" data-role="Nani" data-avatar="👵🏻" data-img="">
+                <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👵🏻</span></div></div>
+                <span class="ft-card__role">Nani</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Connector lines -->
+          <div class="ft-connector" aria-hidden="true">
+            <div class="ft-connector__line"></div>
+            <div class="ft-connector__line"></div>
+          </div>
+
+          <!-- ── 2. PATERNAL SIDE (Bade Papa & Bua) ── -->
+          <div class="ft-section-title">🚩 Dada's Side (Paternal Uncles &amp; Aunts)</div>
+          <div class="ft-row ft-row--extended">
+            <div class="ft-card ft-card--extended reveal" data-name="Bade Papa 1" data-relation="Elder Paternal Uncle" data-role="Bade Papa" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Bade Papa 1</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bade Papa 2" data-relation="Elder Paternal Uncle" data-role="Bade Papa" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Bade Papa 2</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bade Papa 3" data-relation="Elder Paternal Uncle" data-role="Bade Papa" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Bade Papa 3</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Badi Mummy" data-relation="Elder Paternal Aunt" data-role="Badi Mami" data-avatar="👩🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👩🏻</span></div></div>
+              <span class="ft-card__role">Badi Mummy</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bua 1" data-relation="Paternal Aunt" data-role="Bua" data-avatar="👩🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👩🏻</span></div></div>
+              <span class="ft-card__role">Bua 1</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Phuphaji 1" data-relation="Bua's Husband" data-role="Phuphaji" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Phuphaji 1</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bua 2" data-relation="Paternal Aunt" data-role="Bua" data-avatar="👩🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👩🏻</span></div></div>
+              <span class="ft-card__role">Bua 2</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Phuphaji 2" data-relation="Bua's Husband" data-role="Phuphaji" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Phuphaji 2</span>
+            </div>
+          </div>
+
+          <!-- ── 3. MATERNAL SIDE (Mama & Maasi) ── -->
+          <div class="ft-section-title">🌸 Nana's Side (Maternal Uncles &amp; Aunts)</div>
+          <div class="ft-row ft-row--extended">
+            <div class="ft-card ft-card--extended reveal" data-name="Mama 1" data-relation="Maternal Uncle" data-role="Mama" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Mama 1</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Mami 1" data-relation="Mama's Wife" data-role="Mami" data-avatar="👩🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👩🏻</span></div></div>
+              <span class="ft-card__role">Mami 1</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Mama 2" data-relation="Maternal Uncle" data-role="Mama" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Mama 2</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Mami 2" data-relation="Mama's Wife" data-role="Mami" data-avatar="👩🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👩🏻</span></div></div>
+              <span class="ft-card__role">Mami 2</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Maasi" data-relation="Maternal Aunt" data-role="Maasi" data-avatar="👩🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👩🏻</span></div></div>
+              <span class="ft-card__role">Maasi</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Maasa" data-relation="Maasi's Husband" data-role="Maasa" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Maasa</span>
+            </div>
+          </div>
+
+          <!-- ── 4. PARENTS ROW ── -->
+          <div class="ft-section-title">💕 Parents</div>
+          <div class="ft-row ft-row--parents">
+            <div class="ft-card ft-card--parent reveal" data-name="Papa" data-relation="Father" data-role="Papa" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Papa</span>
+            </div>
+
+            <div class="ft-heart" aria-hidden="true">💕</div>
+
+            <div class="ft-card ft-card--parent reveal" data-name="Mumma" data-relation="Mother" data-role="Mumma" data-avatar="👩🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👩🏻</span></div></div>
+              <span class="ft-card__role">Mumma</span>
+            </div>
+          </div>
+
+          <!-- Connector to Shivi -->
+          <div class="ft-connector ft-connector--single" aria-hidden="true">
+            <div class="ft-connector__line"></div>
+          </div>
+
+          <!-- ── 5. SHIVI (REAL PHOTO CENTER STAR) ── -->
+          <div class="ft-row ft-row--child">
+            <div class="ft-card ft-card--star reveal" data-name="Navisha Swami" data-relation="The Birthday Princess ⭐" data-role="Shivi 🦄" data-img="shivi_lollipop.jpg">
+              <div class="ft-circle ft-circle--star">
+                <div class="ft-circle__img-box">
+                  <img src="shivi_lollipop.jpg" alt="Navisha Shivi" class="ft-circle__real-img" />
+                </div>
+              </div>
+              <span class="ft-card__role">Shivi 🦄</span>
+              <span class="ft-card__glow" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <!-- ── 6. BROTHERS, SISTERS, JIJAJI & NEPHEW ── -->
+          <div class="ft-section-title">👦🏻👧🏻 Brothers, Sisters &amp; Nephew</div>
+          <div class="ft-row ft-row--extended">
+            <!-- 8 Brothers -->
+            <div class="ft-card ft-card--extended reveal" data-name="Bhaiya 1" data-relation="Brother / Cousin" data-role="Brother" data-avatar="👦🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👦🏻</span></div></div>
+              <span class="ft-card__role">Bhaiya 1</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bhaiya 2" data-relation="Brother / Cousin" data-role="Brother" data-avatar="👦🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👦🏻</span></div></div>
+              <span class="ft-card__role">Bhaiya 2</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bhaiya 3" data-relation="Brother / Cousin" data-role="Brother" data-avatar="👦🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👦🏻</span></div></div>
+              <span class="ft-card__role">Bhaiya 3</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bhaiya 4" data-relation="Brother / Cousin" data-role="Brother" data-avatar="👦🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👦🏻</span></div></div>
+              <span class="ft-card__role">Bhaiya 4</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bhaiya 5" data-relation="Brother / Cousin" data-role="Brother" data-avatar="👦🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👦🏻</span></div></div>
+              <span class="ft-card__role">Bhaiya 5</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bhaiya 6" data-relation="Brother / Cousin" data-role="Brother" data-avatar="👦🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👦🏻</span></div></div>
+              <span class="ft-card__role">Bhaiya 6</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bhaiya 7" data-relation="Brother / Cousin" data-role="Brother" data-avatar="👦🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👦🏻</span></div></div>
+              <span class="ft-card__role">Bhaiya 7</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Bhaiya 8" data-relation="Brother / Cousin" data-role="Brother" data-avatar="👦🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👦🏻</span></div></div>
+              <span class="ft-card__role">Bhaiya 8</span>
+            </div>
+
+            <!-- 2 Sisters -->
+            <div class="ft-card ft-card--extended reveal" data-name="Didi 1" data-relation="Sister / Cousin" data-role="Sister" data-avatar="👧🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👧🏻</span></div></div>
+              <span class="ft-card__role">Didi 1</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Didi 2" data-relation="Sister / Cousin" data-role="Sister" data-avatar="👧🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👧🏻</span></div></div>
+              <span class="ft-card__role">Didi 2</span>
+            </div>
+
+            <!-- Jijaji & Nephew -->
+            <div class="ft-card ft-card--extended reveal" data-name="Jijaji" data-relation="Sister's Husband" data-role="Jijaji" data-avatar="👨🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👨🏻</span></div></div>
+              <span class="ft-card__role">Jijaji</span>
+            </div>
+            <div class="ft-card ft-card--extended reveal" data-name="Baby Nephew" data-relation="Jijaji &amp; Didi's Son" data-role="Nephew" data-avatar="👶🏻" data-img="">
+              <div class="ft-circle"><div class="ft-circle__img-box"><span class="ft-circle__emoji">👶🏻</span></div></div>
+              <span class="ft-card__role">Nephew</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- JOURNEY — Milestones as a storytelling scroll              -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- JOURNEY — 80% Image + 20% Text Storybook Memory Timeline   -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section id="journey" class="section journey">
+    <div class="container">
+      <div class="section-label reveal"><span>02</span> Her Journey</div>
+      <h2 class="journey__title reveal">
+        365 Days of Precious Memories 💕
+      </h2>
+
+      <div class="journey__track">
+        <!-- Milestone 1 — First Day in This World (4 August 2025) -->
+        <div class="milestone milestone--left reveal">
+          <div class="milestone__marker"><span class="milestone__num">01</span></div>
+          <div class="memory-card" data-img="shivi_first_day.jpg">
+            <div class="memory-card__img-wrap">
+              <img src="shivi_first_day.jpg" alt="First Day in This World" class="memory-card__img" />
+              <span class="memory-card__date-badge">4 Aug 2025</span>
+            </div>
+            <div class="memory-card__footer">
+              <h3 class="memory-card__title">First Day in This World 👶🏻🌸</h3>
+              <p class="memory-card__sub">Held closely in Papa's loving arms</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milestone 2 — First Smile -->
+        <div class="milestone milestone--right reveal">
+          <div class="milestone__marker"><span class="milestone__num">02</span></div>
+          <div class="memory-card" data-img="">
+            <div class="memory-card__img-wrap">
+              <div class="memory-card__placeholder">
+                <span>😊✨</span>
+                <p>First Smile Photo</p>
+              </div>
+              <span class="memory-card__date-badge">Sept 2025</span>
+            </div>
+            <div class="memory-card__footer">
+              <h3 class="memory-card__title">First Smile 😊✨</h3>
+              <p class="memory-card__sub">The smile that melted everyone's hearts</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milestone 3 — First Giggles -->
+        <div class="milestone milestone--left reveal">
+          <div class="milestone__marker"><span class="milestone__num">03</span></div>
+          <div class="memory-card" data-img="">
+            <div class="memory-card__img-wrap">
+              <div class="memory-card__placeholder" style="background: linear-gradient(135deg, #FFD9E8, #E3D6F5);">
+                <span>🤭🎶</span>
+                <p>First Giggles Photo</p>
+              </div>
+              <span class="memory-card__date-badge">Dec 2025</span>
+            </div>
+            <div class="memory-card__footer">
+              <h3 class="memory-card__title">First Giggles 🤭🎶</h3>
+              <p class="memory-card__sub">Papa's silly faces finally worked!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milestone 4 — First Word -->
+        <div class="milestone milestone--right reveal">
+          <div class="milestone__marker"><span class="milestone__num">04</span></div>
+          <div class="memory-card" data-img="">
+            <div class="memory-card__img-wrap">
+              <div class="memory-card__placeholder" style="background: linear-gradient(135deg, #E3D6F5, #CFF5EA);">
+                <span>🗣️💖</span>
+                <p>First Word Photo</p>
+              </div>
+              <span class="memory-card__date-badge">April 2026</span>
+            </div>
+            <div class="memory-card__footer">
+              <h3 class="memory-card__title">First Word: "Ma-ma" 🗣️💖</h3>
+              <p class="memory-card__sub">The sweetest sound in the world</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milestone 5 — Turning 1 -->
+        <div class="milestone milestone--left reveal">
+          <div class="milestone__marker"><span class="milestone__num">05</span></div>
+          <div class="memory-card" data-img="shivi_lollipop.jpg">
+            <div class="memory-card__img-wrap">
+              <img src="shivi_lollipop.jpg" alt="Turning 1 Year Old" class="memory-card__img" />
+              <span class="memory-card__date-badge">4 Aug 2026</span>
+            </div>
+            <div class="memory-card__footer">
+              <h3 class="memory-card__title">Turning 1 Year Old! 🥳🎂</h3>
+              <p class="memory-card__sub">One full year of love &amp; happiness!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- PARTY SNAPS & GALLERY MODAL OVERLAY (Opens on Click Only!) -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="party-gallery-modal" class="party-gallery-modal" role="dialog" aria-modal="true" aria-label="Party Memories and Photos">
+    <div class="party-gallery__backdrop" id="party-gallery-close-bg"></div>
+    <div class="party-gallery__container">
+      <button class="party-gallery__close" id="party-gallery-close-btn" aria-label="Close Gallery">&times;</button>
+      
+      <div class="party-gallery__header">
+        <div class="section-label" style="justify-content:center;"><span>📸</span> Party Memories</div>
+        <h2 class="party-gallery__title">Party Memories &amp; Photos 📸</h2>
+        <p class="party-gallery__subtitle">Have photos from Shivi's birthday? Upload your collection or download memories shared by everyone.</p>
+      </div>
+
+      <!-- Action Bar (Upload / Download) inside Modal -->
+      <div class="party-actions" style="margin-bottom: 2rem;">
+        <label for="party-file-input" class="party-action-btn party-action-btn--upload">
+          <span>📤</span> Upload Your Photos
+          <input type="file" id="party-file-input" multiple accept="image/*" style="display:none;" />
+        </label>
+        <a href="#drive-album" class="party-action-btn party-action-btn--download" target="_blank" rel="noopener">
+          <span>⬇️</span> Download Full Album
+        </a>
+      </div>
+
+      <div id="upload-status" class="upload-status"></div>
+
+      <div class="gallery__wall">
+        <div class="polaroid" data-index="0" style="--rotate: -3deg;">
+          <div class="polaroid__img" style="background: linear-gradient(135deg, #FFD9E8, #E3D6F5);">
+            <span class="polaroid__placeholder">📷</span>
+          </div>
+          <p class="polaroid__caption">Cutest Laugh 💕</p>
+        </div>
+
+        <div class="polaroid" data-index="1" style="--rotate: 2deg;">
+          <div class="polaroid__img" style="background: linear-gradient(135deg, #E3D6F5, #CFF5EA);">
+            <span class="polaroid__placeholder">📷</span>
+          </div>
+          <p class="polaroid__caption">Birthday Girl 🎂</p>
+        </div>
+
+        <div class="polaroid" data-index="2" style="--rotate: -1deg;">
+          <div class="polaroid__img" style="background: linear-gradient(135deg, #CFF5EA, #FFD9E8);">
+            <span class="polaroid__placeholder">📷</span>
+          </div>
+          <p class="polaroid__caption">Family Hugs 👨‍👩‍👧</p>
+        </div>
+
+        <div class="polaroid" data-index="3" style="--rotate: 3deg;">
+          <div class="polaroid__img" style="background: linear-gradient(135deg, #FFD9E8, #F0B93D40);">
+            <span class="polaroid__placeholder">📷</span>
+          </div>
+          <p class="polaroid__caption">Cake Smudge 🧁</p>
+        </div>
+
+        <div class="polaroid" data-index="4" style="--rotate: -2deg;">
+          <div class="polaroid__img" style="background: linear-gradient(135deg, #E3D6F5, #FFD9E8);">
+            <span class="polaroid__placeholder">📷</span>
+          </div>
+          <p class="polaroid__caption">Grandpa's Blessing 👴🏻</p>
+        </div>
+
+        <div class="polaroid" data-index="5" style="--rotate: 1.5deg;">
+          <div class="polaroid__img" style="background: linear-gradient(135deg, #CFF5EA, #E3D6F5);">
+            <span class="polaroid__placeholder">📷</span>
+          </div>
+          <p class="polaroid__caption">Happy Smiles ✨</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Photo lightbox">
+    <button class="lightbox__close" aria-label="Close">&times;</button>
+    <button class="lightbox__prev" aria-label="Previous">&#8249;</button>
+    <div class="lightbox__stage">
+      <div class="lightbox__frame" id="lightbox-frame">
+        <span class="polaroid__placeholder">📷</span>
+      </div>
+      <p class="lightbox__caption" id="lightbox-caption"></p>
+    </div>
+    <button class="lightbox__next" aria-label="Next">&#8250;</button>
+    <span class="lightbox__swipe-hint">← Swipe to navigate →</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- BIRTHDAY COUNTDOWN — 04 The Big Day                        -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section id="birthday" class="section birthday">
+    <div class="birthday__glow" aria-hidden="true"></div>
+    <div class="container">
+      <div class="section-label reveal" style="justify-content:center;"><span>04</span> The Big Day</div>
+      <div class="birthday__content">
+        <h2 class="birthday__title reveal">
+          Shivi is Turning <span class="birthday__one">ONE!</span> 🎂✨
+        </h2>
+        <p class="birthday__sub reveal">
+          The countdown is on for 4th August 2026. Join us for a magical milestone celebration!
+        </p>
+
+        <!-- Liquid Glass Countdown Cards -->
+        <div class="countdown reveal" id="countdown">
+          <div class="countdown__ring">
+            <span class="countdown__val" id="cd-days">--</span>
+            <span class="countdown__unit">Days</span>
+          </div>
+          <div class="countdown__ring">
+            <span class="countdown__val" id="cd-hours">--</span>
+            <span class="countdown__unit">Hours</span>
+          </div>
+          <div class="countdown__ring">
+            <span class="countdown__val" id="cd-minutes">--</span>
+            <span class="countdown__unit">Minutes</span>
+          </div>
+          <div class="countdown__ring">
+            <span class="countdown__val" id="cd-seconds">--</span>
+            <span class="countdown__unit">Seconds</span>
+          </div>
+        </div>
+
+        <!-- Event Detail Pill Badges -->
+        <div class="birthday__details reveal">
+          <div class="birthday__detail">
+            <span>🗓️</span> <strong>4th August 2026</strong>
+          </div>
+          <div class="birthday__detail">
+            <span>⏰</span> <strong>6:15 PM IST</strong>
+          </div>
+          <div class="birthday__detail">
+            <span>📍</span> <strong>Station Auditorium</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- WISHES — Live Interactive Wishes & Blessings Board         -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section id="wishes" class="section wishes">
+    <div class="container">
+      <div class="section-label reveal" style="justify-content:center;"><span>05</span> Blessings &amp; Wishes</div>
+      
+      <div class="wishes__box reveal">
+        <div class="wishes__emoji-rain" aria-hidden="true" id="emoji-rain"></div>
+        <h2 class="wishes__title">
+          Send a Birthday Wish to Shivi 💌
+        </h2>
+        <p class="wishes__text">
+          Write a sweet birthday message or blessing for baby Shivi! She will cherish all your warm words when she grows up.
+        </p>
+
+        <!-- Direct Wish Form (100% Working) -->
+        <form id="inline-wish-form" onsubmit="handleWishSubmit(event)" class="wish-form" style="max-width: 540px; margin: 1.5rem auto 0; text-align: left;">
+          <div class="form-group">
+            <label for="wish-sender-name">Your Name <span class="req">*</span></label>
+            <input type="text" id="wish-sender-name" placeholder="e.g. Rahul Chacha / Anjali Maasi" required />
+          </div>
+
+          <div class="form-group">
+            <label for="wish-message">Your Wish / Message <span class="req">*</span></label>
+            <textarea id="wish-message" rows="3" placeholder="Write your sweetest birthday wishes and blessings for baby Shivi..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Pick a Blessing Emoji</label>
+            <div class="emoji-picker" id="emoji-picker">
+              <button type="button" class="emoji-btn active" onclick="selectWishEmoji(this, '💖')">💖</button>
+              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '🎂')">🎂</button>
+              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '🌈')">🌈</button>
+              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '✨')">✨</button>
+              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '👑')">👑</button>
+              <button type="button" class="emoji-btn" onclick="selectWishEmoji(this, '🎈')">🎈</button>
+            </div>
+          </div>
+
+          <button type="submit" class="wish-submit-btn" style="margin-top: 0.8rem;">
+            Send Wish to Shivi 💌
+          </button>
+        </form>
+
+        <div id="wish-success-msg" style="display:none; margin-top:1.2rem; padding:0.9rem; background:rgba(207,245,234,0.95); border:1.5px solid var(--gold); border-radius:16px; text-align:center; font-weight:800; color:var(--plum); font-size:1rem; box-shadow:0 4px 15px rgba(91,58,102,0.1);">
+          🎉 Thank you! Your wish for Shivi has been posted below! 💌✨
+        </div>
+      </div>
+
+      <!-- Live Wishes Board (Horizontal Scroll Track + View All Button) -->
+      <div class="wishes-board-wrap reveal">
+        <div class="wishes-board__header">
+          <h3 class="wishes-board__heading">Wishes &amp; Blessings for Shivi ✨</h3>
+          <button type="button" class="wishes-view-all-btn" id="view-all-wishes-btn" onclick="openAllWishesModal()" style="display:none;">
+            View All Wishes (<span id="wishes-count-num">0</span>) 📜
+          </button>
+        </div>
+
+        <div class="wishes-board__scroll-track" id="wishes-board-grid">
+          <!-- Dynamically populated horizontal cards -->
+        </div>
+        <p class="wishes__swipe-hint" id="wishes-swipe-hint" style="display:none;">← Swipe horizontally to read all wishes →</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ALL WISHES MODAL OVERLAY ═══ -->
+  <div id="all-wishes-modal" class="party-gallery-modal" role="dialog" aria-modal="true" aria-label="All Wishes for Shivi">
+    <div class="party-gallery__backdrop" onclick="closeAllWishesModal()"></div>
+    <div class="party-gallery__container" style="max-width: 920px;">
+      <button class="party-gallery__close" onclick="closeAllWishesModal()" aria-label="Close">&times;</button>
+      
+      <div class="party-gallery__header">
+        <div class="section-label" style="justify-content:center;"><span>📜</span> Guestbook</div>
+        <h2 class="party-gallery__title">All Wishes &amp; Blessings for Shivi 📜</h2>
+        <p class="party-gallery__subtitle">Every warm note and birthday blessing written with love!</p>
+      </div>
+
+      <div id="all-wishes-modal-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.2rem; text-align:left;">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- REMEMBRANCE — You Will Always Be Missed 🕯️✨               -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section id="remembering" class="section memorial">
+    <div class="container">
+      <div class="memorial__header reveal">
+        <span class="memorial__candle">🕯️</span>
+        <h2 class="memorial__title">You Will Always Be Missed</h2>
+        <p class="memorial__sub">
+          Forever in our hearts &amp; watching over little Shivi from heaven 🕊️✨
+        </p>
+      </div>
+
+      <div class="memorial__grid reveal">
+        <!-- Memorial Card 1 (Add data-img="photo.jpg" to update) -->
+        <div class="memorial-card" data-img="">
+          <div class="memorial-card__frame">
+            <div class="memorial-card__img-box">
+              <span class="memorial-card__placeholder">🕊️</span>
+            </div>
+            <div class="memorial-card__halo"></div>
+          </div>
+          <h3 class="memorial-card__name">In Loving Memory</h3>
+          <span class="memorial-card__relation">Beloved Family Member</span>
+          <p class="memorial-card__quote">"Always in our thoughts, forever in our hearts." 🕊️</p>
+        </div>
+
+        <!-- Memorial Card 2 (Add data-img="photo.jpg" to update) -->
+        <div class="memorial-card" data-img="">
+          <div class="memorial-card__frame">
+            <div class="memorial-card__img-box">
+              <span class="memorial-card__placeholder">🕊️</span>
+            </div>
+            <div class="memorial-card__halo"></div>
+          </div>
+          <h3 class="memorial-card__name">In Loving Memory</h3>
+          <span class="memorial-card__relation">Beloved Family Member</span>
+          <p class="memorial-card__quote">"Your love &amp; blessings guide Shivi every single day." 🕯️</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- FOOTER                                                     -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__unicorn" aria-hidden="true">
+        <svg viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg" width="120">
+          <ellipse cx="60" cy="55" rx="24" ry="18" fill="white" opacity="0.9"/>
+          <circle cx="60" cy="38" r="14" fill="white" opacity="0.9"/>
+          <path d="M60 24 L57.5 12 L62.5 12 Z" fill="#F0B93D"/>
+          <circle cx="55" cy="36" r="2" fill="#5B3A66"/>
+          <circle cx="54.5" cy="35.5" r="0.7" fill="white"/>
+          <ellipse cx="52" cy="41" rx="3" ry="1.8" fill="#FFD9E8" opacity="0.5"/>
+          <path d="M54 42 Q58 45 62 42" stroke="#5B3A66" stroke-width="1" stroke-linecap="round" fill="none"/>
+          <path d="M48 32 Q44 26 48 30" stroke="#FFD9E8" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M72 32 Q76 26 72 30" stroke="#FFD9E8" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M48 38 Q42 42 44 48 Q40 52 44 56" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M46 40 Q38 46 42 54" stroke="#FFD9E8" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <line x1="48" y1="70" x2="48" y2="78" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="55" y1="72" x2="55" y2="80" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="65" y1="72" x2="65" y2="80" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="72" y1="70" x2="72" y2="78" stroke="#E3D6F5" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M82 55 Q90 48 88 40 Q92 44 88 52" stroke="#FFD9E8" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <p class="footer__line">
+        Made with all the love in the world for our little <em>Shivi</em> 🦄
+      </p>
+      <p class="footer__sub">
+        © The Swami Family · Navisha's corner of the internet
+      </p>
+    </div>
+  </footer>
+
+  <!-- ═══ BACK TO TOP BUTTON ═══ -->
+  <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <!-- ═══ FLOATING 'MAKE SHIVI HAPPY' WIDGET (Bottom-Left Corner) ═══ -->
+  <div id="happy-widget" class="happy-widget" role="button" tabindex="0" aria-label="Make Shivi Happy">
+    <div class="happy-widget__badge">
+      <span>Want to see her happy? Click here! 🍭</span>
+    </div>
+    <div class="happy-widget__circle">
+      <span class="happy-widget__icon">🍭</span>
+      <span class="happy-widget__pulse"></span>
+    </div>
+  </div>
+
+  <!-- ═══ FLOATING STICKER OVERLAY (No Card Wrapper) ═══ -->
+  <div id="happy-modal" class="happy-sticker-overlay" role="dialog" aria-modal="true" aria-label="Shivi Happy Sticker">
+    <div class="happy-sticker__backdrop" id="happy-modal-close-bg"></div>
+
+    <div class="happy-sticker-content">
+      <button class="happy-sticker__close" id="happy-modal-close" aria-label="Close">&times;</button>
+
+      <!-- Floating Speech Bubble -->
+      <div class="happy-sticker__bubble">
+        <p class="happy-sticker__speech" id="happy-speech">
+          "Tee-hee! Yum-yum! Look how happy Shivi is!" 🍭🥳
+        </p>
+        <span class="happy-sticker__subhint">Tap Shivi to hear her laugh! 🔊🎶</span>
+      </div>
+
+      <!-- Cutout Circular Floating Sticker of Shivi -->
+      <div class="happy-sticker__main" id="happy-baby">
+        <div class="happy-sticker__glow" aria-hidden="true"></div>
+        <div class="happy-sticker__frame">
+          <img src="shivi_lollipop.jpg" alt="Shivi Happy Sticker" class="happy-sticker-img" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CONFETTI CANVAS ═══ -->
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+  <script src="script.js?v=20260725_v5"></script>
+  <script>
+    window.selectedWishEmoji = '💖';
+
+    window.selectWishEmoji = function(btnEl, char) {
+      window.selectedWishEmoji = char || '💖';
+      var all = document.querySelectorAll('.emoji-btn');
+      for (var i = 0; i < all.length; i++) {
+        all[i].classList.remove('active');
+      }
+      if (btnEl) btnEl.classList.add('active');
+    };
+
+    window.openAllWishesModal = function() {
+      var modal = document.getElementById('all-wishes-modal');
+      var grid = document.getElementById('all-wishes-modal-grid');
+      if (!modal || !grid) return;
+
+      var wishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
+      grid.innerHTML = '';
+
+      if (wishes.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color: var(--plum); font-weight:700;">No wishes posted yet. Be the first!</p>';
+      } else {
+        for (var i = 0; i < wishes.length; i++) {
+          var w = wishes[i];
+          var card = document.createElement('div');
+          card.className = 'wish-card';
+          var nameClean = (w.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          var msgClean = (w.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          card.innerHTML = 
+            '<div class="wish-card__header">' +
+              '<span class="wish-card__sender">' + nameClean + '</span>' +
+            '</div>' +
+            '<p class="wish-card__body">"' + msgClean + '"</p>' +
+            '<div class="wish-card__footer">' +
+              '<span>' + (w.date || 'Just now') + '</span>' +
+              '<span class="wish-card__emoji">' + (w.emoji || '💖') + '</span>' +
+            '</div>';
+          grid.appendChild(card);
+        }
+      }
+
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeAllWishesModal = function() {
+      var modal = document.getElementById('all-wishes-modal');
+      if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    };
+
+    window.loadWishes = function() {
+      var grid = document.getElementById('wishes-board-grid');
+      var viewAllBtn = document.getElementById('view-all-wishes-btn');
+      var countNum = document.getElementById('wishes-count-num');
+      var swipeHint = document.getElementById('wishes-swipe-hint');
+
+      if (!grid) return;
+      var wishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
+      grid.innerHTML = '';
+
+      if (wishes.length === 0) {
+        grid.innerHTML = '<p style="flex: 1; text-align:center; color: var(--plum); opacity:0.85; font-weight:700; padding:1.5rem; background:rgba(255,255,255,0.6); border-radius:18px; border:1px dashed var(--gold);">Be the first to leave a sweet wish for baby Shivi! Type your wish above 💌</p>';
+        if (viewAllBtn) viewAllBtn.style.display = 'none';
+        if (swipeHint) swipeHint.style.display = 'none';
+        return;
+      }
+
+      if (viewAllBtn) viewAllBtn.style.display = 'inline-flex';
+      if (countNum) countNum.textContent = wishes.length;
+      if (swipeHint) swipeHint.style.display = (wishes.length > 2) ? 'block' : 'none';
+
+      for (var i = 0; i < wishes.length; i++) {
+        var w = wishes[i];
+        var card = document.createElement('div');
+        card.className = 'wish-card';
+        var nameClean = (w.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        var msgClean = (w.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        card.innerHTML = 
+          '<div class="wish-card__header">' +
+            '<span class="wish-card__sender">' + nameClean + '</span>' +
+          '</div>' +
+          '<p class="wish-card__body">"' + msgClean + '"</p>' +
+          '<div class="wish-card__footer">' +
+            '<span>' + (w.date || 'Just now') + '</span>' +
+            '<span class="wish-card__emoji">' + (w.emoji || '💖') + '</span>' +
+          '</div>';
+        grid.appendChild(card);
+      }
+    };
+
+    window.handleWishSubmit = function(e) {
+      if (e && e.preventDefault) e.preventDefault();
+
+      var nameEl = document.getElementById('wish-sender-name');
+      var messageEl = document.getElementById('wish-message');
+
+      var name = nameEl ? nameEl.value.trim() : '';
+      var message = messageEl ? messageEl.value.trim() : '';
+
+      if (!name || !message) {
+        alert('Please fill in both your name and wish message!');
+        return false;
+      }
+
+      var newWish = {
+        name: name,
+        message: message,
+        emoji: window.selectedWishEmoji || '💖',
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      };
+
+      var wishes = JSON.parse(localStorage.getItem('shivi_wishes') || '[]');
+      wishes.unshift(newWish);
+      localStorage.setItem('shivi_wishes', JSON.stringify(wishes));
+
+      // Reset inputs
+      if (nameEl) nameEl.value = '';
+      if (messageEl) messageEl.value = '';
+
+      // Show success alert message
+      var successMsg = document.getElementById('wish-success-msg');
+      if (successMsg) {
+        successMsg.style.display = 'block';
+        setTimeout(function() { successMsg.style.display = 'none'; }, 6000);
+      }
+
+      // Refresh live board
+      window.loadWishes();
+
+      // Launch confetti if available
+      if (typeof launchConfetti === 'function') {
+        launchConfetti(window.innerWidth / 2, window.innerHeight * 0.5);
+      }
+
+      // Scroll smoothly to Wishes board grid
+      var boardGrid = document.getElementById('wishes-board-grid');
+      if (boardGrid) boardGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      return false;
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      window.loadWishes();
+    });
+    window.loadWishes();
+  </script>
+</body>
+</html>
