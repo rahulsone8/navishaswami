@@ -222,6 +222,130 @@ em { font-style: italic; }
 }
 
 /* ═══════════════════════════════════════════════════════════
+   MOBILE FLOATING GLASS DOCK & NAVIGATION FOR PHONE USERS
+   ═══════════════════════════════════════════════════════════ */
+.mobile-dock {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Top Nav Bar on Mobile */
+  .nav {
+    padding: 0.6rem 1.1rem !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(25px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(25px) saturate(200%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 4px 20px rgba(91, 58, 102, 0.1) !important;
+  }
+
+  .nav__logo-text {
+    font-size: 1.3rem !important;
+  }
+
+  .nav__burger {
+    display: flex !important;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(91, 58, 102, 0.06);
+    border: 1px solid rgba(91, 58, 102, 0.1);
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .nav__burger:active {
+    transform: scale(0.92);
+  }
+
+  /* Floating Bottom Glass Dock */
+  .mobile-dock {
+    display: flex;
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 24px);
+    max-width: 430px;
+    z-index: 98000;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(30px) saturate(210%);
+    -webkit-backdrop-filter: blur(30px) saturate(210%);
+    border: 1.5px solid rgba(255, 255, 255, 0.95);
+    border-radius: 35px;
+    padding: 0.4rem 0.6rem;
+    align-items: center;
+    justify-content: space-around;
+    box-shadow: 0 14px 45px rgba(91, 58, 102, 0.22), 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 1px #fff;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+  }
+
+  .mobile-dock__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 22px;
+    text-decoration: none;
+    color: #4A2B58;
+    transition: all 0.22s ease;
+    flex: 1;
+    text-align: center;
+  }
+
+  .mobile-dock__icon {
+    font-size: 1.25rem;
+    line-height: 1;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .mobile-dock__label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #4A2B58;
+    line-height: 1;
+  }
+
+  .mobile-dock__item.active,
+  .mobile-dock__item:active {
+    background: rgba(91, 58, 102, 0.08);
+  }
+
+  .mobile-dock__item.active .mobile-dock__icon {
+    transform: scale(1.15) translateY(-2px);
+  }
+
+  .mobile-dock__item.active .mobile-dock__label {
+    color: #D97706;
+    font-weight: 800;
+  }
+
+  .mobile-dock__item--highlight {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+    border-radius: 26px;
+    padding: 0.45rem 0.7rem;
+  }
+
+  .mobile-dock__item--highlight .mobile-dock__label {
+    color: #ffffff !important;
+  }
+
+  .mobile-dock__item--highlight:active {
+    transform: scale(0.93);
+  }
+
+  body {
+    padding-bottom: 75px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
    FLOATING ORBS
    ═══════════════════════════════════════════════════════════ */
 .floating-decor {

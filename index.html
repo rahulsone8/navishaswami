@@ -48,10 +48,34 @@
   <div class="mobile-menu" id="mobile-menu">
     <a href="#about" class="mobile-menu__link">About</a>
     <a href="#journey" class="mobile-menu__link">Journey</a>
-    <a href="#" class="mobile-menu__link" id="mobile-gallery-btn">Gallery</a>
+    <a href="#" class="mobile-menu__link" id="mobile-gallery-btn">Gallery 🎬</a>
     <a href="#birthday" class="mobile-menu__link">Birthday 🎂</a>
     <a href="#" class="mobile-menu__link" id="mobile-party-snaps-btn">Party Snaps 📸</a>
     <a href="#wishes" class="mobile-menu__link">Send Wishes 💌</a>
+  </div>
+
+  <!-- ═══ MOBILE FLOATING GLASS DOCK (Thumb Nav for Phones) ═══ -->
+  <div class="mobile-dock" id="mobile-dock" aria-label="Quick Mobile Navigation">
+    <a href="#top" class="mobile-dock__item active" id="dock-home-btn">
+      <span class="mobile-dock__icon">🏠</span>
+      <span class="mobile-dock__label">Home</span>
+    </a>
+    <a href="#" class="mobile-dock__item" id="dock-reels-btn">
+      <span class="mobile-dock__icon">🎬</span>
+      <span class="mobile-dock__label">Reels</span>
+    </a>
+    <a href="#" class="mobile-dock__item mobile-dock__item--highlight" id="dock-party-snaps-btn">
+      <span class="mobile-dock__icon">📸</span>
+      <span class="mobile-dock__label">Snaps</span>
+    </a>
+    <a href="#birthday" class="mobile-dock__item" id="dock-birthday-btn">
+      <span class="mobile-dock__icon">🎂</span>
+      <span class="mobile-dock__label">Event</span>
+    </a>
+    <a href="#wishes" class="mobile-dock__item" id="dock-wishes-btn">
+      <span class="mobile-dock__icon">💌</span>
+      <span class="mobile-dock__label">Wishes</span>
+    </a>
   </div>
 
   <!-- ═══ FLOATING DECORATIONS ═══ -->
@@ -2828,12 +2852,10 @@
     });
 
     // ── Wire Gallery Nav Buttons → Reels (not Party Snaps) ───────
-    ['nav-gallery-btn', 'mobile-gallery-btn'].forEach(function(id) {
+    ['nav-gallery-btn', 'mobile-gallery-btn', 'dock-reels-btn'].forEach(function(id) {
       var btn = document.getElementById(id);
       if (btn) {
-        var newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        newBtn.addEventListener('click', function(e) {
+        btn.addEventListener('click', function(e) {
           e.preventDefault();
           window.openReelsModal();
           var mm = document.getElementById('mobile-menu');
@@ -2846,6 +2868,27 @@
           }, 50);
         });
       }
+    });
+
+    var dockSnaps = document.getElementById('dock-party-snaps-btn');
+    if (dockSnaps) {
+      dockSnaps.addEventListener('click', function(e) {
+        e.preventDefault();
+        var partyModal = document.getElementById('party-gallery-modal');
+        if (partyModal) {
+          partyModal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+          if (window.renderPartyAlbums) window.renderPartyAlbums();
+        }
+      });
+    }
+
+    // Active tab indicator state for mobile dock
+    document.querySelectorAll('.mobile-dock__item').forEach(function(item) {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.mobile-dock__item').forEach(function(i){ i.classList.remove('active'); });
+        item.classList.add('active');
+      });
     });
 
   })();
