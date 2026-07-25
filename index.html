@@ -479,83 +479,90 @@
   <!-- PARTY SNAPS & GALLERY MODAL OVERLAY (Opens on Click Only!) -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- ═══ PARTY SNAPS & ALBUMS MODAL OVERLAY ═══ -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ═══ PARTY SNAPS & ALBUMS MODAL OVERLAY ═══ -->
   <div id="party-gallery-modal" class="party-gallery-modal" role="dialog" aria-modal="true" aria-label="Party Memories and Photo Albums">
     <div class="party-gallery__backdrop" id="party-gallery-close-bg"></div>
-    <div class="party-gallery__container" style="max-width: 960px;">
+    <div class="party-gallery__container">
       <button class="party-gallery__close" id="party-gallery-close-btn" aria-label="Close Gallery">&times;</button>
       
       <div class="party-gallery__header">
-        <div class="section-label" style="justify-content:center;"><span>📸</span> Party Memories</div>
-        <h2 class="party-gallery__title">Party Memories &amp; Photo Albums 📸</h2>
-        <p class="party-gallery__subtitle">Upload your photos under your name! Photos are saved into your own named album folder.</p>
+        <div class="party-gallery__badge"><span>📸</span> Party Memories</div>
+        <h2 class="party-gallery__title">Party Memories &amp; Photo Albums</h2>
+        <p class="party-gallery__subtitle">Upload your photos under your name to save them into your own named album folder!</p>
       </div>
 
-      <!-- Upload Form with Name Field & Live Upload Progress -->
-      <div class="party-upload-box" style="background: rgba(255,255,255,0.72); backdrop-filter: blur(14px); border: 1.5px solid var(--gold); border-radius: 20px; padding: 1.2rem 1.5rem; margin-bottom: 1.8rem; text-align: left;">
-        <h4 style="font-family: var(--font-headline); font-style: italic; font-size: 1.15rem; color: var(--plum); margin-top: 0; margin-bottom: 0.8rem;">
-          📤 Upload Photos to Your Album Folder
-        </h4>
+      <!-- Upload Form with Custom File Dropzone & Live Upload Progress -->
+      <div class="party-upload-box">
+        <div class="party-upload-box__header">
+          <span class="party-upload-box__icon">✨</span>
+          <h4 class="party-upload-box__title">Upload Photos to Your Album Folder</h4>
+        </div>
         
-        <form id="party-upload-form" onsubmit="handlePartyUploadSubmit(event)" style="display: flex; flex-direction: column; gap: 0.8rem;">
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
-            <div style="flex: 1; min-width: 220px;">
-              <label for="uploader-name-input" style="font-size: 0.82rem; font-weight: 700; color: var(--plum); display: block; margin-bottom: 0.3rem;">
-                Your Name / Family Role <span style="color:red;">*</span>
+        <form id="party-upload-form" onsubmit="handlePartyUploadSubmit(event)" class="party-upload-form">
+          <div class="party-upload-fields">
+            <div class="party-field-group">
+              <label for="uploader-name-input" class="party-field-label">
+                Your Name / Family Role <span class="required-star">*</span>
               </label>
-              <input type="text" id="uploader-name-input" placeholder="e.g. Rahul Chacha / Anjali Maasi" required style="width: 100%; padding: 0.6rem 0.9rem; border-radius: 12px; border: 1.5px solid var(--lilac); background: #fff; font-family: inherit; font-size: 0.92rem; color: var(--plum);" />
+              <input type="text" id="uploader-name-input" placeholder="e.g. Rahul Chacha / Anjali Maasi" required class="party-text-input" />
             </div>
 
-            <div style="flex: 1; min-width: 220px;">
-              <label for="party-file-input-named" style="font-size: 0.82rem; font-weight: 700; color: var(--plum); display: block; margin-bottom: 0.3rem;">
-                Select Photos <span style="color:red;">*</span>
+            <div class="party-field-group">
+              <label class="party-field-label">
+                Select Photos <span class="required-star">*</span>
               </label>
-              <input type="file" id="party-file-input-named" multiple accept="image/*" required style="width: 100%; padding: 0.45rem 0.6rem; border-radius: 12px; border: 1.5px solid var(--lilac); background: #fff; font-size: 0.85rem;" />
+              <div class="party-file-dropzone" onclick="document.getElementById('party-file-input-named').click()">
+                <span class="party-dropzone-icon">📷</span>
+                <span id="file-chosen-text" class="party-dropzone-text">Choose Photos or Drag &amp; Drop</span>
+                <input type="file" id="party-file-input-named" multiple accept="image/*" required class="party-file-input-hidden" onchange="var t=document.getElementById('file-chosen-text'); if(this.files &amp;&amp; this.files.length>0){t.textContent='✨ '+this.files.length+' photo'+(this.files.length>1?'s':'')+' selected'; t.style.fontWeight='800'; t.style.color='var(--plum)';} else {t.textContent='Choose Photos or Drag &amp; Drop';}" />
+              </div>
             </div>
 
-            <button type="submit" class="party-action-btn party-action-btn--upload" style="margin: 0; padding: 0.65rem 1.4rem; height: 44px; font-weight: 800;">
+            <button type="submit" class="party-submit-btn">
               <span>☁️</span> Upload to Cloud
             </button>
           </div>
         </form>
 
         <!-- Live Upload Progress Status Bar -->
-        <div id="party-upload-progress" style="display: none; margin-top: 1rem; padding: 0.8rem; background: rgba(227, 214, 245, 0.5); border-radius: 14px; border: 1px solid var(--gold);">
-          <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 0.9rem; color: var(--plum); margin-bottom: 0.4rem;">
+        <div id="party-upload-progress" class="party-progress-box" style="display: none;">
+          <div class="party-progress-info">
             <span id="party-upload-text">Uploading (0/0) photos...</span>
             <span id="party-upload-percent">0%</span>
           </div>
-          <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.8); border-radius: 10px; overflow: hidden;">
-            <div id="party-upload-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--gold), var(--plum)); transition: width 0.3s;"></div>
+          <div class="party-progress-track">
+            <div id="party-upload-bar" class="party-progress-fill"></div>
           </div>
         </div>
       </div>
 
       <!-- Albums Folder View Header & Grid -->
       <div class="party-albums-wrap">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 0.8rem;">
-          <h3 style="font-family: var(--font-headline); font-style: italic; font-size: 1.3rem; color: var(--plum); margin: 0;" id="albums-section-title">
+        <div class="party-albums-topbar">
+          <h3 class="party-albums-title" id="albums-section-title">
             📁 Shared Photo Albums
           </h3>
           
-          <div id="album-download-actions" style="display: none; gap: 0.6rem; flex-wrap: wrap; align-items: center;">
-            <label style="background: rgba(255,255,255,0.92); padding: 0.45rem 0.85rem; border-radius: 12px; border: 1.5px solid var(--gold); display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.82rem; font-weight: 800; color: var(--plum); user-select: none;">
-              <input type="checkbox" id="party-select-all-cb" onchange="window.toggleSelectAllPhotos(this.checked)" style="width: 17px; height: 17px; accent-color: var(--plum); cursor: pointer;" />
-              Select All
+          <div id="album-download-actions" class="party-download-actions" style="display: none;">
+            <label class="party-select-all-pill">
+              <input type="checkbox" id="party-select-all-cb" onchange="window.toggleSelectAllPhotos(this.checked)" class="party-select-cb" />
+              <span>Select All</span>
             </label>
-            <button type="button" class="party-action-btn party-action-btn--download" onclick="downloadSelectedFolderPhotos()" style="padding: 0.45rem 0.9rem; font-size: 0.82rem; font-weight: 800;">
+            <button type="button" class="party-btn party-btn--selected" onclick="downloadSelectedFolderPhotos()">
               ⬇️ Download Selected (<span id="selected-photos-count">0</span>)
             </button>
-            <button type="button" class="party-action-btn party-action-btn--download" onclick="downloadAllFolderPhotos()" style="padding: 0.45rem 0.9rem; font-size: 0.82rem; font-weight: 800; background: var(--gold); color: var(--plum);">
+            <button type="button" class="party-btn party-btn--all" onclick="downloadAllFolderPhotos()">
               📦 Download All Photos
             </button>
-            <button type="button" class="wishes-view-all-btn" onclick="showAllAlbumsView()" id="back-to-albums-btn">
+            <button type="button" class="party-btn party-btn--back" onclick="showAllAlbumsView()" id="back-to-albums-btn">
               ← Back to Albums 📁
             </button>
           </div>
         </div>
 
         <!-- Grouped Album Folder Cards -->
-        <div id="party-albums-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.2rem; margin-bottom: 1.5rem;">
+        <div id="party-albums-grid" class="party-albums-grid">
           <!-- Dynamically populated folder cards -->
         </div>
 

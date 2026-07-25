@@ -1617,7 +1617,7 @@ em { font-style: italic; }
   color: var(--plum);
 }
 
-/* ─── Party Snaps & Gallery Modal Overlay (Opens on Click Only!) ─── */
+/* ─── Party Snaps & Gallery Modal Redesign ─── */
 .party-gallery-modal {
   position: fixed;
   inset: 0;
@@ -1639,25 +1639,25 @@ em { font-style: italic; }
 .party-gallery__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(30, 15, 45, 0.65);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(25, 12, 38, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .party-gallery__container {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 960px;
-  max-height: 88vh;
+  max-width: 980px;
+  max-height: 90vh;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 2px solid var(--gold);
-  border-radius: 28px;
-  padding: 2.2rem 2rem 2.5rem;
-  box-shadow: 0 25px 70px rgba(91, 58, 102, 0.35);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(252, 245, 255, 0.92));
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1.5px solid rgba(240, 185, 61, 0.6);
+  border-radius: 32px;
+  padding: 2.5rem 2.2rem 3.5rem;
+  box-shadow: 0 30px 80px rgba(70, 35, 85, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   transform: scale(0.94);
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -1668,48 +1668,363 @@ em { font-style: italic; }
 
 .party-gallery__close {
   position: absolute;
-  top: 1.2rem;
-  right: 1.5rem;
+  top: 1.4rem;
+  right: 1.6rem;
+  z-index: 100;
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--plum);
-  color: var(--white);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--plum);
   border: 1.5px solid var(--gold);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(91, 58, 102, 0.3);
-  transition: transform 0.2s, background 0.2s;
+  box-shadow: 0 6px 20px rgba(91, 58, 102, 0.18);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .party-gallery__close:hover {
   transform: scale(1.1) rotate(90deg);
-  background: var(--gold);
-  color: var(--plum);
+  background: var(--plum);
+  color: #fff;
+  border-color: var(--plum);
+  box-shadow: 0 8px 24px rgba(91, 58, 102, 0.35);
 }
 
 .party-gallery__header {
   text-align: center;
   margin-bottom: 2rem;
+  padding: 0 2rem;
+}
+
+.party-gallery__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(91, 58, 102, 0.08);
+  border: 1px solid rgba(240, 185, 61, 0.5);
+  color: var(--plum);
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0.4rem 1.1rem;
+  border-radius: 50px;
+  margin-bottom: 0.6rem;
 }
 
 .party-gallery__title {
   font-family: var(--font-headline);
   font-style: italic;
   font-weight: 900;
-  font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+  font-size: clamp(1.9rem, 4.5vw, 2.7rem);
   color: var(--plum);
   margin: 0.2rem 0 0.4rem;
+  letter-spacing: -0.5px;
 }
 
 .party-gallery__subtitle {
   font-size: 0.95rem;
   color: var(--plum-light);
   font-weight: 600;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ─── Ultra-Sleek Glassmorphic Upload Box ─── */
+.party-upload-box {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 238, 255, 0.85));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(240, 185, 61, 0.45);
+  border-radius: 24px;
+  padding: 1.5rem 1.8rem;
+  margin-bottom: 2.2rem;
+  text-align: left;
+  box-shadow: 0 14px 40px rgba(91, 58, 102, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.party-upload-box__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.party-upload-box__icon {
+  font-size: 1.2rem;
+}
+
+.party-upload-box__title {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--plum);
+  margin: 0;
+}
+
+.party-upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.party-upload-fields {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr auto;
+  gap: 1.2rem;
+  align-items: flex-end;
+}
+
+@media (max-width: 768px) {
+  .party-upload-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.party-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.party-field-label {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--plum);
+}
+
+.required-star {
+  color: #EF4444;
+}
+
+.party-text-input {
+  width: 100%;
+  padding: 0.75rem 1.1rem;
+  border-radius: 16px;
+  border: 1.5px solid rgba(190, 160, 220, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--plum);
+  box-shadow: 0 2px 8px rgba(91, 58, 102, 0.04);
+  transition: all 0.25s ease;
+}
+
+.party-text-input:focus {
+  outline: none;
+  border-color: var(--plum);
+  box-shadow: 0 0 0 4px rgba(91, 58, 102, 0.12);
+  background: #fff;
+}
+
+/* Custom File Dropzone Element */
+.party-file-dropzone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.65rem 1.1rem;
+  border-radius: 16px;
+  border: 1.5px dashed rgba(240, 185, 61, 0.7);
+  background: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+  box-shadow: 0 2px 8px rgba(91, 58, 102, 0.04);
+}
+
+.party-file-dropzone:hover {
+  border-color: var(--plum);
+  background: rgba(255, 255, 255, 0.98);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(91, 58, 102, 0.1);
+}
+
+.party-dropzone-icon {
+  font-size: 1.1rem;
+}
+
+.party-dropzone-text {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--plum-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.party-file-input-hidden {
+  display: none;
+}
+
+.party-submit-btn {
+  height: 48px;
+  padding: 0 1.6rem;
+  border-radius: 50px;
+  border: none;
+  background: linear-gradient(135deg, var(--plum), #4A2B56);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(91, 58, 102, 0.25);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.party-submit-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: linear-gradient(135deg, #4A2B56, var(--plum));
+  box-shadow: 0 12px 28px rgba(91, 58, 102, 0.38);
+}
+
+/* Progress Box */
+.party-progress-box {
+  margin-top: 1.2rem;
+  padding: 1rem 1.2rem;
+  background: rgba(235, 222, 252, 0.6);
+  border-radius: 16px;
+  border: 1px solid rgba(240, 185, 61, 0.5);
+}
+
+.party-progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--plum);
+  margin-bottom: 0.5rem;
+}
+
+.party-progress-track {
+  width: 100%;
+  height: 9px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.party-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #F59E0B, var(--plum));
+  transition: width 0.3s ease;
+  border-radius: 10px;
+}
+
+/* ─── Albums Header & Download Action Controls ─── */
+.party-albums-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.4rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.party-albums-title {
+  font-family: var(--font-headline);
+  font-style: italic;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--plum);
+  margin: 0;
+}
+
+.party-download-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.party-select-all-pill {
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  border: 1.5px solid rgba(240, 185, 61, 0.6);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--plum);
+  user-select: none;
+  box-shadow: 0 4px 12px rgba(91, 58, 102, 0.06);
+  transition: all 0.2s ease;
+}
+
+.party-select-all-pill:hover {
+  background: #fff;
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.party-select-cb {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--plum);
+  cursor: pointer;
+}
+
+.party-btn {
+  padding: 0.55rem 1.1rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.party-btn--selected {
+  background: rgba(91, 58, 102, 0.1);
+  color: var(--plum);
+  border: 1.5px solid rgba(91, 58, 102, 0.2);
+}
+
+.party-btn--selected:hover {
+  background: var(--plum);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.party-btn--all {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.35);
+}
+
+.party-btn--all:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.45);
+}
+
+.party-btn--back {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--plum);
+  border: 1.5px solid var(--gold);
+}
+
+.party-btn--back:hover {
+  background: var(--plum);
+  color: #fff;
+  border-color: var(--plum);
+  transform: translateY(-2px);
 }
 
 /* ─── Grouped Photo Album Folders ─── */
