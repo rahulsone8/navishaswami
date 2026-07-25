@@ -2825,44 +2825,60 @@
       if (e.key === 'm' || e.key === 'M') { isMuted = !isMuted; updateMuteUI(); }
     });
 
-    // ── Wire Gallery Nav Buttons → Reels (not Party Snaps) ───────
-    ['nav-gallery-btn', 'mobile-gallery-btn', 'dock-reels-btn'].forEach(function(id) {
+    // ── FAST UNIFIED MOBILE DOCK CONTROLLER ──────────────────────
+    function closeAllActiveModals() {
+      if (typeof window.closeReelsModal === 'function') window.closeReelsModal();
+      var partyModal = document.getElementById('party-gallery-modal');
+      if (partyModal) partyModal.classList.remove('active');
+      var wishesModal = document.getElementById('all-wishes-modal');
+      if (wishesModal) wishesModal.classList.remove('active');
+      var mm = document.getElementById('mobile-menu');
+      if (mm) mm.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    var DOCK_ACTIONS = {
+      'dock-home-btn': function() {
+        closeAllActiveModals();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+      'dock-reels-btn': function() {
+        closeAllActiveModals();
+        setTimeout(function() { window.openReelsModal(); }, 10);
+      },
+      'dock-party-snaps-btn': function() {
+        closeAllActiveModals();
+        setTimeout(function() {
+          var partyModal = document.getElementById('party-gallery-modal');
+          if (partyModal) {
+            partyModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (window.renderPartyAlbums) window.renderPartyAlbums();
+          }
+        }, 10);
+      },
+      'dock-birthday-btn': function() {
+        closeAllActiveModals();
+        var el = document.getElementById('birthday');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      },
+      'dock-wishes-btn': function() {
+        closeAllActiveModals();
+        var el = document.getElementById('wishes');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    Object.keys(DOCK_ACTIONS).forEach(function(id) {
       var btn = document.getElementById(id);
       if (btn) {
         btn.addEventListener('click', function(e) {
           e.preventDefault();
-          window.openReelsModal();
-          var mm = document.getElementById('mobile-menu');
-          if (mm) mm.classList.remove('open');
-          document.body.style.overflow = '';
-          setTimeout(function() {
-            if (reelsModal && reelsModal.classList.contains('active')) {
-              document.body.style.overflow = 'hidden';
-            }
-          }, 50);
+          document.querySelectorAll('.mobile-dock__item').forEach(function(i){ i.classList.remove('active'); });
+          btn.classList.add('active');
+          DOCK_ACTIONS[id]();
         });
       }
-    });
-
-    var dockSnaps = document.getElementById('dock-party-snaps-btn');
-    if (dockSnaps) {
-      dockSnaps.addEventListener('click', function(e) {
-        e.preventDefault();
-        var partyModal = document.getElementById('party-gallery-modal');
-        if (partyModal) {
-          partyModal.classList.add('active');
-          document.body.style.overflow = 'hidden';
-          if (window.renderPartyAlbums) window.renderPartyAlbums();
-        }
-      });
-    }
-
-    // Active tab indicator state for mobile dock
-    document.querySelectorAll('.mobile-dock__item').forEach(function(item) {
-      item.addEventListener('click', function() {
-        document.querySelectorAll('.mobile-dock__item').forEach(function(i){ i.classList.remove('active'); });
-        item.classList.add('active');
-      });
     });
 
     // ── Mobile Dock Scroll Auto-Minimize Engine ───────────────────
