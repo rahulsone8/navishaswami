@@ -526,8 +526,6 @@ em { font-style: italic; }
   opacity: 1 !important;
   transform: translate3d(0, 0, 0) !important;
 }
-  transform: translateY(0) !important;
-}
 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
