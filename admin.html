@@ -67,7 +67,7 @@
 
     .form-group {
       text-align: left;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.1rem;
     }
 
     .form-label {
@@ -129,7 +129,7 @@
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 1.5rem 5rem;
+      padding: 2.5rem 1.5rem 6rem;
     }
 
     .admin-header {
@@ -193,6 +193,7 @@
       margin-bottom: 1.2rem;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
     }
 
@@ -210,6 +211,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.7rem;
+      position: relative;
     }
 
     .image-preview-box {
@@ -252,6 +254,7 @@
       display: flex;
       gap: 0.5rem;
       align-items: center;
+      margin-top: 0.3rem;
     }
 
     .btn-small-upload {
@@ -268,6 +271,45 @@
 
     .btn-small-upload:hover {
       background: var(--plum);
+      color: #fff;
+    }
+
+    .btn-add-milestone {
+      padding: 0.65rem 1.4rem;
+      border-radius: 50px;
+      border: 1.5px solid var(--plum);
+      background: var(--plum);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-add-milestone:hover {
+      background: #4A2B56;
+      transform: translateY(-1px);
+    }
+
+    .btn-delete-card {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.8rem;
+      background: rgba(239, 68, 68, 0.12);
+      color: #EF4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 50px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-delete-card:hover {
+      background: #EF4444;
       color: #fff;
     }
 
@@ -318,7 +360,7 @@
   <div class="auth-container" id="auth-screen">
     <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔐</div>
     <h2 class="auth-title">Admin Login</h2>
-    <p class="auth-subtitle">Manage all Family Tree photos &amp; website images</p>
+    <p class="auth-subtitle">Manage all Family Tree photos, milestones &amp; website text</p>
 
     <form onsubmit="handleLoginSubmit(event)">
       <div class="form-group">
@@ -342,7 +384,7 @@
     <div class="admin-header">
       <div>
         <h1 class="admin-title">👑 Shivi's Site Admin Panel</h1>
-        <p style="margin: 0.2rem 0 0; color: var(--plum-light); font-weight: 600;">Upload and update photos for every Family Tree member, milestones &amp; backgrounds</p>
+        <p style="margin: 0.2rem 0 0; color: var(--plum-light); font-weight: 600;">Upload &amp; sync photos across all devices, create &amp; edit milestone memories</p>
       </div>
 
       <div class="header-actions">
@@ -375,20 +417,42 @@
       <div class="image-grid" id="siblings-grid"></div>
     </div>
 
-    <!-- CATEGORY 5: WEBSITE BACKGROUNDS & MILESTONES -->
+    <!-- CATEGORY 5: DYNAMIC MILESTONES TIMELINE MANAGER -->
     <div class="section-card">
-      <h2 class="section-card-title">🖼️ Website Backgrounds &amp; Milestones</h2>
+      <div class="section-card-title">
+        <span>🚩 Her Journey — Milestones Timeline Manager</span>
+        <button type="button" class="btn-add-milestone" onclick="addNewMilestoneCard()">➕ Add New Milestone</button>
+      </div>
+      <p style="margin: -0.5rem 0 1.2rem; font-size: 0.85rem; color: var(--plum-light); font-weight: 600;">
+        Upload milestone photos, change titles, date badges &amp; memory story text. Add as many custom milestones as you want!
+      </p>
+      <div class="image-grid" id="milestones-grid"></div>
+    </div>
+
+    <!-- CATEGORY 6: WEBSITE BACKGROUNDS -->
+    <div class="section-card">
+      <h2 class="section-card-title">🖼️ Website Backgrounds &amp; Cutout Badges</h2>
       <div class="image-grid" id="site-images-grid"></div>
     </div>
 
     <!-- STICKY SAVE BAR -->
     <div class="save-bar">
-      <span class="save-bar-text">✨ Upload photos &amp; click save to update the website in real-time!</span>
+      <span class="save-bar-text" id="save-status-text">✨ Upload photos &amp; click save to sync across mobile &amp; laptop!</span>
       <button type="button" class="btn-save" onclick="saveAllImageOverrides()">💾 Save All Changes</button>
     </div>
   </div>
 
   <script>
+    // SUPABASE INITIALIZATION FOR MULTI-DEVICE CLOUD SYNC
+    var sbUrl = (window.APP_CONFIG && window.APP_CONFIG.SUPABASE_URL) || "https://zpgahkzikzqoozmhwaja.supabase.co";
+    var sbKey = (window.APP_CONFIG && window.APP_CONFIG.SUPABASE_ANON_KEY) || "sb_publishable_L8FYHXGZ5MzHr0hwDKRY4w_sw_hXUNs";
+    var supabaseClient = null;
+
+    if (typeof supabase !== 'undefined' && supabase.createClient) {
+      supabaseClient = supabase.createClient(sbUrl, sbKey);
+      window.supabaseClient = supabaseClient;
+    }
+
     // FULL CONFIG OF ALL FAMILY MEMBERS & SITE IMAGES
     var ALL_CONFIG = {
       // 1. Main Family
@@ -436,13 +500,21 @@
       'didi_2': { cat: 'siblings', emoji: '👧🏻', title: 'Didi 2', sub: 'Sister / Cousin', defaultSrc: '' },
       'nephew_1': { cat: 'siblings', emoji: '👶🏻', title: 'Nephew 1', sub: 'Nephew', defaultSrc: '' },
 
-      // 5. Site Images & Backgrounds
+      // 5. Site Backgrounds
       'family_bg': { cat: 'site', emoji: '🖼️', title: 'Hero Desktop Background', sub: 'Main Desktop Header Background', defaultSrc: 'assets/images/family_bg.jpg' },
       'mobile_bg': { cat: 'site', emoji: '📱', title: 'Mobile Dedicated Background', sub: 'Mobile Screen Background Image', defaultSrc: 'assets/images/mobile_bg.jpg' },
-      'shivi_first_day': { cat: 'site', emoji: '🌸', title: 'Milestone 1: First Day', sub: 'First Day in This World Memory', defaultSrc: 'assets/images/shivi_first_day.jpg' },
-      'shivi_lollipop': { cat: 'site', emoji: '🍭', title: 'Milestone 2: Turning 1 Year Old', sub: 'One Year Milestone Photo', defaultSrc: 'assets/images/shivi_lollipop.jpg' },
       'shivi_cutout': { cat: 'site', emoji: '✂️', title: 'Shivi Title Cutout Image', sub: 'Inline Header Cutout Badge', defaultSrc: 'assets/images/shivi_cutout.png' }
     };
+
+    var DEFAULT_MILESTONES = [
+      { id: 'm1', num: '01', title: 'First Day in This World 👶🏻🌸', sub: 'Held closely in Papa\'s loving arms', date: '4 Aug 2025', img: 'assets/images/shivi_first_day.jpg', emoji: '👶🏻🌸' },
+      { id: 'm2', num: '02', title: 'First Smile 😊✨', sub: 'The smile that melted everyone\'s hearts', date: 'Sept 2025', img: '', emoji: '😊✨' },
+      { id: 'm3', num: '03', title: 'First Giggles 🤭🎶', sub: 'Papa\'s silly faces finally worked!', date: 'Dec 2025', img: '', emoji: '🤭🎶' },
+      { id: 'm4', num: '04', title: 'First Word: "Ma-ma" 🗣️💖', sub: 'The sweetest sound in the world', date: 'April 2026', img: '', emoji: '🗣️💖' },
+      { id: 'm5', num: '05', title: 'Turning 1 Year Old! 🥳🎂', sub: 'One full year of love & happiness!', date: '4 Aug 2026', img: 'assets/images/shivi_lollipop.jpg', emoji: '🥳🎂' }
+    ];
+
+    var currentMilestones = [];
 
     // AUTHENTICATION LOGIC
     function checkAuth() {
@@ -476,8 +548,34 @@
       checkAuth();
     }
 
-    // DASHBOARD RENDER LOGIC
+    // DASHBOARD DATA INITIALIZATION (FETCH FROM SUPABASE CLOUD FOR PHONE -> LAPTOP SYNC)
     function initDashboard() {
+      if (window.supabaseClient) {
+        window.supabaseClient
+          .from('site_settings')
+          .select('*')
+          .then(function(res) {
+            if (res.data && res.data.length > 0) {
+              res.data.forEach(function(row) {
+                if (row.id === 'img_overrides' && row.value) {
+                  localStorage.setItem('shivi_img_overrides', row.value);
+                }
+                if (row.id === 'milestones' && row.value) {
+                  localStorage.setItem('shivi_milestones', row.value);
+                }
+              });
+            }
+            renderDashboardUI();
+          })
+          .catch(function() {
+            renderDashboardUI();
+          });
+      } else {
+        renderDashboardUI();
+      }
+    }
+
+    function renderDashboardUI() {
       var grids = {
         'main': document.getElementById('main-family-grid'),
         'paternal': document.getElementById('paternal-grid'),
@@ -492,6 +590,7 @@
 
       var saved = JSON.parse(localStorage.getItem('shivi_img_overrides') || '{}');
 
+      // Render Family & Site Cards
       Object.keys(ALL_CONFIG).forEach(function(key) {
         var item = ALL_CONFIG[key];
         var currentSrc = saved[key] || item.defaultSrc || '';
@@ -523,6 +622,89 @@
         card.innerHTML = html;
         targetGrid.appendChild(card);
       });
+
+      // Render Milestones Section
+      renderMilestonesSection();
+    }
+
+    function renderMilestonesSection() {
+      var grid = document.getElementById('milestones-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      var savedMilestones = [];
+      try {
+        savedMilestones = JSON.parse(localStorage.getItem('shivi_milestones') || 'null');
+      } catch(e) {}
+
+      currentMilestones = (savedMilestones && savedMilestones.length > 0) ? savedMilestones : JSON.parse(JSON.stringify(DEFAULT_MILESTONES));
+
+      currentMilestones.forEach(function(m, idx) {
+        var card = document.createElement('div');
+        card.className = 'image-item-card';
+        card.id = 'milestone-card-' + idx;
+
+        var previewHtml = m.img
+          ? '<img src="' + m.img + '" id="preview-m-' + idx + '" alt="' + m.title + '" />'
+          : '<div id="preview-m-' + idx + '" class="image-preview-placeholder">' + (m.emoji || '🌸') + '</div>';
+
+        var html = 
+          '<button type="button" class="btn-delete-card" onclick="deleteMilestoneCard(' + idx + ')">🗑️ Remove</button>' +
+          '<h4 class="image-title">Milestone ' + (idx + 1) + '</h4>' +
+          '<div class="image-preview-box" id="box-m-' + idx + '">' + previewHtml + '</div>' +
+
+          '<div class="form-group" style="margin-bottom:0.4rem;">' +
+            '<label class="form-label" style="font-size:0.75rem;">Milestone Title</label>' +
+            '<input type="text" id="m-title-' + idx + '" value="' + (m.title || '') + '" class="form-input" style="font-size:0.8rem;" placeholder="e.g. First Smile 😊" />' +
+          '</div>' +
+
+          '<div class="form-group" style="margin-bottom:0.4rem;">' +
+            '<label class="form-label" style="font-size:0.75rem;">Date Badge Text</label>' +
+            '<input type="text" id="m-date-' + idx + '" value="' + (m.date || '') + '" class="form-input" style="font-size:0.8rem;" placeholder="e.g. Sept 2025" />' +
+          '</div>' +
+
+          '<div class="form-group" style="margin-bottom:0.4rem;">' +
+            '<label class="form-label" style="font-size:0.75rem;">Story / Subtitle Description</label>' +
+            '<input type="text" id="m-sub-' + idx + '" value="' + (m.sub || '') + '" class="form-input" style="font-size:0.8rem;" placeholder="e.g. The smile that melted our hearts" />' +
+          '</div>' +
+
+          '<div class="form-group" style="margin-bottom:0.4rem;">' +
+            '<label class="form-label" style="font-size:0.75rem;">Photo URL</label>' +
+            '<input type="text" id="m-img-' + idx + '" value="' + (m.img || '') + '" class="form-input" style="font-size:0.8rem;" onchange="updateMilestonePreview(' + idx + ', this.value)" placeholder="Paste URL or upload photo" />' +
+          '</div>' +
+
+          '<div class="file-upload-btn-wrap">' +
+            '<input type="file" id="file-m-' + idx + '" accept="image/*" style="display:none;" onchange="uploadMilestonePhoto(' + idx + ', this)" />' +
+            '<button type="button" class="btn-small-upload" onclick="document.getElementById(\'file-m-' + idx + '\').click()">📸 Upload Photo</button>' +
+          '</div>';
+
+        card.innerHTML = html;
+        grid.appendChild(card);
+      });
+    }
+
+    function addNewMilestoneCard() {
+      var newIdx = currentMilestones.length;
+      var numStr = (newIdx + 1 < 10) ? ('0' + (newIdx + 1)) : ('' + (newIdx + 1));
+      currentMilestones.push({
+        id: 'm_' + Date.now(),
+        num: numStr,
+        title: 'New Milestone ' + (newIdx + 1) + ' ✨',
+        sub: 'Add your milestone memory description here',
+        date: '2026',
+        img: '',
+        emoji: '⭐'
+      });
+      renderMilestonesSection();
+      var newCard = document.getElementById('milestone-card-' + newIdx);
+      if (newCard) newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function deleteMilestoneCard(idx) {
+      if (confirm('Are you sure you want to delete this milestone?')) {
+        currentMilestones.splice(idx, 1);
+        renderMilestonesSection();
+      }
     }
 
     function updatePreview(key, url) {
@@ -534,6 +716,16 @@
         box.innerHTML = '<img src="' + url + '" id="preview-' + key + '" alt="' + item.title + '" />';
       } else {
         box.innerHTML = '<div id="preview-' + key + '" class="image-preview-placeholder">' + item.emoji + '</div>';
+      }
+    }
+
+    function updateMilestonePreview(idx, url) {
+      var box = document.getElementById('box-m-' + idx);
+      if (!box) return;
+      if (url) {
+        box.innerHTML = '<img src="' + url + '" id="preview-m-' + idx + '" alt="Milestone" />';
+      } else {
+        box.innerHTML = '<div id="preview-m-' + idx + '" class="image-preview-placeholder">🌸</div>';
       }
     }
 
@@ -577,7 +769,6 @@
           } catch(e) {}
         }
 
-        // Local Data URL fallback if network fails
         var reader = new FileReader();
         reader.onload = function(e) {
           if (input) input.value = e.target.result;
@@ -597,7 +788,59 @@
       xhr.send(formData);
     }
 
+    function uploadMilestonePhoto(idx, inputEl) {
+      if (!inputEl || !inputEl.files || inputEl.files.length === 0) return;
+      var file = inputEl.files[0];
+      var input = document.getElementById('m-img-' + idx);
+      var box = document.getElementById('box-m-' + idx);
+
+      var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || 'dtsmry84';
+      var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || 'shivi_party_snaps';
+      var apiKey = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_API_KEY) || '559857846832466';
+
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+      if (apiKey) formData.append('api_key', apiKey);
+      formData.append('folder', 'ShiviMilestones');
+
+      if (box) box.style.opacity = '0.5';
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
+      xhr.onload = function() {
+        if (box) box.style.opacity = '1';
+        if (xhr.status === 200) {
+          try {
+            var res = JSON.parse(xhr.responseText);
+            var url = res.secure_url || res.url;
+            if (input) input.value = url;
+            updateMilestonePreview(idx, url);
+            return;
+          } catch(e) {}
+        }
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          if (input) input.value = e.target.result;
+          updateMilestonePreview(idx, e.target.result);
+        };
+        reader.readAsDataURL(file);
+      };
+      xhr.onerror = function() {
+        if (box) box.style.opacity = '1';
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          if (input) input.value = e.target.result;
+          updateMilestonePreview(idx, e.target.result);
+        };
+        reader.readAsDataURL(file);
+      };
+      xhr.send(formData);
+    }
+
     function saveAllImageOverrides() {
+      // 1. Gather Family & Site Overrides
       var overrides = {};
       Object.keys(ALL_CONFIG).forEach(function(key) {
         var input = document.getElementById('input-' + key);
@@ -605,20 +848,52 @@
           overrides[key] = input.value.trim();
         }
       });
-
       localStorage.setItem('shivi_img_overrides', JSON.stringify(overrides));
 
-      // Sync to Supabase site_settings if available
+      // 2. Gather Milestones Data
+      var milestonesList = [];
+      currentMilestones.forEach(function(m, idx) {
+        var tInput = document.getElementById('m-title-' + idx);
+        var dInput = document.getElementById('m-date-' + idx);
+        var sInput = document.getElementById('m-sub-' + idx);
+        var iInput = document.getElementById('m-img-' + idx);
+
+        var numStr = (idx + 1 < 10) ? ('0' + (idx + 1)) : ('' + (idx + 1));
+
+        milestonesList.push({
+          id: m.id || ('m_' + idx),
+          num: numStr,
+          title: tInput ? tInput.value.trim() : (m.title || ''),
+          date: dInput ? dInput.value.trim() : (m.date || ''),
+          sub: sInput ? sInput.value.trim() : (m.sub || ''),
+          img: iInput ? iInput.value.trim() : (m.img || ''),
+          emoji: m.emoji || '🌸'
+        });
+      });
+      localStorage.setItem('shivi_milestones', JSON.stringify(milestonesList));
+
+      var statusText = document.getElementById('save-status-text');
+      if (statusText) statusText.textContent = '☁️ Syncing changes to cloud database...';
+
+      // 3. Save to Supabase Cloud Database for Phone <-> Laptop real-time sync
       if (window.supabaseClient) {
         window.supabaseClient
           .from('site_settings')
-          .upsert([{ id: 'img_overrides', value: JSON.stringify(overrides) }])
-          .then(function() {})
-          .catch(function() {});
+          .upsert([
+            { id: 'img_overrides', value: JSON.stringify(overrides) },
+            { id: 'milestones', value: JSON.stringify(milestonesList) }
+          ])
+          .then(function() {
+            if (statusText) statusText.textContent = '✅ Synced to cloud! Your laptop & phone now show the updated site!';
+          })
+          .catch(function(err) {
+            console.warn('Supabase save error:', err);
+            if (statusText) statusText.textContent = 'Local saved! (Cloud sync error)';
+          });
       }
 
-      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-      alert('🎉 Success! All Family Member photos and Website Image changes have been saved!');
+      confetti({ particleCount: 140, spread: 85, origin: { y: 0.6 } });
+      alert('🎉 Success! All Family Member photos, Milestones & Website Image changes have been saved & synced!');
     }
 
     // Initialize Auth check
