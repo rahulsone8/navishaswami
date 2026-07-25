@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20260725_v15" />
+  <link rel="stylesheet" href="style.css?v=20260725_v16" />
 </head>
 <body>
   <!-- ═══ MOBILE DEDICATED BACKGROUND ═══ -->
@@ -487,11 +487,36 @@
         <p class="party-gallery__subtitle">Upload your photos under your name! Photos are saved into your own named album folder.</p>
       </div>
 
-      <!-- Upload Form with Name Field & Live Upload Progress -->
+      <!-- Upload Form with Name Field, Cloudinary Status & Live Upload Progress -->
       <div class="party-upload-box" style="background: rgba(255,255,255,0.72); backdrop-filter: blur(14px); border: 1.5px solid var(--gold); border-radius: 20px; padding: 1.2rem 1.5rem; margin-bottom: 1.8rem; text-align: left;">
-        <h4 style="font-family: var(--font-headline); font-style: italic; font-size: 1.1rem; color: var(--plum); margin-bottom: 0.8rem;">
-          📤 Upload Photos to Your Album Folder
-        </h4>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem;">
+          <h4 style="font-family: var(--font-headline); font-style: italic; font-size: 1.1rem; color: var(--plum); margin: 0;">
+            ☁️ Upload Photos to Cloudinary Album Folder
+          </h4>
+          <button type="button" onclick="toggleCloudinarySettings()" style="background: rgba(255,255,255,0.9); border: 1.2px solid var(--gold); padding: 4px 10px; border-radius: 12px; font-size: 0.76rem; font-weight: 800; color: var(--plum); cursor: pointer; display: inline-flex; align-items: center; gap: 5px;">
+            <span>⚙️ Cloud Settings</span>
+            <span id="cloudinary-status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+          </button>
+        </div>
+
+        <!-- Optional Custom Cloudinary Credentials Drawer -->
+        <div id="cloudinary-settings-drawer" style="display: none; background: rgba(255, 248, 240, 0.95); border: 1px dashed var(--gold); border-radius: 14px; padding: 0.8rem 1rem; margin-bottom: 1rem;">
+          <div style="font-size: 0.78rem; font-weight: 800; color: var(--plum); margin-bottom: 0.4rem;">☁️ Cloudinary Account Settings:</div>
+          <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 160px;">
+              <label style="font-size: 0.72rem; font-weight: 700; color: var(--plum); display: block;">Cloud Name</label>
+              <input type="text" id="cld-name-input" placeholder="shivi-party" style="width: 100%; padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid var(--lilac); font-size: 0.82rem;" />
+            </div>
+            <div style="flex: 1; min-width: 160px;">
+              <label style="font-size: 0.72rem; font-weight: 700; color: var(--plum); display: block;">Upload Preset</label>
+              <input type="text" id="cld-preset-input" placeholder="shivi_party_snaps" style="width: 100%; padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid var(--lilac); font-size: 0.82rem;" />
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+              <button type="button" onclick="saveCloudinarySettings()" style="padding: 0.4rem 0.8rem; background: var(--plum); color: white; border-radius: 8px; font-size: 0.78rem; font-weight: 800; border: none; cursor: pointer;">Save Settings</button>
+            </div>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--plum-light); margin-top: 0.4rem; margin-bottom: 0;">* Cloudinary auto-uploads under <code>ShiviPartySnaps/{uploaderName}</code> folder accessible anywhere.</p>
+        </div>
         
         <form id="party-upload-form" onsubmit="handlePartyUploadSubmit(event)" style="display: flex; flex-direction: column; gap: 0.8rem;">
           <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end;">
@@ -510,7 +535,7 @@
             </div>
 
             <button type="submit" class="party-action-btn party-action-btn--upload" style="margin: 0; padding: 0.65rem 1.4rem; height: 44px; font-weight: 800;">
-              <span>📤</span> Start Uploading
+              <span>☁️</span> Upload to Cloud
             </button>
           </div>
         </form>
@@ -836,7 +861,7 @@
   <!-- ═══ CONFETTI CANVAS ═══ -->
   <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
-  <script src="script.js?v=20260725_v15"></script>
+  <script src="script.js?v=20260725_v16"></script>
   <script>
     window.selectedWishEmoji = '💖';
 
@@ -1113,7 +1138,86 @@
       callback(localPhotos);
     }
 
-    // ── PARTY SNAPS ALBUM & UPLOAD LOGIC ──
+    // ── CLOUDINARY & PARTY SNAPS ALBUM LOGIC ──
+    window.toggleCloudinarySettings = function() {
+      var drawer = document.getElementById('cloudinary-settings-drawer');
+      if (drawer) {
+        drawer.style.display = (drawer.style.display === 'none' || !drawer.style.display) ? 'block' : 'none';
+        var cldName = localStorage.getItem('shivi_cloudinary_cloud_name') || 'dju6e6g3j';
+        var cldPreset = localStorage.getItem('shivi_cloudinary_preset') || 'shivi_party_snaps';
+        var nameIn = document.getElementById('cld-name-input');
+        var presetIn = document.getElementById('cld-preset-input');
+        if (nameIn) nameIn.value = cldName;
+        if (presetIn) presetIn.value = cldPreset;
+      }
+    };
+
+    window.saveCloudinarySettings = function() {
+      var nameIn = document.getElementById('cld-name-input');
+      var presetIn = document.getElementById('cld-preset-input');
+      if (nameIn && nameIn.value.trim()) localStorage.setItem('shivi_cloudinary_cloud_name', nameIn.value.trim());
+      if (presetIn && presetIn.value.trim()) localStorage.setItem('shivi_cloudinary_preset', presetIn.value.trim());
+      alert('Cloudinary settings saved successfully! ☁️');
+      var drawer = document.getElementById('cloudinary-settings-drawer');
+      if (drawer) drawer.style.display = 'none';
+    };
+
+    function uploadToCloudinaryServer(file, uploaderName, callback) {
+      var cloudName = localStorage.getItem('shivi_cloudinary_cloud_name') || 'dju6e6g3j';
+      var uploadPreset = localStorage.getItem('shivi_cloudinary_preset') || 'shivi_party_snaps';
+      var cleanFolder = uploaderName.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+      formData.append('folder', 'ShiviPartySnaps/' + cleanFolder);
+      formData.append('tags', 'shivi_party_snaps,folder_' + cleanFolder);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
+
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          try {
+            var res = JSON.parse(xhr.responseText);
+            var photoObj = {
+              id: 'cld_' + (res.public_id || Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+              uploader: uploaderName,
+              src: res.secure_url || res.url,
+              public_id: res.public_id,
+              bytes: res.bytes,
+              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            };
+            callback(null, photoObj);
+            return;
+          } catch(e) {}
+        }
+        compressPhotoFile(file, function(compressedUrl) {
+          var fallbackObj = {
+            id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+            uploader: uploaderName,
+            src: compressedUrl,
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          };
+          callback(null, fallbackObj);
+        });
+      };
+
+      xhr.onerror = function() {
+        compressPhotoFile(file, function(compressedUrl) {
+          var fallbackObj = {
+            id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+            uploader: uploaderName,
+            src: compressedUrl,
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+          };
+          callback(null, fallbackObj);
+        });
+      };
+
+      xhr.send(formData);
+    }
+
     window.handlePartyUploadSubmit = function(e) {
       if (e && e.preventDefault) e.preventDefault();
 
@@ -1141,13 +1245,13 @@
       var completed = 0;
 
       if (progressBox) progressBox.style.display = 'block';
-      if (progressText) progressText.textContent = 'Uploading (0/' + total + ') photos...';
+      if (progressText) progressText.textContent = 'Uploading (0/' + total + ') to Cloudinary...';
       if (progressPercent) progressPercent.textContent = '0%';
       if (progressBar) progressBar.style.width = '0%';
 
       function processFileIndex(idx) {
         if (idx >= total) {
-          if (progressText) progressText.textContent = '🎉 Upload complete! Folder created for ' + uploaderName + '!';
+          if (progressText) progressText.textContent = '☁️ Cloud upload complete! Folder created for ' + uploaderName + '!';
           if (progressPercent) progressPercent.textContent = '100%';
           if (progressBar) progressBar.style.width = '100%';
 
@@ -1157,7 +1261,6 @@
             launchConfetti(window.innerWidth / 2, window.innerHeight * 0.4);
           }
 
-          // Instantly open the newly created album folder!
           setTimeout(function() {
             if (progressBox) progressBox.style.display = 'none';
             window.openPartyAlbumFolder(uploaderName);
@@ -1168,23 +1271,17 @@
         var file = files[idx];
         var currentNum = idx + 1;
         var startPct = Math.round((idx / total) * 100);
-        if (progressText) progressText.textContent = 'Uploading (' + currentNum + '/' + total + ') photos...';
+        if (progressText) progressText.textContent = 'Uploading (' + currentNum + '/' + total + ') to Cloudinary...';
         if (progressPercent) progressPercent.textContent = startPct + '%';
         if (progressBar) progressBar.style.width = startPct + '%';
 
-        compressPhotoFile(file, function(compressedDataUrl) {
-          if (compressedDataUrl) {
-            var photoObj = {
-              id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
-              uploader: uploaderName,
-              src: compressedDataUrl,
-              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-            };
+        uploadToCloudinaryServer(file, uploaderName, function(err, photoObj) {
+          if (photoObj) {
             savePartyPhotoRecord(photoObj, function() {
               completed++;
               var pct = Math.round((completed / total) * 100);
 
-              if (progressText) progressText.textContent = 'Uploading (' + completed + '/' + total + ') photos...';
+              if (progressText) progressText.textContent = 'Uploading (' + completed + '/' + total + ') to Cloudinary...';
               if (progressPercent) progressPercent.textContent = pct + '%';
               if (progressBar) progressBar.style.width = pct + '%';
 
@@ -1322,13 +1419,40 @@
       });
     };
 
-    function triggerDownload(dataUrl, filename) {
-      var a = document.createElement('a');
-      a.href = dataUrl;
-      a.download = filename || 'shivi_party_photo.jpg';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    function triggerDownload(url, filename) {
+      if (!url) return;
+      var cleanName = filename || 'shivi_party_photo.jpg';
+
+      if (url.indexOf('res.cloudinary.com') !== -1) {
+        fetch(url)
+          .then(function(res) { return res.blob(); })
+          .then(function(blob) {
+            var blobUrl = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = cleanName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 2000);
+          })
+          .catch(function() {
+            var a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.download = cleanName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          });
+      } else {
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = cleanName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
     }
 
     window.downloadSelectedFolderPhotos = function() {
