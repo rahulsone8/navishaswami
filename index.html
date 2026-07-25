@@ -515,7 +515,7 @@
               <div class="party-file-dropzone" onclick="document.getElementById('party-file-input-named').click()">
                 <span class="party-dropzone-icon">📷</span>
                 <span id="file-chosen-text" class="party-dropzone-text">Choose Photos or Drag &amp; Drop</span>
-                <input type="file" id="party-file-input-named" multiple accept="image/*" required class="party-file-input-hidden" onchange="var t=document.getElementById('file-chosen-text'); if(this.files &amp;&amp; this.files.length>0){t.textContent='✨ '+this.files.length+' photo'+(this.files.length>1?'s':'')+' selected'; t.style.fontWeight='800'; t.style.color='var(--plum)';} else {t.textContent='Choose Photos or Drag &amp; Drop';}" />
+                <input type="file" id="party-file-input-named" multiple accept="image/*" required class="party-file-input-hidden" onchange="window.handlePartyFileSelect(this)" />
               </div>
             </div>
 
@@ -1242,7 +1242,19 @@
       } else {
         processPhotosList([]);
       }
-    }
+    window.handlePartyFileSelect = function(inputEl) {
+      var t = document.getElementById('file-chosen-text');
+      if (!t || !inputEl) return;
+      if (inputEl.files && inputEl.files.length > 0) {
+        t.textContent = '✨ ' + inputEl.files.length + ' photo' + (inputEl.files.length > 1 ? 's' : '') + ' selected';
+        t.style.fontWeight = '800';
+        t.style.color = 'var(--plum)';
+      } else {
+        t.textContent = 'Choose Photos or Drag & Drop';
+        t.style.fontWeight = '';
+        t.style.color = '';
+      }
+    };
 
     // ── CLOUDINARY & PARTY SNAPS ALBUM LOGIC ──
 
