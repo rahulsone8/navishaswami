@@ -445,12 +445,12 @@ em { font-style: italic; }
   font-style: italic;
   font-weight: 800;
   color: var(--plum);
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.8rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  gap: 0.1rem;
   text-shadow: 0 2px 12px rgba(255, 255, 255, 0.9);
 }
 
@@ -465,26 +465,32 @@ em { font-style: italic; }
 }
 
 .shivi-inline-photo {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  margin: 0.1rem auto;
-  padding: 0;
   background: transparent;
+  padding: 0;
+  margin: 0;
+  width: fit-content;
+  height: fit-content;
+  line-height: 0; /* removes inline gap below img */
+  font-size: 0;
 }
 
 .shivi-cutout-img {
-  height: clamp(85px, 18vw, 160px);
+  height: clamp(140px, 30vw, 290px);
   width: auto;
-  max-width: min(960px, 94vw);
+  max-width: min(960px, 96vw);
   display: block;
-  margin: 0 auto;
-  mix-blend-mode: multiply;
-  filter: drop-shadow(0 10px 25px rgba(91, 58, 102, 0.25));
+  margin: 0.3rem 0;
+  /* Removed mix-blend-mode: multiply — caused invisible padding to blend with bg */
+  filter: drop-shadow(0 12px 30px rgba(91, 58, 102, 0.28));
   transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .shivi-cutout-img:hover {
-  transform: scale(1.04);
+  transform: scale(1.04) rotate(-1deg);
 }
 
 .hero__unicorn-emoji {
