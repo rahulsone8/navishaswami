@@ -1,0 +1,612 @@
+/* ═══════════════════════════════════════════════════════════
+   reels.css — Instagram-style Vertical Reels Player
+   Full-screen, snap-scroll, mobile-first
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Modal Overlay ──────────────────────────────────────── */
+#reels-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 99000;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#reels-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Topbar ─────────────────────────────────────────────── */
+.reels-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.2rem 0.6rem;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%);
+}
+
+.reels-topbar-title {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+
+.reels-topbar-title span {
+  font-size: 1.3rem;
+}
+
+.reels-close-btn {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border: none;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.reels-close-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* ── Reel Stack (snap scroll) ───────────────────────────── */
+.reels-stack {
+  flex: 1;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.reels-stack::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Single Reel Item ───────────────────────────────────── */
+.reel-item {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  overflow: hidden;
+}
+
+/* ── Video Element ──────────────────────────────────────── */
+.reel-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+}
+
+/* ── Tap to play/pause overlay ──────────────────────────── */
+.reel-tap-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* ── Play/Pause Icon ────────────────────────────────────── */
+.reel-play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  z-index: 5;
+  font-size: 4rem;
+  color: rgba(255,255,255,0.9);
+  pointer-events: none;
+  filter: drop-shadow(0 0 12px rgba(0,0,0,0.5));
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+  opacity: 0;
+}
+
+.reel-play-icon.show {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+.reel-play-icon.hide {
+  transform: translate(-50%, -50%) scale(1.4);
+  opacity: 0;
+}
+
+/* ── Bottom Gradient + Info ─────────────────────────────── */
+.reel-bottom-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 55%, transparent 100%);
+  padding: 1.4rem 4.5rem 1.4rem 1.2rem;
+  pointer-events: none;
+}
+
+.reel-username {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #fff;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.reel-description {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.4;
+  font-weight: 500;
+  max-width: 280px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Progress Bar ───────────────────────────────────────── */
+.reel-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.2);
+  z-index: 6;
+}
+
+.reel-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #F0B93D, #E879A0);
+  width: 0%;
+  transition: width 0.1s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Right Action Sidebar ───────────────────────────────── */
+.reel-actions {
+  position: absolute;
+  right: 0.7rem;
+  bottom: 3.5rem;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+}
+
+.reel-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #fff;
+}
+
+.reel-action-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s;
+}
+
+.reel-action-btn:hover .reel-action-icon,
+.reel-action-btn:active .reel-action-icon {
+  transform: scale(1.2);
+  background: rgba(255,255,255,0.22);
+}
+
+.reel-action-btn.liked .reel-action-icon {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.reel-action-label {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  line-height: 1;
+}
+
+/* Heart burst animation */
+@keyframes heartBurst {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.8); }
+  60%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.reel-action-btn.heart-burst .reel-action-icon {
+  animation: heartBurst 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ── Mute Button ────────────────────────────────────────── */
+.reel-mute-btn {
+  position: absolute;
+  top: 4.5rem;
+  right: 0.9rem;
+  z-index: 5;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.reel-mute-btn:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+/* ── Empty State ────────────────────────────────────────── */
+.reels-empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-align: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.reels-empty-state .empty-emoji {
+  font-size: 4rem;
+}
+
+.reels-empty-state h3 {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.reels-empty-state p {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.7);
+  margin: 0;
+  max-width: 260px;
+  line-height: 1.5;
+}
+
+/* ── Loading Spinner ────────────────────────────────────── */
+.reels-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  z-index: 20;
+  transition: opacity 0.4s;
+}
+
+.reels-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(255,255,255,0.15);
+  border-top-color: #F0B93D;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Comment Drawer ─────────────────────────────────────── */
+.reel-comment-drawer {
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  right: 0;
+  z-index: 100001;
+  background: rgba(20, 20, 20, 0.97);
+  backdrop-filter: blur(20px);
+  border-radius: 24px 24px 0 0;
+  padding: 1rem 1.2rem 0;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  transition: bottom 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reel-comment-drawer.open {
+  bottom: 0;
+}
+
+.drawer-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 2px;
+  margin: 0 auto 1rem;
+}
+
+.drawer-title {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drawer-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.drawer-comments-list {
+  flex: 1;
+  overflow-y: auto;
+  margin: 0 -1.2rem;
+  padding: 0 1.2rem;
+  scrollbar-width: none;
+}
+
+.drawer-comments-list::-webkit-scrollbar { display: none; }
+
+.drawer-comment-item {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.drawer-comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5B3A66, #F0B93D);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.drawer-comment-body {
+  flex: 1;
+}
+
+.drawer-comment-name {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: #F0B93D;
+  margin-bottom: 0.15rem;
+}
+
+.drawer-comment-text {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.4;
+}
+
+.drawer-comment-time {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 0.2rem;
+}
+
+.drawer-no-comments {
+  text-align: center;
+  color: rgba(255,255,255,0.4);
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.88rem;
+  padding: 1.5rem 0;
+}
+
+.drawer-input-row {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.8rem 0 1rem;
+  align-items: flex-end;
+}
+
+.drawer-name-input,
+.drawer-comment-input {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 50px;
+  color: #fff;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 0.88rem;
+  padding: 0.6rem 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.drawer-name-input {
+  width: 100px;
+  flex-shrink: 0;
+}
+
+.drawer-comment-input {
+  flex: 1;
+}
+
+.drawer-name-input::placeholder,
+.drawer-comment-input::placeholder {
+  color: rgba(255,255,255,0.35);
+}
+
+.drawer-name-input:focus,
+.drawer-comment-input:focus {
+  border-color: #F0B93D;
+}
+
+.drawer-send-btn {
+  background: linear-gradient(135deg, #5B3A66, #4A2B56);
+  border: none;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.drawer-send-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(91,58,102,0.5);
+}
+
+/* ── Reel Dot Nav ───────────────────────────────────────── */
+.reels-dot-nav {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  pointer-events: none;
+}
+
+.reels-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  transition: all 0.3s;
+}
+
+.reels-dot.active {
+  height: 16px;
+  border-radius: 2px;
+  background: #fff;
+}
+
+/* ── Nav scroll arrows ──────────────────────────────────── */
+.reels-nav-arrow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.reels-nav-arrow:hover { opacity: 1; background: rgba(255,255,255,0.2); }
+
+.reels-nav-arrow--up { top: 5rem; }
+.reels-nav-arrow--down { bottom: 1.5rem; }
+
+/* Backdrop for comment drawer */
+.reel-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.reel-drawer-backdrop.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Responsive tweaks ──────────────────────────────────── */
+@media (min-width: 768px) {
+  .reels-stack {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .reel-item {
+    max-width: 420px;
+    margin: 0 auto;
+    border-radius: 0;
+  }
+
+  .reel-comment-drawer {
+    max-width: 420px;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -100%;
+  }
+
+  .reel-comment-drawer.open {
+    bottom: 0;
+    transform: translateX(-50%);
+  }
+}

@@ -435,6 +435,49 @@
       <div class="image-grid" id="site-images-grid"></div>
     </div>
 
+    <!-- CATEGORY 7: GALLERY REELS -->
+    <div class="section-card">
+      <div class="section-card-title">
+        <span>🎬 Gallery Reels (Instagram-style Videos)</span>
+        <span style="font-size:0.78rem; font-weight:600; color:var(--plum-light);">Uploads go live instantly on the Gallery page</span>
+      </div>
+      <p style="margin: -0.5rem 0 1.2rem; font-size: 0.85rem; color: var(--plum-light); font-weight: 600;">
+        Upload MP4 / MOV videos → they appear in the full-screen Gallery Reels section. Visitors can like ❤️ and comment 💬 on each reel.
+      </p>
+
+      <!-- Upload new reel form -->
+      <div style="background: rgba(91,58,102,0.06); border-radius: 18px; padding: 1.2rem; margin-bottom: 1.5rem; border: 1.5px dashed rgba(91,58,102,0.3);">
+        <h4 style="margin:0 0 1rem; font-size:0.95rem; font-weight:800;">➕ Upload New Reel</h4>
+
+        <div class="form-group" style="margin-bottom:0.7rem;">
+          <label class="form-label" style="font-size:0.78rem;">Reel Title</label>
+          <input type="text" id="reel-title-input" class="form-input" style="font-size:0.85rem;" placeholder="e.g. Shivi's First Steps 👣" maxlength="100" />
+        </div>
+
+        <div class="form-group" style="margin-bottom:0.7rem;">
+          <label class="form-label" style="font-size:0.78rem;">Description (shown below the reel)</label>
+          <input type="text" id="reel-desc-input" class="form-input" style="font-size:0.85rem;" placeholder="e.g. She took her very first steps! 🌟" maxlength="200" />
+        </div>
+
+        <div class="file-upload-btn-wrap" style="margin-top:0.5rem;">
+          <input type="file" id="reel-video-file" accept="video/mp4,video/mov,video/webm,video/*" style="display:none;" onchange="uploadReelVideo(this)" />
+          <button type="button" class="btn-small-upload" onclick="document.getElementById('reel-video-file').click()">🎬 Choose Video File</button>
+          <span id="reel-upload-status" style="font-size:0.78rem; color:var(--plum-light); font-weight:600;"></span>
+        </div>
+
+        <div id="reel-upload-progress-bar" style="display:none; margin-top:0.8rem; background:rgba(91,58,102,0.12); border-radius:50px; height:8px; overflow:hidden;">
+          <div id="reel-upload-progress-fill" style="height:100%; width:0%; background:linear-gradient(90deg,#5B3A66,#F0B93D); border-radius:50px; transition:width 0.2s;"></div>
+        </div>
+
+        <button type="button" id="reel-save-btn" class="btn-add-milestone" style="margin-top:1rem; width:100%; justify-content:center; display:none;" onclick="saveReelToSupabase()">☁️ Save Reel to Gallery</button>
+      </div>
+
+      <!-- Existing reels list -->
+      <div id="admin-reels-list">
+        <p style="color:var(--plum-light); font-size:0.85rem; font-weight:600; text-align:center; padding:1rem;">Loading reels...</p>
+      </div>
+    </div>
+
     <!-- STICKY SAVE BAR -->
     <div class="save-bar">
       <span class="save-bar-text" id="save-status-text">✨ Upload photos &amp; click save to sync across mobile &amp; laptop!</span>
@@ -573,6 +616,8 @@
       } else {
         renderDashboardUI();
       }
+      // Load Reels list regardless of Supabase state
+      setTimeout(loadAdminReelsList, 800);
     }
 
     function renderDashboardUI() {
@@ -894,6 +939,153 @@
 
       confetti({ particleCount: 140, spread: 85, origin: { y: 0.6 } });
       alert('🎉 Success! All Family Member photos, Milestones & Website Image changes have been saved & synced!');
+    }
+
+    // ══════════════════════════════════════════════════
+    // GALLERY REELS — ADMIN FUNCTIONS
+    // ══════════════════════════════════════════════════
+    var pendingReelVideoUrl = null;
+
+    function uploadReelVideo(input) {
+      var file = input.files[0];
+      if (!file) return;
+
+      var statusEl = document.getElementById('reel-upload-status');
+      var progressBar = document.getElementById('reel-upload-progress-bar');
+      var progressFill = document.getElementById('reel-upload-progress-fill');
+      var saveBtn = document.getElementById('reel-save-btn');
+
+      if (statusEl) statusEl.textContent = '⏳ Uploading video...';
+      if (progressBar) progressBar.style.display = 'block';
+      if (progressFill) progressFill.style.width = '0%';
+      if (saveBtn) saveBtn.style.display = 'none';
+      pendingReelVideoUrl = null;
+
+      var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || 'dtsmry84';
+      var preset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || 'shivi_party_snaps';
+
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', preset);
+      formData.append('folder', 'ShiviReels');
+      formData.append('resource_type', 'video');
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/video/upload', true);
+
+      xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable && progressFill) {
+          var pct = Math.round((e.loaded / e.total) * 95);
+          progressFill.style.width = pct + '%';
+        }
+      };
+
+      xhr.onload = function() {
+        if (progressFill) progressFill.style.width = '100%';
+        if (xhr.status === 200) {
+          var data = JSON.parse(xhr.responseText);
+          pendingReelVideoUrl = data.secure_url;
+          if (statusEl) statusEl.textContent = '✅ Video uploaded! Now click Save Reel.';
+          if (saveBtn) saveBtn.style.display = 'block';
+        } else {
+          if (statusEl) statusEl.textContent = '❌ Upload failed. Try again.';
+          if (progressBar) progressBar.style.display = 'none';
+        }
+        input.value = '';
+      };
+
+      xhr.onerror = function() {
+        if (statusEl) statusEl.textContent = '❌ Network error. Try again.';
+        if (progressBar) progressBar.style.display = 'none';
+        input.value = '';
+      };
+
+      xhr.send(formData);
+    }
+
+    function saveReelToSupabase() {
+      if (!pendingReelVideoUrl) { alert('Please upload a video first.'); return; }
+      if (!supabaseClient) { alert('Supabase not connected.'); return; }
+
+      var title = (document.getElementById('reel-title-input') || {}).value || '';
+      var desc = (document.getElementById('reel-desc-input') || {}).value || '';
+      var saveBtn = document.getElementById('reel-save-btn');
+      var statusEl = document.getElementById('reel-upload-status');
+
+      if (saveBtn) saveBtn.textContent = '⏳ Saving...';
+
+      supabaseClient.from('reels').insert({
+        title: title,
+        description: desc,
+        video_url: pendingReelVideoUrl
+      }).then(function(res) {
+        if (res.error) {
+          alert('Error saving reel: ' + res.error.message);
+          if (saveBtn) saveBtn.textContent = '☁️ Save Reel to Gallery';
+        } else {
+          if (statusEl) statusEl.textContent = '🎉 Reel saved! Now live on Gallery page.';
+          if (saveBtn) { saveBtn.textContent = '✅ Saved!'; saveBtn.style.display = 'none'; }
+          if (document.getElementById('reel-title-input')) document.getElementById('reel-title-input').value = '';
+          if (document.getElementById('reel-desc-input')) document.getElementById('reel-desc-input').value = '';
+          pendingReelVideoUrl = null;
+          loadAdminReelsList();
+          confetti({ particleCount: 80, spread: 60, origin: { y: 0.5 } });
+        }
+      });
+    }
+
+    function loadAdminReelsList() {
+      var listEl = document.getElementById('admin-reels-list');
+      if (!listEl) return;
+      if (!supabaseClient) {
+        listEl.innerHTML = '<p style="color:var(--plum-light);font-size:0.85rem;text-align:center;">Connect Supabase to see reels.</p>';
+        return;
+      }
+
+      supabaseClient.from('reels').select('*').order('created_at', { ascending: false })
+        .then(function(res) {
+          var reels = res.data || [];
+          if (reels.length === 0) {
+            listEl.innerHTML = '<p style="color:var(--plum-light);font-size:0.85rem;font-weight:600;text-align:center;padding:1rem;">No reels yet. Upload your first video above! 🎬</p>';
+            return;
+          }
+          listEl.innerHTML = '';
+          reels.forEach(function(r) {
+            var card = document.createElement('div');
+            card.style.cssText = 'display:flex;align-items:center;gap:0.8rem;padding:0.75rem;background:rgba(91,58,102,0.06);border-radius:14px;margin-bottom:0.6rem;border:1px solid rgba(91,58,102,0.12);';
+
+            var thumb = document.createElement('video');
+            thumb.src = r.video_url;
+            thumb.style.cssText = 'width:64px;height:64px;object-fit:cover;border-radius:10px;flex-shrink:0;background:#000;';
+            thumb.muted = true;
+            thumb.preload = 'metadata';
+
+            var info = document.createElement('div');
+            info.style.cssText = 'flex:1;min-width:0;';
+            var date = r.created_at ? new Date(r.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : '';
+            info.innerHTML =
+              '<div style="font-weight:800;font-size:0.88rem;color:var(--plum);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (r.title || 'Untitled Reel') + '</div>' +
+              '<div style="font-size:0.75rem;color:var(--plum-light);margin-top:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (r.description || '') + '</div>' +
+              '<div style="font-size:0.7rem;color:rgba(91,58,102,0.5);margin-top:0.2rem;">📅 ' + date + '</div>';
+
+            var delBtn = document.createElement('button');
+            delBtn.textContent = '🗑️';
+            delBtn.title = 'Delete reel';
+            delBtn.style.cssText = 'background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#EF4444;border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1rem;flex-shrink:0;';
+            delBtn.onclick = function() {
+              if (!confirm('Delete this reel? This cannot be undone.')) return;
+              supabaseClient.from('reels').delete().eq('id', r.id).then(function() { loadAdminReelsList(); });
+            };
+
+            card.appendChild(thumb);
+            card.appendChild(info);
+            card.appendChild(delBtn);
+            listEl.appendChild(card);
+          });
+        })
+        .catch(function() {
+          listEl.innerHTML = '<p style="color:#EF4444;font-size:0.85rem;text-align:center;">Could not load reels.</p>';
+        });
     }
 
     // Initialize Auth check

@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css?v=20260725_v16" />
+  <link rel="stylesheet" href="assets/css/reels.css?v=20260726_v1" />
   <script src="assets/js/config.js?v=20260725_v17"></script>
   <script src="/api/config.js" onerror="console.log('Static config fallback active')"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -478,6 +479,56 @@
 
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- PARTY SNAPS & GALLERY MODAL OVERLAY (Opens on Click Only!) -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ═══ GALLERY REELS MODAL (Instagram-style) ═══ -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="reels-modal" role="dialog" aria-modal="true" aria-label="Shivi's Video Reels Gallery">
+
+    <!-- Topbar -->
+    <div class="reels-topbar">
+      <div class="reels-topbar-title"><span>🎬</span> Shivi's Reels</div>
+      <button class="reels-close-btn" id="reels-close-btn" aria-label="Close Reels">✕</button>
+    </div>
+
+    <!-- Loading -->
+    <div class="reels-loader" id="reels-loader">
+      <div class="reels-spinner"></div>
+    </div>
+
+    <!-- Reel Stack -->
+    <div class="reels-stack" id="reels-stack"></div>
+
+    <!-- Dot navigation (right side) -->
+    <div class="reels-dot-nav" id="reels-dot-nav"></div>
+
+    <!-- Up/Down scroll arrows for desktop -->
+    <button class="reels-nav-arrow reels-nav-arrow--up" id="reels-arrow-up" aria-label="Previous reel">▲</button>
+    <button class="reels-nav-arrow reels-nav-arrow--down" id="reels-arrow-down" aria-label="Next reel">▼</button>
+
+    <!-- Global mute button -->
+    <button class="reel-mute-btn" id="reels-mute-btn" aria-label="Toggle mute">🔇</button>
+  </div>
+
+  <!-- Comment Drawer Backdrop -->
+  <div class="reel-drawer-backdrop" id="reel-drawer-backdrop"></div>
+
+  <!-- Comment Drawer (shared, moves per reel) -->
+  <div class="reel-comment-drawer" id="reel-comment-drawer">
+    <div class="drawer-handle"></div>
+    <div class="drawer-title">
+      <span>💬 Comments</span>
+      <button class="drawer-close" id="drawer-close-btn">✕</button>
+    </div>
+    <div class="drawer-comments-list" id="drawer-comments-list">
+      <p class="drawer-no-comments">Be the first to comment! 💕</p>
+    </div>
+    <div class="drawer-input-row">
+      <input type="text" id="drawer-name-input" class="drawer-name-input" placeholder="Your name" maxlength="30" />
+      <input type="text" id="drawer-comment-input" class="drawer-comment-input" placeholder="Add a comment..." maxlength="200" />
+      <button class="drawer-send-btn" id="drawer-send-btn" aria-label="Send comment">➤</button>
+    </div>
+  </div>
+
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!-- ═══ PARTY SNAPS & ALBUMS MODAL OVERLAY ═══ -->
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -2013,6 +2064,459 @@
     window.applySiteImageOverrides();
     window.renderDynamicMilestones();
     window.renderPartyAlbums();
+  </script>
+
+  <!-- ═══ GALLERY REELS ENGINE ═══ -->
+  <script>
+  (function() {
+    'use strict';
+
+    // ── State ────────────────────────────────────────────────────
+    var reelsData = [];
+    var reelsLoaded = false;
+    var isMuted = true;
+    var activeReelIdx = 0;
+    var activeCommentReelId = null;
+    var reelObserver = null;
+    var sessionId = localStorage.getItem('shivi_session_id') || (function() {
+      var id = 'sess_' + Math.random().toString(36).slice(2) + Date.now();
+      localStorage.setItem('shivi_session_id', id);
+      return id;
+    })();
+
+    var sb = window.supabaseClient || (
+      typeof supabase !== 'undefined' && window.APP_CONFIG &&
+      supabase.createClient(window.APP_CONFIG.SUPABASE_URL, window.APP_CONFIG.SUPABASE_ANON_KEY)
+    );
+
+    // ── DOM Refs ──────────────────────────────────────────────────
+    var reelsModal    = document.getElementById('reels-modal');
+    var reelsStack    = document.getElementById('reels-stack');
+    var reelsLoader   = document.getElementById('reels-loader');
+    var reelsDotNav   = document.getElementById('reels-dot-nav');
+    var reelsMuteBtn  = document.getElementById('reels-mute-btn');
+    var reelsCloseBtn = document.getElementById('reels-close-btn');
+    var arrowUp       = document.getElementById('reels-arrow-up');
+    var arrowDown     = document.getElementById('reels-arrow-down');
+    var drawerEl      = document.getElementById('reel-comment-drawer');
+    var drawerBdp     = document.getElementById('reel-drawer-backdrop');
+    var drawerList    = document.getElementById('drawer-comments-list');
+    var drawerName    = document.getElementById('drawer-name-input');
+    var drawerInput   = document.getElementById('drawer-comment-input');
+    var drawerSend    = document.getElementById('drawer-send-btn');
+    var drawerClose   = document.getElementById('drawer-close-btn');
+
+    // ── Open / Close Modal ────────────────────────────────────────
+    window.openReelsModal = function() {
+      if (!reelsModal) return;
+      reelsModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      if (!reelsLoaded) {
+        fetchAndRenderReels();
+      } else {
+        // Resume active video
+        var vids = reelsStack.querySelectorAll('.reel-video');
+        if (vids[activeReelIdx]) {
+          vids[activeReelIdx].muted = isMuted;
+          vids[activeReelIdx].play().catch(function(){});
+        }
+      }
+    };
+
+    window.closeReelsModal = function() {
+      if (!reelsModal) return;
+      reelsModal.classList.remove('active');
+      document.body.style.overflow = '';
+      // Pause all videos
+      reelsStack.querySelectorAll('.reel-video').forEach(function(v) { v.pause(); });
+      closeCommentDrawer();
+    };
+
+    if (reelsCloseBtn) reelsCloseBtn.addEventListener('click', window.closeReelsModal);
+
+    // ── Fetch Reels from Supabase ─────────────────────────────────
+    function fetchAndRenderReels() {
+      if (!sb) {
+        renderReels([]);
+        return;
+      }
+      sb.from('reels')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .then(function(res) {
+          reelsLoaded = true;
+          renderReels(res.data || []);
+        })
+        .catch(function() {
+          reelsLoaded = true;
+          renderReels([]);
+        });
+    }
+
+    // ── Render Reel Items ─────────────────────────────────────────
+    function renderReels(data) {
+      reelsData = data;
+      if (reelsLoader) reelsLoader.style.opacity = '0';
+      setTimeout(function() { if (reelsLoader) reelsLoader.style.display = 'none'; }, 400);
+
+      if (!reelsStack) return;
+      reelsStack.innerHTML = '';
+      if (reelsDotNav) reelsDotNav.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        reelsStack.innerHTML =
+          '<div class="reels-empty-state">' +
+            '<div class="empty-emoji">🎬</div>' +
+            '<h3>No Reels Yet!</h3>' +
+            '<p>The admin is uploading Shivi\'s beautiful memories. Check back soon! 💕</p>' +
+          '</div>';
+        if (arrowUp) arrowUp.style.display = 'none';
+        if (arrowDown) arrowDown.style.display = 'none';
+        return;
+      }
+
+      if (reelObserver) reelObserver.disconnect();
+
+      reelObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          var vid = entry.target.querySelector('.reel-video');
+          var idx = parseInt(entry.target.getAttribute('data-idx'), 10);
+          if (entry.isIntersecting) {
+            activeReelIdx = idx;
+            if (vid) { vid.muted = isMuted; vid.play().catch(function(){}); }
+            updateDots(idx);
+            updateArrows(idx, data.length);
+            // Fetch live like count for this reel
+            fetchLikeCount(data[idx].id, idx);
+          } else {
+            if (vid) vid.pause();
+          }
+        });
+      }, { threshold: 0.6 });
+
+      data.forEach(function(reel, idx) {
+        var item = buildReelItem(reel, idx);
+        reelsStack.appendChild(item);
+        reelObserver.observe(item);
+
+        // Dot
+        if (reelsDotNav) {
+          var dot = document.createElement('div');
+          dot.className = 'reels-dot' + (idx === 0 ? ' active' : '');
+          reelsDotNav.appendChild(dot);
+        }
+      });
+
+      // Scroll to top reel
+      reelsStack.scrollTop = 0;
+      activeReelIdx = 0;
+      updateArrows(0, data.length);
+    }
+
+    // ── Build a Single Reel Element ───────────────────────────────
+    function buildReelItem(reel, idx) {
+      var item = document.createElement('div');
+      item.className = 'reel-item';
+      item.setAttribute('data-idx', idx);
+      item.setAttribute('data-reel-id', reel.id);
+
+      var likedKey = 'liked_' + reel.id;
+      var alreadyLiked = localStorage.getItem(likedKey) === '1';
+
+      item.innerHTML =
+        '<video class="reel-video" src="' + (reel.video_url || '') + '" playsinline muted loop preload="metadata"></video>' +
+        '<div class="reel-tap-overlay" id="tap-' + idx + '"></div>' +
+        '<div class="reel-play-icon" id="play-icon-' + idx + '">▶</div>' +
+
+        '<div class="reel-actions">' +
+          '<button class="reel-action-btn' + (alreadyLiked ? ' liked' : '') + '" id="like-btn-' + idx + '" data-reel-id="' + reel.id + '" data-idx="' + idx + '" aria-label="Like">' +
+            '<div class="reel-action-icon">' + (alreadyLiked ? '❤️' : '🤍') + '</div>' +
+            '<span class="reel-action-label" id="like-count-' + idx + '">...</span>' +
+          '</button>' +
+          '<button class="reel-action-btn" id="comment-btn-' + idx + '" data-reel-id="' + reel.id + '" data-idx="' + idx + '" aria-label="Comment">' +
+            '<div class="reel-action-icon">💬</div>' +
+            '<span class="reel-action-label" id="comment-count-' + idx + '">0</span>' +
+          '</button>' +
+        '</div>' +
+
+        '<div class="reel-bottom-overlay">' +
+          '<div class="reel-username">🦄 Shivi\'s World</div>' +
+          '<div class="reel-description">' + (reel.description || reel.title || 'A precious memory 💕') + '</div>' +
+        '</div>' +
+
+        '<div class="reel-progress-bar"><div class="reel-progress-fill" id="prog-' + idx + '"></div></div>';
+
+      // Tap to play/pause
+      var tap = item.querySelector('#tap-' + idx);
+      var vid = item.querySelector('.reel-video');
+      var playIcon = item.querySelector('#play-icon-' + idx);
+
+      if (tap && vid) {
+        tap.addEventListener('click', function() {
+          if (vid.paused) {
+            vid.play().catch(function(){});
+            playIcon.className = 'reel-play-icon show';
+            setTimeout(function() { playIcon.className = 'reel-play-icon hide'; }, 600);
+          } else {
+            vid.pause();
+            playIcon.textContent = '⏸';
+            playIcon.className = 'reel-play-icon show';
+          }
+        });
+      }
+
+      // Progress bar
+      if (vid) {
+        vid.addEventListener('timeupdate', function() {
+          var prog = document.getElementById('prog-' + idx);
+          if (prog && vid.duration) {
+            prog.style.width = ((vid.currentTime / vid.duration) * 100) + '%';
+          }
+        });
+      }
+
+      // Like button
+      var likeBtn = item.querySelector('#like-btn-' + idx);
+      if (likeBtn) {
+        likeBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          handleLike(reel.id, idx);
+        });
+      }
+
+      // Comment button
+      var commentBtn = item.querySelector('#comment-btn-' + idx);
+      if (commentBtn) {
+        commentBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          openCommentDrawer(reel.id, idx);
+        });
+      }
+
+      return item;
+    }
+
+    // ── Like Logic ────────────────────────────────────────────────
+    function fetchLikeCount(reelId, idx) {
+      if (!sb) { setLikeCount(idx, 0); return; }
+      sb.from('reel_likes').select('id', { count: 'exact' }).eq('reel_id', reelId)
+        .then(function(res) { setLikeCount(idx, res.count || 0); })
+        .catch(function() { setLikeCount(idx, 0); });
+
+      // Also fetch comment count
+      sb.from('reel_comments').select('id', { count: 'exact' }).eq('reel_id', reelId)
+        .then(function(res) {
+          var el = document.getElementById('comment-count-' + idx);
+          if (el) el.textContent = (res.count || 0);
+        }).catch(function(){});
+    }
+
+    function setLikeCount(idx, count) {
+      var el = document.getElementById('like-count-' + idx);
+      if (el) el.textContent = count >= 1000 ? (count/1000).toFixed(1) + 'k' : count;
+    }
+
+    function handleLike(reelId, idx) {
+      var likedKey = 'liked_' + reelId;
+      var btn = document.getElementById('like-btn-' + idx);
+      var icon = btn ? btn.querySelector('.reel-action-icon') : null;
+
+      if (localStorage.getItem(likedKey) === '1') {
+        // Unlike
+        localStorage.removeItem(likedKey);
+        if (btn) btn.classList.remove('liked');
+        if (icon) icon.textContent = '🤍';
+        if (sb) {
+          sb.from('reel_likes').delete().eq('reel_id', reelId).eq('session_id', sessionId).then(function() {
+            fetchLikeCount(reelId, idx);
+          });
+        }
+      } else {
+        // Like + heart burst animation
+        localStorage.setItem(likedKey, '1');
+        if (btn) {
+          btn.classList.add('liked');
+          btn.classList.add('heart-burst');
+          setTimeout(function() { btn.classList.remove('heart-burst'); }, 600);
+        }
+        if (icon) icon.textContent = '❤️';
+        if (sb) {
+          sb.from('reel_likes').insert({ reel_id: reelId, session_id: sessionId }).then(function() {
+            fetchLikeCount(reelId, idx);
+          });
+        } else {
+          var el = document.getElementById('like-count-' + idx);
+          if (el) el.textContent = parseInt(el.textContent || '0') + 1;
+        }
+      }
+    }
+
+    // ── Comment Drawer ────────────────────────────────────────────
+    function openCommentDrawer(reelId, idx) {
+      activeCommentReelId = reelId;
+      if (drawerEl) drawerEl.classList.add('open');
+      if (drawerBdp) drawerBdp.classList.add('open');
+      loadComments(reelId);
+    }
+
+    function closeCommentDrawer() {
+      if (drawerEl) drawerEl.classList.remove('open');
+      if (drawerBdp) drawerBdp.classList.remove('open');
+      activeCommentReelId = null;
+    }
+
+    if (drawerClose) drawerClose.addEventListener('click', closeCommentDrawer);
+    if (drawerBdp) drawerBdp.addEventListener('click', closeCommentDrawer);
+
+    function loadComments(reelId) {
+      if (!drawerList) return;
+      drawerList.innerHTML = '<p class="drawer-no-comments" style="color:rgba(255,255,255,0.3);">Loading... 💬</p>';
+
+      if (!sb) {
+        drawerList.innerHTML = '<p class="drawer-no-comments">Be the first to comment! 💕</p>';
+        return;
+      }
+
+      sb.from('reel_comments').select('*').eq('reel_id', reelId).order('created_at', { ascending: true })
+        .then(function(res) {
+          var comments = res.data || [];
+          if (comments.length === 0) {
+            drawerList.innerHTML = '<p class="drawer-no-comments">Be the first to comment! 💕</p>';
+            return;
+          }
+          drawerList.innerHTML = '';
+          comments.forEach(function(c) {
+            var el = document.createElement('div');
+            el.className = 'drawer-comment-item';
+            var initial = (c.name || '?')[0].toUpperCase();
+            var time = c.created_at ? new Date(c.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short' }) : '';
+            el.innerHTML =
+              '<div class="drawer-comment-avatar">' + initial + '</div>' +
+              '<div class="drawer-comment-body">' +
+                '<div class="drawer-comment-name">' + (c.name || 'Guest') + '</div>' +
+                '<div class="drawer-comment-text">' + (c.message || '') + '</div>' +
+                '<div class="drawer-comment-time">' + time + '</div>' +
+              '</div>';
+            drawerList.appendChild(el);
+          });
+          drawerList.scrollTop = drawerList.scrollHeight;
+
+          // Update comment count
+          var cIdx = reelsData.findIndex(function(r) { return r.id === reelId; });
+          if (cIdx !== -1) {
+            var el = document.getElementById('comment-count-' + cIdx);
+            if (el) el.textContent = comments.length;
+          }
+        })
+        .catch(function() {
+          drawerList.innerHTML = '<p class="drawer-no-comments">Be the first to comment! 💕</p>';
+        });
+    }
+
+    function submitComment() {
+      if (!activeCommentReelId) return;
+      var name = (drawerName && drawerName.value.trim()) || 'Guest';
+      var msg = drawerInput && drawerInput.value.trim();
+      if (!msg) return;
+
+      if (drawerInput) drawerInput.value = '';
+
+      if (!sb) {
+        var el = document.createElement('div');
+        el.className = 'drawer-comment-item';
+        el.innerHTML =
+          '<div class="drawer-comment-avatar">' + name[0].toUpperCase() + '</div>' +
+          '<div class="drawer-comment-body">' +
+            '<div class="drawer-comment-name">' + name + '</div>' +
+            '<div class="drawer-comment-text">' + msg + '</div>' +
+          '</div>';
+        if (drawerList) {
+          var noComment = drawerList.querySelector('.drawer-no-comments');
+          if (noComment) noComment.remove();
+          drawerList.appendChild(el);
+          drawerList.scrollTop = drawerList.scrollHeight;
+        }
+        return;
+      }
+
+      sb.from('reel_comments').insert({ reel_id: activeCommentReelId, name: name, message: msg })
+        .then(function() { loadComments(activeCommentReelId); });
+    }
+
+    if (drawerSend) drawerSend.addEventListener('click', submitComment);
+    if (drawerInput) {
+      drawerInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); submitComment(); }
+      });
+    }
+
+    // ── Mute Toggle ───────────────────────────────────────────────
+    function updateMuteUI() {
+      if (reelsMuteBtn) reelsMuteBtn.textContent = isMuted ? '🔇' : '🔊';
+      reelsStack.querySelectorAll('.reel-video').forEach(function(v) { v.muted = isMuted; });
+    }
+
+    if (reelsMuteBtn) {
+      reelsMuteBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        isMuted = !isMuted;
+        updateMuteUI();
+      });
+    }
+
+    // ── Dot Nav & Arrows ──────────────────────────────────────────
+    function updateDots(idx) {
+      if (!reelsDotNav) return;
+      var dots = reelsDotNav.querySelectorAll('.reels-dot');
+      dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+    }
+
+    function updateArrows(idx, total) {
+      if (arrowUp) arrowUp.style.opacity = idx === 0 ? '0.2' : '0.6';
+      if (arrowDown) arrowDown.style.opacity = idx === total - 1 ? '0.2' : '0.6';
+    }
+
+    function scrollToReel(idx) {
+      var items = reelsStack.querySelectorAll('.reel-item');
+      if (items[idx]) items[idx].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    if (arrowUp) arrowUp.addEventListener('click', function() { scrollToReel(Math.max(0, activeReelIdx - 1)); });
+    if (arrowDown) arrowDown.addEventListener('click', function() { scrollToReel(Math.min(reelsData.length - 1, activeReelIdx + 1)); });
+
+    // ── Keyboard Navigation ───────────────────────────────────────
+    document.addEventListener('keydown', function(e) {
+      if (!reelsModal || !reelsModal.classList.contains('active')) return;
+      if (e.key === 'Escape') { window.closeReelsModal(); }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { scrollToReel(Math.min(reelsData.length - 1, activeReelIdx + 1)); }
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { scrollToReel(Math.max(0, activeReelIdx - 1)); }
+      if (e.key === 'm' || e.key === 'M') { isMuted = !isMuted; updateMuteUI(); }
+    });
+
+    // ── Wire Gallery Nav Buttons → Reels (not Party Snaps) ───────
+    ['nav-gallery-btn', 'mobile-gallery-btn'].forEach(function(id) {
+      var btn = document.getElementById(id);
+      if (btn) {
+        // Remove any existing party-snaps click listeners by cloning
+        var newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        newBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.openReelsModal();
+          var mm = document.getElementById('mobile-menu');
+          if (mm) mm.classList.remove('open');
+          document.body.style.overflow = '';
+          // re-lock after slight delay
+          setTimeout(function() {
+            if (reelsModal && reelsModal.classList.contains('active')) {
+              document.body.style.overflow = 'hidden';
+            }
+          }, 50);
+        });
+      }
+    });
+
+  })();
   </script>
 </body>
 </html>
