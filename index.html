@@ -852,10 +852,11 @@
 
       <div class="memorial__grid reveal">
         <!-- Memorial Card 1: Shivi's Bhua -->
-        <div class="memorial-card" data-img="assets/images/shivi_bua_memorial.jpg">
+        <div class="memorial-card" data-person="bua_memorial" data-img="assets/images/shivi_bua_memorial.jpg">
           <div class="memorial-card__frame">
             <div class="memorial-card__img-box">
-              <img src="assets/images/shivi_bua_memorial.jpg" alt="Shivi's Bhua" class="memorial-card__real-img" />
+              <img src="assets/images/shivi_bua_memorial.jpg" alt="Shivi's Bhua" class="memorial-card__real-img" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block';" />
+              <span class="memorial-card__placeholder" style="display:none;">🌹</span>
             </div>
             <div class="memorial-card__halo"></div>
           </div>
@@ -865,10 +866,11 @@
         </div>
 
         <!-- Memorial Card 2: Bade Papa 2 -->
-        <div class="memorial-card" data-img="badepapa2.jpg">
+        <div class="memorial-card" data-person="bade_papa_2" data-img="badepapa2.jpg">
           <div class="memorial-card__frame">
             <div class="memorial-card__img-box">
-              <img src="badepapa2.jpg" alt="Bade Papa 2" class="memorial-card__real-img" />
+              <img src="badepapa2.jpg" alt="Bade Papa 2" class="memorial-card__real-img" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block';" />
+              <span class="memorial-card__placeholder" style="display:none;">👨🏻</span>
             </div>
             <div class="memorial-card__halo"></div>
           </div>
@@ -878,10 +880,11 @@
         </div>
 
         <!-- Memorial Card 3: Nana -->
-        <div class="memorial-card" data-img="nana.jpg">
+        <div class="memorial-card" data-person="nana" data-img="nana.jpg">
           <div class="memorial-card__frame">
             <div class="memorial-card__img-box">
-              <img src="nana.jpg" alt="Nana" class="memorial-card__real-img" />
+              <img src="nana.jpg" alt="Nana" class="memorial-card__real-img" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block';" />
+              <span class="memorial-card__placeholder" style="display:none;">👴🏻</span>
             </div>
             <div class="memorial-card__halo"></div>
           </div>
@@ -891,10 +894,11 @@
         </div>
 
         <!-- Memorial Card 4: Mama 2 -->
-        <div class="memorial-card" data-img="mama2.jpg">
+        <div class="memorial-card" data-person="mama_2" data-img="mama2.jpg">
           <div class="memorial-card__frame">
             <div class="memorial-card__img-box">
-              <img src="mama2.jpg" alt="Mama 2" class="memorial-card__real-img" />
+              <img src="mama2.jpg" alt="Mama 2" class="memorial-card__real-img" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='block';" />
+              <span class="memorial-card__placeholder" style="display:none;">👨🏻</span>
             </div>
             <div class="memorial-card__halo"></div>
           </div>
@@ -2011,14 +2015,17 @@
             }
           });
 
-          // Special handlers for Bhua Memorial card in memorial section
-          if (key === 'bua_memorial') {
-            document.querySelectorAll('.memorial-card').forEach(function(card) {
-              card.setAttribute('data-img', newUrl);
-              var img = card.querySelector('img.memorial-card__real-img');
-              if (img) img.src = newUrl;
-            });
-          }
+          // Targeted handler for memorial cards in Remembrance section
+          document.querySelectorAll('.memorial-card[data-person="' + key + '"]').forEach(function(card) {
+            card.setAttribute('data-img', newUrl);
+            var img = card.querySelector('img.memorial-card__real-img');
+            if (img) {
+              img.src = newUrl;
+              img.style.display = 'block';
+              var ph = card.querySelector('.memorial-card__placeholder');
+              if (ph) ph.style.display = 'none';
+            }
+          });
 
           // Special handlers for Shivi sticker
           if (key === 'shivi_main') {
