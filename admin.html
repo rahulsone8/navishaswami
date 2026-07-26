@@ -924,9 +924,10 @@
       Object.keys(ALL_CONFIG).forEach(function(key) {
         var input = document.getElementById('input-' + key);
         var val = input ? input.value.trim() : '';
-        if (val) {
+        var isRealUrl = val && (val.startsWith('assets/') || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:image/'));
+        if (isRealUrl) {
           overrides[key] = val;
-        } else if (ALL_CONFIG[key] && ALL_CONFIG[key].defaultSrc) {
+        } else if (ALL_CONFIG[key] && ALL_CONFIG[key].defaultSrc && (ALL_CONFIG[key].defaultSrc.startsWith('assets/') || ALL_CONFIG[key].defaultSrc.startsWith('http'))) {
           overrides[key] = ALL_CONFIG[key].defaultSrc;
         }
       });

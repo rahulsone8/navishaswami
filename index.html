@@ -2004,13 +2004,15 @@
         Object.keys(KEY_TO_NAME_MAP).forEach(function(key) {
           var targetName = KEY_TO_NAME_MAP[key];
           var newUrl = map[key];
-          if (!newUrl) return;
+          var isRealUrl = newUrl && (newUrl.startsWith('assets/') || newUrl.startsWith('http://') || newUrl.startsWith('https://') || newUrl.startsWith('data:image/'));
+          if (!isRealUrl) return;
 
           document.querySelectorAll('.ft-card[data-name="' + targetName + '"]').forEach(function(card) {
             card.setAttribute('data-img', newUrl);
             var imgBox = card.querySelector('.ft-circle__img-box');
+            var avatar = card.getAttribute('data-avatar') || '💕';
             if (imgBox) {
-              imgBox.innerHTML = '<img src="' + newUrl + '" alt="' + targetName + '" class="ft-circle__real-img" />';
+              imgBox.innerHTML = '<img src="' + newUrl + '" alt="' + targetName + '" class="ft-circle__real-img" onerror="this.onerror=null; this.parentElement.innerHTML=\'<span class=\\\'ft-circle__emoji\\\'>' + avatar + '</span>\';" />';
             }
           });
 
