@@ -602,23 +602,39 @@
           .then(function(res) {
             if (res.data && res.data.length > 0) {
               res.data.forEach(function(row) {
-                if (row.id === 'img_overrides' && row.value) {
+                if (row.id === 'img_overrides' && row.value && row.value.length > 5) {
                   localStorage.setItem('shivi_img_overrides', row.value);
                 }
-                if (row.id === 'milestones' && row.value) {
+                if (row.id === 'milestones' && row.value && row.value.length > 5) {
                   localStorage.setItem('shivi_milestones', row.value);
                 }
               });
+              renderDashboardUI();
+            } else {
+              window.supabaseClient
+                .from('party_photos')
+                .select('*')
+                .eq('uploader', '__SYS_SITE_SETTINGS__')
+                .then(function(pRes) {
+                  if (pRes.data && pRes.data.length > 0) {
+                    pRes.data.forEach(function(row) {
+                      if (row.public_id === 'img_overrides' && row.src && row.src.length > 5) {
+                        localStorage.setItem('shivi_img_overrides', row.src);
+                      }
+                      if (row.public_id === 'milestones' && row.src && row.src.length > 5) {
+                        localStorage.setItem('shivi_milestones', row.src);
+                      }
+                    });
+                  }
+                  renderDashboardUI();
+                })
+                .catch(function() { renderDashboardUI(); });
             }
-            renderDashboardUI();
           })
-          .catch(function() {
-            renderDashboardUI();
-          });
+          .catch(function() { renderDashboardUI(); });
       } else {
         renderDashboardUI();
       }
-      // Load Reels list regardless of Supabase state
       setTimeout(loadAdminReelsList, 800);
     }
 
@@ -919,14 +935,22 @@
     }
 
     function saveAllImageOverrides() {
+      var saved = {};
+      try {
+        saved = JSON.parse(localStorage.getItem('shivi_img_overrides') || '{}');
+      } catch(e) {}
+
       // 1. Gather Family & Site Overrides
       var overrides = {};
       Object.keys(ALL_CONFIG).forEach(function(key) {
         var input = document.getElementById('input-' + key);
         var val = input ? input.value.trim() : '';
         var isRealUrl = val && (val.startsWith('assets/') || val.startsWith('http://') || val.startsWith('https://') || val.startsWith('data:image/'));
+
         if (isRealUrl) {
           overrides[key] = val;
+        } else if (saved[key] && (saved[key].startsWith('assets/') || saved[key].startsWith('http://') || saved[key].startsWith('https://') || saved[key].startsWith('data:image/'))) {
+          overrides[key] = saved[key];
         } else if (ALL_CONFIG[key] && ALL_CONFIG[key].defaultSrc && (ALL_CONFIG[key].defaultSrc.startsWith('assets/') || ALL_CONFIG[key].defaultSrc.startsWith('http'))) {
           overrides[key] = ALL_CONFIG[key].defaultSrc;
         }
