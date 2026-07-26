@@ -693,33 +693,8 @@
 }
 
 .reels-nav-arrow {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 15;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  border: none;
-  color: #ffffff;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.7;
-  transition: opacity 0.2s, transform 0.2s;
+  display: none !important;
 }
-
-.reels-nav-arrow:hover {
-  opacity: 1;
-  transform: translateX(-50%) scale(1.08);
-}
-
-.reels-nav-arrow--up { top: 4.8rem; }
-.reels-nav-arrow--down { bottom: 1.5rem; }
 
 .reel-drawer-backdrop {
   position: fixed;

@@ -965,7 +965,19 @@
   }
   window.closePartyModal = closePartyModal;
 
-  ['nav-gallery-btn', 'nav-party-snaps-btn', 'mobile-gallery-btn', 'mobile-party-snaps-btn'].forEach(function(id) {
+  ['nav-gallery-btn', 'mobile-gallery-btn'].forEach(function(id) {
+    var btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', function(e) {
+        if (e) e.preventDefault();
+        if (typeof window.openReelsModal === 'function') {
+          window.openReelsModal();
+        }
+      });
+    }
+  });
+
+  ['nav-party-snaps-btn', 'mobile-party-snaps-btn'].forEach(function(id) {
     var btn = document.getElementById(id);
     if (btn) {
       btn.addEventListener('click', openPartyModal);
