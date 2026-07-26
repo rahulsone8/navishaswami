@@ -846,9 +846,12 @@
   document.querySelectorAll('.ft-card').forEach(function (card) {
     var imgSrc = card.getAttribute('data-img');
     var imgBox = card.querySelector('.ft-circle__img-box');
-    if (imgSrc && imgBox && !imgBox.querySelector('.ft-circle__real-img')) {
+    var avatar = card.getAttribute('data-avatar') || '💕';
+    var isRealUrl = imgSrc && (imgSrc.startsWith('assets/') || imgSrc.startsWith('http://') || imgSrc.startsWith('https://') || imgSrc.startsWith('data:image/'));
+
+    if (isRealUrl && imgBox && !imgBox.querySelector('.ft-circle__real-img')) {
       var name = card.getAttribute('data-name') || 'Family Member';
-      imgBox.innerHTML = '<img src="' + imgSrc + '" alt="' + name + '" class="ft-circle__real-img" />';
+      imgBox.innerHTML = '<img src="' + imgSrc + '" alt="' + name + '" class="ft-circle__real-img" onerror="this.onerror=null; this.parentElement.innerHTML=\'<span class=\\\'ft-circle__emoji\\\'>' + avatar + '</span>\';" />';
     }
   });
 
@@ -856,9 +859,11 @@
   document.querySelectorAll('.memorial-card').forEach(function (card) {
     var imgSrc = card.getAttribute('data-img');
     var imgBox = card.querySelector('.memorial-card__img-box');
-    if (imgSrc && imgBox && !imgBox.querySelector('.memorial-card__real-img')) {
+    var isRealUrl = imgSrc && (imgSrc.startsWith('assets/') || imgSrc.startsWith('http://') || imgSrc.startsWith('https://') || imgSrc.startsWith('data:image/'));
+
+    if (isRealUrl && imgBox && !imgBox.querySelector('.memorial-card__real-img')) {
       var name = card.querySelector('.memorial-card__name')?.textContent || 'In Loving Memory';
-      imgBox.innerHTML = '<img src="' + imgSrc + '" alt="' + name + '" class="memorial-card__real-img" />';
+      imgBox.innerHTML = '<img src="' + imgSrc + '" alt="' + name + '" class="memorial-card__real-img" onerror="this.style.display=\'none\'; if(this.nextElementSibling) this.nextElementSibling.style.display=\'block\';" />';
     }
   });
 
