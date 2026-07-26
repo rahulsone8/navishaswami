@@ -30,7 +30,12 @@
 /* ═══════════════════════════════════════════════════════════
    RESET
    ═══════════════════════════════════════════════════════════ */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--font-body);
@@ -45,6 +50,12 @@ body {
   line-height: 1.7;
   overflow-x: hidden;
 }
+
+/* Fast Mobile Touch Response */
+button, a, .ft-card, .mobile-dock__item, .nav__link, .party-album-folder, .reel-card, .wish-card, .memorial-card {
+  touch-action: manipulation;
+}
+
 img { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 button { border: none; background: none; cursor: pointer; font: inherit; color: inherit; }
