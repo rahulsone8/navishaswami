@@ -2053,7 +2053,42 @@
                 applyOverrides(remoteOverrides);
                 localStorage.setItem('shivi_img_overrides', res.data[0].value);
               } catch(e) {}
+            } else {
+              window.supabaseClient
+                .from('party_photos')
+                .select('*')
+                .eq('uploader', '__SYS_SITE_SETTINGS__')
+                .eq('public_id', 'img_overrides')
+                .order('date', { ascending: false })
+                .limit(1)
+                .then(function(pRes) {
+                  if (pRes.data && pRes.data[0] && pRes.data[0].src) {
+                    try {
+                      var fallbackOverrides = JSON.parse(pRes.data[0].src);
+                      applyOverrides(fallbackOverrides);
+                      localStorage.setItem('shivi_img_overrides', pRes.data[0].src);
+                    } catch(e) {}
+                  }
+                });
             }
+          })
+          .catch(function() {
+            window.supabaseClient
+              .from('party_photos')
+              .select('*')
+              .eq('uploader', '__SYS_SITE_SETTINGS__')
+              .eq('public_id', 'img_overrides')
+              .order('date', { ascending: false })
+              .limit(1)
+              .then(function(pRes) {
+                if (pRes.data && pRes.data[0] && pRes.data[0].src) {
+                  try {
+                    var fallbackOverrides = JSON.parse(pRes.data[0].src);
+                    applyOverrides(fallbackOverrides);
+                    localStorage.setItem('shivi_img_overrides', pRes.data[0].src);
+                  } catch(e) {}
+                }
+              });
           });
       }
     };

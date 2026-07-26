@@ -784,53 +784,92 @@
       updatePreview(key, item.defaultSrc || '');
     }
 
+    function compressImageFile(file, maxDim, quality, callback) {
+      if (!file || !file.type || !file.type.startsWith('image/')) {
+        callback(file, null);
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+          var w = img.width;
+          var h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          var canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          var dataUrl = canvas.toDataURL('image/jpeg', quality);
+          canvas.toBlob(function(blob) {
+            if (blob) {
+              var compressedFile = new File([blob], file.name, { type: 'image/jpeg' });
+              callback(compressedFile, dataUrl);
+            } else {
+              callback(file, dataUrl);
+            }
+          }, 'image/jpeg', quality);
+        };
+        img.onerror = function() { callback(file, e.target.result); };
+        img.src = e.target.result;
+      };
+      reader.onerror = function() { callback(file, null); };
+      reader.readAsDataURL(file);
+    }
+
     function uploadImageFile(key, inputEl) {
       if (!inputEl || !inputEl.files || inputEl.files.length === 0) return;
       var file = inputEl.files[0];
       var input = document.getElementById('input-' + key);
       var box = document.getElementById('box-' + key);
-
-      var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || 'dtsmry84';
-      var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || 'shivi_party_snaps';
-      var apiKey = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_API_KEY) || '559857846832466';
-
-      var formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', uploadPreset);
-      if (apiKey) formData.append('api_key', apiKey);
-      formData.append('folder', 'ShiviFamilyTree');
-
       if (box) box.style.opacity = '0.5';
 
-      function finishUpload(url) {
-        if (box) box.style.opacity = '1';
-        if (input) input.value = url;
-        updatePreview(key, url);
-        setTimeout(saveAllImageOverrides, 300);
-      }
+      compressImageFile(file, 800, 0.82, function(compressedFile, compressedDataUrl) {
+        var fileToUpload = compressedFile || file;
+        var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || 'dtsmry84';
+        var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || 'shivi_party_snaps';
+        var apiKey = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_API_KEY) || '559857846832466';
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
-      xhr.onload = function() {
-        if (xhr.status === 200) {
-          try {
-            var res = JSON.parse(xhr.responseText);
-            var url = res.secure_url || res.url;
-            finishUpload(url);
-            return;
-          } catch(e) {}
+        var formData = new FormData();
+        formData.append('file', fileToUpload);
+        formData.append('upload_preset', uploadPreset);
+        if (apiKey) formData.append('api_key', apiKey);
+        formData.append('folder', 'ShiviFamilyTree');
+
+        function finishUpload(url) {
+          if (box) box.style.opacity = '1';
+          if (input) input.value = url;
+          updatePreview(key, url);
+          setTimeout(saveAllImageOverrides, 300);
         }
 
-        var reader = new FileReader();
-        reader.onload = function(e) { finishUpload(e.target.result); };
-        reader.readAsDataURL(file);
-      };
-      xhr.onerror = function() {
-        var reader = new FileReader();
-        reader.onload = function(e) { finishUpload(e.target.result); };
-        reader.readAsDataURL(file);
-      };
-      xhr.send(formData);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            try {
+              var res = JSON.parse(xhr.responseText);
+              var url = res.secure_url || res.url;
+              finishUpload(url);
+              return;
+            } catch(e) {}
+          }
+          finishUpload(compressedDataUrl);
+        };
+        xhr.onerror = function() {
+          finishUpload(compressedDataUrl);
+        };
+        xhr.send(formData);
+      });
     }
 
     function uploadMilestonePhoto(idx, inputEl) {
@@ -838,48 +877,45 @@
       var file = inputEl.files[0];
       var input = document.getElementById('m-img-' + idx);
       var box = document.getElementById('box-m-' + idx);
-
-      var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || 'dtsmry84';
-      var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || 'shivi_party_snaps';
-      var apiKey = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_API_KEY) || '559857846832466';
-
-      var formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', uploadPreset);
-      if (apiKey) formData.append('api_key', apiKey);
-      formData.append('folder', 'ShiviMilestones');
-
       if (box) box.style.opacity = '0.5';
 
-      function finishMilestoneUpload(url) {
-        if (box) box.style.opacity = '1';
-        if (input) input.value = url;
-        updateMilestonePreview(idx, url);
-        setTimeout(saveAllImageOverrides, 300);
-      }
+      compressImageFile(file, 800, 0.82, function(compressedFile, compressedDataUrl) {
+        var fileToUpload = compressedFile || file;
+        var cloudName = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_CLOUD_NAME) || 'dtsmry84';
+        var uploadPreset = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_UPLOAD_PRESET) || 'shivi_party_snaps';
+        var apiKey = (window.APP_CONFIG && window.APP_CONFIG.CLOUDINARY_API_KEY) || '559857846832466';
 
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
-      xhr.onload = function() {
-        if (xhr.status === 200) {
-          try {
-            var res = JSON.parse(xhr.responseText);
-            var url = res.secure_url || res.url;
-            finishMilestoneUpload(url);
-            return;
-          } catch(e) {}
+        var formData = new FormData();
+        formData.append('file', fileToUpload);
+        formData.append('upload_preset', uploadPreset);
+        if (apiKey) formData.append('api_key', apiKey);
+        formData.append('folder', 'ShiviMilestones');
+
+        function finishMilestoneUpload(url) {
+          if (box) box.style.opacity = '1';
+          if (input) input.value = url;
+          updateMilestonePreview(idx, url);
+          setTimeout(saveAllImageOverrides, 300);
         }
 
-        var reader = new FileReader();
-        reader.onload = function(e) { finishMilestoneUpload(e.target.result); };
-        reader.readAsDataURL(file);
-      };
-      xhr.onerror = function() {
-        var reader = new FileReader();
-        reader.onload = function(e) { finishMilestoneUpload(e.target.result); };
-        reader.readAsDataURL(file);
-      };
-      xhr.send(formData);
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', true);
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            try {
+              var res = JSON.parse(xhr.responseText);
+              var url = res.secure_url || res.url;
+              finishMilestoneUpload(url);
+              return;
+            } catch(e) {}
+          }
+          finishMilestoneUpload(compressedDataUrl);
+        };
+        xhr.onerror = function() {
+          finishMilestoneUpload(compressedDataUrl);
+        };
+        xhr.send(formData);
+      });
     }
 
     function saveAllImageOverrides() {
