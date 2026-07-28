@@ -7,6 +7,8 @@
   <meta name="description" content="The little world of Navisha 'Shivi' Swami — a year of wonder, tiny firsts, and endless love." />
   <meta name="theme-color" content="#5B3A66" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preload" as="image" href="assets/images/mobile_bg.jpg" media="(max-width: 768px)" />
+  <link rel="preload" as="image" href="assets/images/family_bg.jpg" media="(min-width: 769px)" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
   <link rel="preconnect" href="https://zpgahkzikzqoozmhwaja.supabase.co" crossorigin />
@@ -25,7 +27,7 @@
 </head>
 <body>
   <!-- ═══ MOBILE DEDICATED BACKGROUND ═══ -->
-  <img id="mobile-bg-img" src="assets/images/mobile_bg.jpg" alt="" aria-hidden="true" decoding="async" loading="eager" />
+  <img id="mobile-bg-img" src="assets/images/mobile_bg.jpg" alt="" aria-hidden="true" decoding="async" loading="eager" fetchpriority="high" />
 
   <!-- ═══ SCROLL PROGRESS BAR ═══ -->
   <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
