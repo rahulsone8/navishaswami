@@ -583,14 +583,39 @@
       var u = document.getElementById('admin-username').value.trim();
       var p = document.getElementById('admin-password').value.trim();
       var err = document.getElementById('auth-error');
+      var btn = document.querySelector('#auth-screen button[type="submit"], #auth-screen button');
 
-      if (u === 'swaminavisha' && p === '7230967198') {
-        sessionStorage.setItem('shivi_admin_auth', 'true');
-        if (err) err.style.display = 'none';
-        checkAuth();
-      } else {
-        if (err) err.style.display = 'block';
+      if (!u || !p) {
+        if (err) { err.textContent = 'Please enter username and password.'; err.style.display = 'block'; }
+        return;
       }
+
+      // Disable button while checking
+      if (btn) { btn.disabled = true; btn.textContent = 'Logging in...'; }
+      if (err) err.style.display = 'none';
+
+      // Verify credentials against server-side env vars (credentials never in browser code)
+      fetch('/api/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (btn) { btn.disabled = false; btn.textContent = 'Login'; }
+        if (data.success) {
+          sessionStorage.setItem('shivi_admin_auth', 'true');
+          if (err) err.style.display = 'none';
+          checkAuth();
+        } else {
+          if (err) { err.textContent = '.'; err.style.display = 'block'; }
+        }
+      })
+      .catch(function() {
+        // Fallback: if API is unreachable (local dev without Vercel), deny login cleanly
+        if (btn) { btn.disabled = false; btn.textContent = 'Login'; }
+        if (err) { err.textContent = 'Login service unavailable. Please try again.'; err.style.display = 'block'; }
+      });
     }
 
     function handleLogout() {
